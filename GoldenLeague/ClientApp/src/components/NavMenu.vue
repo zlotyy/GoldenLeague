@@ -27,8 +27,8 @@
         >
           <ul class="navbar-nav flex-grow">
             <li class="nav-item">
-              <router-link :to="{ name: 'Home' }" class="nav-link text-dark"
-                >Home</router-link
+              <router-link :to="{ name: 'Login' }" class="nav-link text-dark"
+                >Login</router-link
               >
             </li>
             <li class="nav-item">
