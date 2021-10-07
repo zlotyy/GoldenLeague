@@ -50,7 +50,7 @@ namespace GoldenLeague
             services.AddControllers();
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp";
+                configuration.RootPath = "client-app";
             });
 
             services.AddSingleton<IJwtAuthenticationManager, JwtAuthenticationManager>();
@@ -78,7 +78,7 @@ namespace GoldenLeague
             app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
-                    spa.Options.SourcePath = "ClientApp/";
+                    spa.Options.SourcePath = "client-app/";
                 else
                     spa.Options.SourcePath = "dist";
 

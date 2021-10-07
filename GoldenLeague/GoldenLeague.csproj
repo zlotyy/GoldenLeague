@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaRoot>client-app\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
 
