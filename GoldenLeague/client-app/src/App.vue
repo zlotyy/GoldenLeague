@@ -11,7 +11,7 @@
 
 <script>
 import Menu from "@/components/Menu.vue";
-import Layout from "@/components/Layouts/Layout.vue";
+import Layout from "@/components/layouts/Layout.vue";
 
 export default {
   name: "App",

@@ -1,7 +1,7 @@
 <template>
-  <v-card class="grey lighten-1" outlined>
-    <v-card class="pa-2 mb-2" outlined> Aktualna kolejka </v-card>
-    <v-card class="pa-2" outlined> ??? </v-card>
+  <v-card class="d-flex flex-column flex grey lighten-5" outlined>
+    <v-card class="mb-2 flex" outlined> Aktualna kolejka </v-card>
+    <v-card outlined class="flex"> Tabela Premier League </v-card>
   </v-card>
 </template>
 

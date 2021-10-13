@@ -1,12 +1,12 @@
 <template>
   <v-container fluid class="grey lighten-1">
-    <v-row>
+    <v-row dense>
       <v-col cols="8 d-flex flex-column">
         <MainLayout>
           <slot />
         </MainLayout>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4 d-flex flex-column">
         <SecondaryLayout />
       </v-col>
     </v-row>

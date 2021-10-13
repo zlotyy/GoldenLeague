@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-2 flex" outlined>
+  <v-card class="flex grey lighten-5" outlined>
     <slot />
   </v-card>
 </template>
