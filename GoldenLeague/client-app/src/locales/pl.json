@@ -1,5 +1,19 @@
 {
   "common": {
-    "player": "Gracz"
+    "appName": "Golden League",
+    "player": "Gracz",
+    "points": "Punkty",
+    "ranking": "Ranking",
+    "matchBetting": "Typer",
+    "info": "Info",
+    "squad": "Skład"
+  },
+  "ranking": {
+    "matchBettingRanking": "Ranking Typerów",
+    "goldenLeagueRanking": "Ranking Golden League",
+    "summaryRanking": "Ranking Podsumowujący"
+  },
+  "matchBetting": {
+    "yourBets": "Twoje typy"
   }
 }

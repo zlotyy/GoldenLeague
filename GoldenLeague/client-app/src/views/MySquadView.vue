@@ -1,9 +1,9 @@
 <template>
-  <div>Info</div>
+  <div>Skład</div>
 </template>
 
 <script>
 export default {
-  name: "Info",
+  name: "MySquad",
 };
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <div>Punkty</div>
+  <div>Info</div>
 </template>
 
 <script>
 export default {
-  name: "Points",
+  name: "InfoView",
 };
 </script>
