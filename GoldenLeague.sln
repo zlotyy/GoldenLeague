@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldenLeague", "GoldenLeague\GoldenLeague.csproj", "{0E5AFD6B-210C-4E74-9206-63EDC7CBB510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoldenLeague.TransportModels", "GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj", "{F0B5800B-6736-4CB3-B4AB-772965912CAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldenLeague.TransportModels", "GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj", "{F0B5800B-6736-4CB3-B4AB-772965912CAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoldenLeague.Database", "GoldenLeague.Database\GoldenLeague.Database.csproj", "{6F52FAFC-5968-4C6A-8338-01D36D240E75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldenLeague.Database", "GoldenLeague.Database\GoldenLeague.Database.csproj", "{6F52FAFC-5968-4C6A-8338-01D36D240E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoldenLeague.Api", "GoldenLeague.Api\GoldenLeague.Api.csproj", "{58DEF578-2FEE-4DD4-B79A-013CD2B770ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoldenLeague.Api", "GoldenLeague.Api\GoldenLeague.Api.csproj", "{58DEF578-2FEE-4DD4-B79A-013CD2B770ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

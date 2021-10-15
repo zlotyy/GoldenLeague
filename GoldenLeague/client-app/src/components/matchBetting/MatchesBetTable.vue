@@ -5,26 +5,32 @@
       <v-data-table
         :headers="matchesTable.headers"
         :items="matchesTable.items"
-        :items-per-page="10"
+        :items-per-page="20"
         hide-default-footer
         group-by="matchDate"
         group-desc
-        sort-by="matchDate"
+        sort-by="matchDateTime"
         sort-desc
         disable-sort
         class="elevation-1"
       >
         <template v-slot:[`group.header`]="{ items }">
-          <th colspan="6">
-            {{ items[0].matchDate.toLocaleString() }}
+          <th colspan="7">
+            {{ items[0].matchDate }}
           </th>
         </template>
-        <template v-slot:[`item.matchDate`]="{ item }">
-          {{ item.matchDate }}
+        <template v-slot:[`item.matchTime`]="{ item }">
+          {{ item.matchTime }}
+        </template>
+        <template v-slot:[`item.homeTeamName`]="{ item }">
+          {{ item.homeTeamBetDetails.teamName }}
+        </template>
+        <template v-slot:[`item.awayTeamName`]="{ item }">
+          {{ item.awayTeamBetDetails.teamName }}
         </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
-        <template v-slot:[`item.betResult`]="{ item }">
-          <div v-if="item.matchDate > new Date()">
+        <template v-slot:[`item.resultBet`]="{ item }">
+          <div v-if="AllowBet(item.matchDateTime)">
             <div
               class="d-flex"
               style="align-items: baseline; justify-content: center"
@@ -34,7 +40,7 @@
                   dense
                   outlined
                   hide-details="true"
-                  v-model="item.homeTeamGoalsBet"
+                  v-model="item.homeTeamBetDetails.teamGoalsBet"
                 ></v-text-field>
               </div>
               <div class="flex mx-2">
@@ -45,20 +51,22 @@
                   dense
                   outlined
                   hide-details="true"
-                  v-model="item.awayTeamGoalsBet"
+                  v-model="item.awayTeamBetDetails.teamGoalsBet"
                 ></v-text-field>
               </div>
             </div>
           </div>
           <div v-else>
             <span>
-              {{ item.homeTeamGoalsBet }} : {{ item.awayTeamGoalsBet }}
+              {{ item.homeTeamBetDetails.teamGoalsBet }} :
+              {{ item.awayTeamBetDetails.teamGoalsBet }}
             </span>
           </div>
         </template>
-        <template v-slot:[`item.matchResult`]="{ item }">
+        <template v-slot:[`item.resultActual`]="{ item }">
           <span>
-            {{ item.homeTeamGoalsResult }} : {{ item.awayTeamGoalsResult }}
+            {{ item.homeTeamBetDetails.teamGoalsActual }} :
+            {{ item.awayTeamBetDetails.teamGoalsActual }}
           </span>
         </template>
         <template v-slot:[`body.append`]>
@@ -74,20 +82,23 @@
 </template>
 
 <script>
+import PlayerService from "@/services/PlayerService.js";
+import dayjs from "@/plugins/dayjs.js";
+
 export default {
   name: "MatchesBetTable",
   data() {
     return {
       matchesTable: {
         headers: [
-          { value: "matchDate", width: "20%" },
+          { value: "matchTime" },
           { value: "homeTeamName", align: "end", width: "20%" },
           { value: "teamsSpacer", align: "center", width: "1%" },
           { value: "awayTeamName", align: "start", width: "20%" },
-          { text: "Typ", value: "betResult", align: "center", width: "12%" },
+          { text: "Typ", value: "resultBet", align: "center", width: "12%" },
           {
             text: "Wynik",
-            value: "matchResult",
+            value: "resultActual",
             align: "center",
             width: "10%",
           },
@@ -97,119 +108,27 @@ export default {
     };
   },
   mounted() {
-    var tmpDate = new Date("2021-10-03 15:00");
-
-    this.matchesTable.items = [
-      {
-        matchId: 1,
-        matchDate: new Date("2021-10-02 13:30"),
-        homeTeamId: 5,
-        homeTeamName: "Manchester United",
-        homeTeamGoalsBet: 2,
-        homeTeamGoalsResult: 1,
-        awayTeamId: 6,
-        awayTeamName: "Everton",
-        awayTeamGoalsBet: 1,
-        awayTeamGoalsResult: 1,
-      },
-      {
-        matchId: 2,
-        matchDate: new Date("2021-10-18 21:00"),
-        homeTeamId: 1,
-        homeTeamName: "Arsenal",
-        homeTeamGoalsBet: null,
-        homeTeamGoalsResult: null,
-        awayTeamId: 2,
-        awayTeamName: "Crystal Palace",
-        awayTeamGoalsBet: null,
-        awayTeamGoalsResult: null,
-      },
-      {
-        matchId: 3,
-        matchDate: new Date("2021-10-16 13:30"),
-        homeTeamId: 3,
-        homeTeamName: "Watford",
-        homeTeamGoalsBet: 0,
-        homeTeamGoalsResult: null,
-        awayTeamId: 4,
-        awayTeamName: "Liverpool",
-        awayTeamGoalsBet: 2,
-        awayTeamGoalsResult: null,
-      },
-
-      {
-        matchId: 4,
-        matchDate: tmpDate,
-        homeTeamId: 5,
-        homeTeamName: "Crystal Palace",
-        homeTeamGoalsBet: 0,
-        homeTeamGoalsResult: 2,
-        awayTeamId: 6,
-        awayTeamName: "Leicester",
-        awayTeamGoalsBet: 1,
-        awayTeamGoalsResult: 2,
-      },
-      {
-        matchId: 5,
-        matchDate: tmpDate,
-        homeTeamId: 5,
-        homeTeamName: "Tottenham",
-        homeTeamGoalsBet: 1,
-        homeTeamGoalsResult: 2,
-        awayTeamId: 6,
-        awayTeamName: "Aston Villa",
-        awayTeamGoalsBet: 1,
-        awayTeamGoalsResult: 1,
-      },
-      {
-        matchId: 6,
-        matchDate: tmpDate,
-        homeTeamId: 5,
-        homeTeamName: "West Ham",
-        homeTeamGoalsBet: 1,
-        homeTeamGoalsResult: 1,
-        awayTeamId: 6,
-        awayTeamName: "Brentford",
-        awayTeamGoalsBet: 0,
-        awayTeamGoalsResult: 2,
-      },
-      {
-        matchId: 7,
-        matchDate: new Date("2021-10-03 15:00"),
-        homeTeamId: 5,
-        homeTeamName: "Liverpool",
-        homeTeamGoalsBet: 1,
-        homeTeamGoalsResult: 2,
-        awayTeamId: 6,
-        awayTeamName: "Manchester City",
-        awayTeamGoalsBet: 1,
-        awayTeamGoalsResult: 2,
-      },
-      {
-        matchId: 8,
-        matchDate: new Date("2021-10-16 16:00"),
-        homeTeamId: 5,
-        homeTeamName: "Manchester City",
-        homeTeamGoalsBet: 3,
-        homeTeamGoalsResult: null,
-        awayTeamId: 6,
-        awayTeamName: "Burnley",
-        awayTeamGoalsBet: 0,
-        awayTeamGoalsResult: null,
-      },
-      {
-        matchId: 9,
-        matchDate: new Date("2021-10-16 16:00"),
-        homeTeamId: 5,
-        homeTeamName: "Arsenal",
-        homeTeamGoalsBet: 1,
-        homeTeamGoalsResult: null,
-        awayTeamId: 6,
-        awayTeamName: "Manchester United",
-        awayTeamGoalsBet: 1,
-        awayTeamGoalsResult: null,
-      },
-    ].sort((x, y) => y.matchDate - x.matchDate);
+    const userId = "0f8fad5b-d9cb-469f-a165-70867728950e";
+    PlayerService.GetMatchBettings(userId).then((response) => {
+      this.matchesTable.items = response.data.data.map((x) => {
+        return {
+          ...x,
+          matchDate: this.GetMatchDate(x.matchDateTime),
+          matchTime: this.GetMatchTime(x.matchDateTime),
+        };
+      });
+    });
+  },
+  methods: {
+    AllowBet(matchDateTime) {
+      return dayjs(matchDateTime) > dayjs();
+    },
+    GetMatchDate(dateTime) {
+      return dayjs(dateTime).format("DD MMMM YYYY");
+    },
+    GetMatchTime(dateTime) {
+      return dayjs(dateTime).format("HH:mm");
+    },
   },
 };
 </script>
