@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GoldenLeague.Models
+namespace GoldenLeague.TransportModels.Common
 {
     public class Result<T>
     {

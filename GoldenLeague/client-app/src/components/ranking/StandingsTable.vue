@@ -11,10 +11,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(player, index) in players" :key="player.id">
+          <tr v-for="(user, index) in users" :key="user.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ player.login }}</td>
-            <td>{{ player.points }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ user.points }}</td>
           </tr>
         </tbody>
       </template>
@@ -30,7 +30,7 @@ export default {
       type: String,
       default: "Ranking",
     },
-    players: [],
+    users: [],
   },
 };
 </script>

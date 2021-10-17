@@ -23,10 +23,10 @@
           {{ item.matchTime }}
         </template>
         <template v-slot:[`item.homeTeamName`]="{ item }">
-          {{ item.homeTeamBetDetails.teamName }}
+          {{ item.matchResult.homeTeam.teamName }}
         </template>
         <template v-slot:[`item.awayTeamName`]="{ item }">
-          {{ item.awayTeamBetDetails.teamName }}
+          {{ item.matchResult.awayTeam.teamName }}
         </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
         <template v-slot:[`item.resultBet`]="{ item }">
@@ -40,7 +40,7 @@
                   dense
                   outlined
                   hide-details="true"
-                  v-model="item.homeTeamBetDetails.teamGoalsBet"
+                  v-model="item.matchResult.homeTeam.teamScoreBet"
                 ></v-text-field>
               </div>
               <div class="flex mx-2">
@@ -51,22 +51,22 @@
                   dense
                   outlined
                   hide-details="true"
-                  v-model="item.awayTeamBetDetails.teamGoalsBet"
+                  v-model="item.matchResult.awayTeam.teamScoreBet"
                 ></v-text-field>
               </div>
             </div>
           </div>
           <div v-else>
             <span>
-              {{ item.homeTeamBetDetails.teamGoalsBet }} :
-              {{ item.awayTeamBetDetails.teamGoalsBet }}
+              {{ item.matchResult.homeTeam.teamScoreBet }} :
+              {{ item.matchResult.awayTeam.teamScoreBet }}
             </span>
           </div>
         </template>
         <template v-slot:[`item.resultActual`]="{ item }">
           <span>
-            {{ item.homeTeamBetDetails.teamGoalsActual }} :
-            {{ item.awayTeamBetDetails.teamGoalsActual }}
+            {{ item.matchResult.homeTeam.teamScoreActual }} :
+            {{ item.matchResult.awayTeam.teamScoreActual }}
           </span>
         </template>
         <template v-slot:[`body.append`]>
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import PlayerService from "@/services/PlayerService.js";
+import UserService from "@/services/UserService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
@@ -108,15 +108,19 @@ export default {
     };
   },
   mounted() {
-    const userId = "0f8fad5b-d9cb-469f-a165-70867728950e";
-    PlayerService.GetMatchBettings(userId).then((response) => {
-      this.matchesTable.items = response.data.data.map((x) => {
-        return {
-          ...x,
-          matchDate: this.GetMatchDate(x.matchDateTime),
-          matchTime: this.GetMatchTime(x.matchDateTime),
-        };
-      });
+    const userId = "35CE5DF3-CBCD-4A43-9582-A51CBEC26B91";
+    debugger;
+    UserService.GetMatchBetting(userId).then((response) => {
+      const result = response.data;
+      if (result.success) {
+        this.matchesTable.items = result.data.map((x) => {
+          return {
+            ...x,
+            matchDate: this.GetMatchDate(x.matchDateTime),
+            matchTime: this.GetMatchTime(x.matchDateTime),
+          };
+        });
+      }
     });
   },
   methods: {

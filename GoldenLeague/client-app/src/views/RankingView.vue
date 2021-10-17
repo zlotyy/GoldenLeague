@@ -3,19 +3,19 @@
     <v-col cols="4">
       <StandingsTable
         :header="$t('ranking.matchBettingRanking')"
-        :players="matchBettingStandings"
+        :users="matchBettingStandings"
       />
     </v-col>
     <v-col cols="4">
       <StandingsTable
         :header="$t('ranking.goldenLeagueRanking')"
-        :players="goldenLeagueStandings"
+        :users="goldenLeagueStandings"
       />
     </v-col>
     <v-col cols="4">
       <StandingsTable
         :header="$t('ranking.summaryRanking')"
-        :players="summaryStandings"
+        :users="summaryStandings"
       />
     </v-col>
   </v-row>

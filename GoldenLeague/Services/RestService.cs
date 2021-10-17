@@ -26,9 +26,9 @@ namespace GoldenLeague.Services
 
         public RestService(IOptions<AppSettings> options)
         {
-            _client = new RestClient(options.Value.WebApi.Url)
+            _client = new RestClient(options.Value.RestApi.Url)
             {
-                Authenticator = new HttpBasicAuthenticator(options.Value.WebApi.UserName, options.Value.WebApi.Password)
+                Authenticator = new HttpBasicAuthenticator(options.Value.RestApi.UserName, options.Value.RestApi.Password)
             };
         }
 
