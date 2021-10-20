@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GoldenLeague.Common\GoldenLeague.Common.csproj" />
     <ProjectReference Include="..\GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj" />
   </ItemGroup>
 

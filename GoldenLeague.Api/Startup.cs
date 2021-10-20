@@ -1,6 +1,8 @@
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Api.Utils;
+using GoldenLeague.Common.Extensions;
 using GoldenLeague.Database;
+using GoldenLeague.Database.Queries;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +35,14 @@ namespace GoldenLeague.Api
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Insert(0, new DateTimeJsonConverter());
+                });
+
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GoldenLeague.Api", Version = "v1" });
@@ -59,6 +68,7 @@ namespace GoldenLeague.Api
                 });
             });
 
+            services.AddTransient<IBaseQueries, BaseQueries>();
             services.AddTransient<IUserQueries, UserQueries>();
             services.AddTransient<IMatchBettingQueries, MatchBettingQueries>();
         }

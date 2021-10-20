@@ -12,6 +12,7 @@
         sort-by="matchDateTime"
         sort-desc
         disable-sort
+        :item-class="RowClass"
         class="elevation-1"
       >
         <template v-slot:[`group.header`]="{ items }">
@@ -72,7 +73,9 @@
         <template v-slot:[`body.append`]>
           <tr>
             <td colspan="12" class="text-right">
-              <v-btn class="primary my-5" outlined>Zapisz typy</v-btn>
+              <v-btn class="primary my-5" outlined>{{
+                $t("matchBetting.saveYourBets")
+              }}</v-btn>
             </td>
           </tr>
         </template>
@@ -133,6 +136,16 @@ export default {
     GetMatchTime(dateTime) {
       return dayjs(dateTime).format("HH:mm");
     },
+    RowClass() {
+      // NOT WORKING COLOR
+      return "betting-hit";
+    },
   },
 };
 </script>
+
+<style scoped>
+tr .betting-hit {
+  background-color: chartreuse !important;
+}
+</style>

@@ -9,10 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using LinqToDB;
+using LinqToDB.Common;
 using LinqToDB.Configuration;
+using LinqToDB.Data;
 using LinqToDB.Mapping;
 
 namespace GoldenLeague.Database
@@ -24,11 +27,12 @@ namespace GoldenLeague.Database
 	/// </summary>
 	public partial class GoldenLeagueDB : LinqToDB.Data.DataConnection
 	{
-		public ITable<MatchBetting>  MatchBetting  { get { return this.GetTable<MatchBetting>(); } }
-		public ITable<Matches>       Matches       { get { return this.GetTable<Matches>(); } }
-		public ITable<Teams>         Teams         { get { return this.GetTable<Teams>(); } }
-		public ITable<Users>         Users         { get { return this.GetTable<Users>(); } }
-		public ITable<VMatchBetting> VMatchBetting { get { return this.GetTable<VMatchBetting>(); } }
+		public ITable<ConfigDictionary> ConfigDictionary { get { return this.GetTable<ConfigDictionary>(); } }
+		public ITable<MatchBetting>     MatchBetting     { get { return this.GetTable<MatchBetting>(); } }
+		public ITable<Matches>          Matches          { get { return this.GetTable<Matches>(); } }
+		public ITable<Teams>            Teams            { get { return this.GetTable<Teams>(); } }
+		public ITable<Users>            Users            { get { return this.GetTable<Users>(); } }
+		public ITable<VMatchBetting>    VMatchBetting    { get { return this.GetTable<VMatchBetting>(); } }
 
 		public GoldenLeagueDB()
 		{
@@ -61,6 +65,15 @@ namespace GoldenLeague.Database
 		partial void InitMappingSchema();
 	}
 
+	[Table(Schema="dbo", Name="ConfigDictionary")]
+	public partial class ConfigDictionary
+	{
+		[PrimaryKey, Identity] public int    ConfigId          { get; set; } // int
+		[Column,     NotNull ] public string ConfigKey         { get; set; } // varchar(50)
+		[Column,     NotNull ] public string ConfigValue       { get; set; } // nvarchar(4000)
+		[Column,     NotNull ] public string ConfigDescription { get; set; } // nvarchar(4000)
+	}
+
 	[Table(Schema="dbo", Name="MatchBetting")]
 	public partial class MatchBetting
 	{
@@ -68,6 +81,10 @@ namespace GoldenLeague.Database
 		[PrimaryKey(2), NotNull    ] public Guid MatchId       { get; set; } // uniqueidentifier
 		[Column,           Nullable] public int? HomeTeamScore { get; set; } // int
 		[Column,           Nullable] public int? AwayTeamScore { get; set; } // int
+		/// <summary>
+		/// Liczba punktów za wytypowany wynik meczu (0 - nietrafiony, 1 - trafiony zwyciezca, 3 - trafiony wynik)
+		/// </summary>
+		[Column,           Nullable] public int? BettingPoints { get; set; } // int
 
 		#region Associations
 
@@ -189,10 +206,29 @@ namespace GoldenLeague.Database
 		[Column, NotNull    ] public string   AwayTeamName        { get; set; } // nvarchar(15)
 		[Column,    Nullable] public int?     AwayTeamScoreActual { get; set; } // int
 		[Column,    Nullable] public int?     AwayTeamScoreBet    { get; set; } // int
+		[Column,    Nullable] public int?     BettingPoints       { get; set; } // int
+	}
+
+	public static partial class GoldenLeagueDBStoredProcedures
+	{
+		#region SetMatchBettingPointsForEmptyBetting
+
+		public static int SetMatchBettingPointsForEmptyBetting(this GoldenLeagueDB dataConnection)
+		{
+			return dataConnection.ExecuteProc("[dbo].[SetMatchBettingPointsForEmptyBetting]");
+		}
+
+		#endregion
 	}
 
 	public static partial class TableExtensions
 	{
+		public static ConfigDictionary Find(this ITable<ConfigDictionary> table, int ConfigId)
+		{
+			return table.FirstOrDefault(t =>
+				t.ConfigId == ConfigId);
+		}
+
 		public static MatchBetting Find(this ITable<MatchBetting> table, Guid UserId, Guid MatchId)
 		{
 			return table.FirstOrDefault(t =>

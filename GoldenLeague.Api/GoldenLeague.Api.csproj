@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="linq2db" Version="3.4.4" />
     <PackageReference Include="linq2db.SqlServer" Version="3.4.4" />
     <PackageReference Include="NLog" Version="4.7.11" />
@@ -15,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GoldenLeague.Common\GoldenLeague.Common.csproj" />
     <ProjectReference Include="..\GoldenLeague.Database\GoldenLeague.Database.csproj" />
     <ProjectReference Include="..\GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj" />
   </ItemGroup>

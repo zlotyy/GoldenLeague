@@ -1,0 +1,17 @@
+﻿<#@include file="EnumsDbHelper.ttinclude" #>
+
+<#
+  var configFilePath = "Enums.config";
+ 
+  var enums = new []
+  {
+	new EnumEntry
+      ("Konfiguracja", "EnumsDb", "dbo", "ConfigDictionary", "ConfigId", "ConfigKey", "ConfigDescription")
+      { EnumName = "ConfigKeys" },
+
+  };
+ 
+  var code = this.GenerateEnums(configFilePath, enums);
+ 
+  return code;
+#>

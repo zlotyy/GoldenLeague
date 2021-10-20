@@ -34,14 +34,18 @@ namespace GoldenLeague.TransportModels.MatchBetting
 
         }
 
-        public MatchResultModel(TeamMatchDetailsModel homeTeam, TeamMatchDetailsModel awayTeam)
+        public MatchResultModel(TeamMatchDetailsModel homeTeam, TeamMatchDetailsModel awayTeam, int? bettingPoints, BettingResultEnum? bettingResult)
         {
             HomeTeam = homeTeam;
             AwayTeam = awayTeam;
+            BettingPoints = bettingPoints;
+            BettingResult = bettingResult;
         }
 
         public TeamMatchDetailsModel HomeTeam { get; set; }
         public TeamMatchDetailsModel AwayTeam { get; set; }
+        public int? BettingPoints { get; set; }
+        public BettingResultEnum? BettingResult { get; set; }
     }
 
     public class TeamMatchDetailsModel

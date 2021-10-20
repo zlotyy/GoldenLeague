@@ -1,5 +1,9 @@
+using GoldenLeague.Common.Extensions;
+using GoldenLeague.Database;
+using GoldenLeague.Database.Queries;
 using GoldenLeague.Services;
 using GoldenLeague.Utils;
+using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +21,7 @@ namespace GoldenLeague
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            DataConnection.DefaultSettings = new LinqToDBSettings(configuration.GetConnectionString("GoldenLeagueDB"));
         }
 
         public IConfiguration Configuration { get; }
@@ -27,6 +32,8 @@ namespace GoldenLeague
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
+
+            services.AddSingleton<IDbContextFactory, DbContextFactory>();
 
             services.AddAuthentication(options =>
             {
@@ -47,14 +54,21 @@ namespace GoldenLeague
                 // TODO? RefreshToken
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Insert(0, new DateTimeJsonConverter());
+                });
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "client-app";
             });
 
             services.AddSingleton<IJwtAuthenticationManager, JwtAuthenticationManager>();
+
             services.AddTransient<IRestService, RestService>();
+            services.AddTransient<IBaseQueries, BaseQueries>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

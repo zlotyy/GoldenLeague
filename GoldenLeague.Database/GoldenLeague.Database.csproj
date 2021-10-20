@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Enums\DbEnumHelper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DbEnumHelper.cs</LastGenOutput>
+    </None>
     <None Update="GoldenLeagueDB.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>GoldenLeagueDB.generated.cs</LastGenOutput>
@@ -33,6 +37,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Enums\DbEnumHelper.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DbEnumHelper.tt</DependentUpon>
+    </Compile>
     <Compile Update="GoldenLeagueDB.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
