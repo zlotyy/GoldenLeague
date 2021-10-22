@@ -3,7 +3,6 @@ using GoldenLeague.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GoldenLeague.Api.Queries
 {
@@ -27,15 +26,9 @@ namespace GoldenLeague.Api.Queries
 
         public IEnumerable<VMatchBetting> GetMatchBetting(Guid userId, int seasonNo)
         {
-            // TODO Ten widok musi zwracać wszystkie typy wszystkich użytkowników
-            // Procedura powinna pobierać wszystkie mecze użytkownika, również nieobstawione
             using (var db = _dbContextFactory.Create())
             {
-                var query = db.VMatchBetting
-                    .Where(x => x.UserId == userId && x.SeasonNo == seasonNo)
-                    .OrderBy(x => x.MatchDateTime);
-
-                return query.ToList();
+                return db.GetUserMatchBetting(userId, seasonNo);
             }
         }
     }
