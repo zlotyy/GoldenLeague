@@ -4,8 +4,9 @@
       <v-card-title>{{ $t("matchBetting.yourBets") }}</v-card-title>
       <v-data-table
         :headers="matchesTable.headers"
-        :items="matchesTable.items"
+        :items="gameweekItems"
         :items-per-page="20"
+        :loading="matchesTable.loading"
         hide-default-footer
         group-by="matchDate"
         group-desc
@@ -15,6 +16,19 @@
         :item-class="RowClass"
         class="elevation-1"
       >
+        <template v-slot:[`top`]>
+          <v-row justify="start">
+            <v-col class="mx-3" cols="2">
+              <v-select
+                dense
+                outlined
+                :label="$t('common.gameweek')"
+                :items="gameweeks"
+                v-model="gameweekNo"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </template>
         <template v-slot:[`group.header`]="{ items }">
           <th colspan="7">
             {{ items[0].matchDate }}
@@ -57,6 +71,7 @@
               </div>
             </div>
           </div>
+          <div v-else-if="BetEmpty(item)"><span> - </span></div>
           <div v-else>
             <span>
               {{ item.matchResult.homeTeam.teamScoreBet }} :
@@ -73,9 +88,14 @@
         <template v-slot:[`body.append`]>
           <tr>
             <td colspan="12" class="text-right">
-              <v-btn class="primary my-5" outlined>{{
-                $t("matchBetting.saveYourBets")
-              }}</v-btn>
+              <v-btn
+                class="primary my-5"
+                outlined
+                :loading="saveLoading"
+                :disabled="saveLoading"
+                @click="UpdateMatchBetting"
+                >{{ $t("matchBetting.saveYourBets") }}</v-btn
+              >
             </td>
           </tr>
         </template>
@@ -98,7 +118,7 @@ export default {
           { value: "homeTeamName", align: "end", width: "20%" },
           { value: "teamsSpacer", align: "center", width: "1%" },
           { value: "awayTeamName", align: "start", width: "20%" },
-          { text: "Typ", value: "resultBet", align: "center", width: "12%" },
+          { text: "Typ", value: "resultBet", align: "center", width: "13%" },
           {
             text: "Wynik",
             value: "resultActual",
@@ -107,28 +127,32 @@ export default {
           },
         ],
         items: [],
+        loading: false,
       },
+      gameweekNo: 38,
+      gameweeks: [],
+      saveLoading: false,
     };
   },
+  computed: {
+    gameweekItems() {
+      return this.matchesTable.items.filter(
+        (x) => x.gameweekNo == this.gameweekNo
+      );
+    },
+  },
   mounted() {
-    const userId = "35CE5DF3-CBCD-4A43-9582-A51CBEC26B91";
-    debugger;
-    UserService.GetMatchBetting(userId).then((response) => {
-      const result = response.data;
-      if (result.success) {
-        this.matchesTable.items = result.data.map((x) => {
-          return {
-            ...x,
-            matchDate: this.GetMatchDate(x.matchDateTime),
-            matchTime: this.GetMatchTime(x.matchDateTime),
-          };
-        });
-      }
-    });
+    this.$_setMatchBettingItems();
   },
   methods: {
     AllowBet(matchDateTime) {
       return dayjs(matchDateTime) > dayjs();
+    },
+    BetEmpty(item) {
+      return (
+        ((item.matchResult || {}).homeTeam || {}).teamScoreBet == null ||
+        ((item.matchResult || {}).awayTeam || {}).teamScoreBet == null
+      );
     },
     GetMatchDate(dateTime) {
       return dayjs(dateTime).format("DD MMMM YYYY");
@@ -139,6 +163,41 @@ export default {
     RowClass() {
       // NOT WORKING COLOR
       return "betting-hit";
+    },
+    UpdateMatchBetting() {
+      this.saveLoading = true;
+      UserService.UpdateMatchBetting(this.gameweekItems).then((response) => {
+        const result = response.data;
+        if (result.success) {
+          console.log("Updated");
+        } else {
+          console.log("Error - not updated");
+        }
+        this.$_setMatchBettingItems();
+        this.saveLoading = false;
+      });
+    },
+    $_setMatchBettingItems() {
+      this.matchesTable.loading = true;
+      UserService.GetMatchBetting().then((response) => {
+        const result = response.data;
+        if (result.success) {
+          this.matchesTable.items = result.data.map((x) => {
+            return {
+              ...x,
+              matchDate: this.GetMatchDate(x.matchDateTime),
+              matchTime: this.GetMatchTime(x.matchDateTime),
+            };
+          });
+          this.gameweeks = this.$_getGameweeks();
+        }
+        this.matchesTable.loading = false;
+      });
+    },
+    $_getGameweeks() {
+      return [
+        ...new Set(this.matchesTable.items.map((x) => x.gameweekNo)),
+      ].sort((a, b) => a - b);
     },
   },
 };

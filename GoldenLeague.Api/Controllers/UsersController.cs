@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoldenLeague.Api.Commands;
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Common;
@@ -16,14 +17,16 @@ namespace GoldenLeague.Api.Controllers
         private readonly ILogger<UsersController> _logger;
         private readonly IUserQueries _userQueries;
         private readonly IMatchBettingQueries _matchBettingQueries;
+        private readonly IMatchBettingCommands _matchBettingCommands;
         private readonly IMapper _mapper;
 
         public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IMatchBettingQueries matchBettingQueries,
-            IMapper mapper)
+            IMatchBettingCommands matchBettingCommands, IMapper mapper)
         {
             _logger = logger;
             _userQueries = userQueries;
             _matchBettingQueries = matchBettingQueries;
+            _matchBettingCommands = matchBettingCommands;
             _mapper = mapper;
         }
 
@@ -46,6 +49,32 @@ namespace GoldenLeague.Api.Controllers
                 var data = _matchBettingQueries.GetMatchBetting(id, seasonNo);
                 var mappedData = _mapper.Map<List<MatchBettingModel>>(data);
                 result.Data = mappedData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetMatchBetting)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/match-betting")]
+        public IActionResult UpdateMatchBetting([FromRoute] Guid id, [FromBody] List<MatchBettingModel> model)
+        {
+            var result = new Result<bool>();
+
+            try
+            {
+                var updateResult = _matchBettingCommands.UpdateMatchBetting(model);
+                if (!updateResult)
+                {
+                    result.Errors.Add(ErrorLocalization.ErrorDBUpsert);
+                }
+                else
+                {
+                    result.Data = true;
+                }
             }
             catch (Exception ex)
             {

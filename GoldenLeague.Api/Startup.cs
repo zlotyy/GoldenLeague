@@ -1,3 +1,4 @@
+using GoldenLeague.Api.Commands;
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Api.Utils;
 using GoldenLeague.Common.Extensions;
@@ -68,9 +69,13 @@ namespace GoldenLeague.Api
                 });
             });
 
+            // queries
             services.AddTransient<IBaseQueries, BaseQueries>();
             services.AddTransient<IUserQueries, UserQueries>();
             services.AddTransient<IMatchBettingQueries, MatchBettingQueries>();
+
+            // commands
+            services.AddTransient<IMatchBettingCommands, MatchBettingCommands>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

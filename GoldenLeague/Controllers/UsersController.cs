@@ -1,5 +1,7 @@
-﻿using GoldenLeague.Database.Enums;
+﻿using GoldenLeague.Common.Localization;
+using GoldenLeague.Database.Enums;
 using GoldenLeague.Database.Queries;
+using GoldenLeague.Helpers;
 using GoldenLeague.Services;
 using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.MatchBetting;
@@ -32,10 +34,22 @@ namespace GoldenLeague.Controllers
         [HttpGet("{id}/match-betting")]
         public IActionResult GetMatchBetting([FromRoute] Guid id)
         {
-            var response = _restService.Get<Result<List<MatchBettingModel>>>($"users/{id}/match-betting/?seasonNo={_currentSeasonNo}");
+            var response = _restService.Get<Result<List<MatchBettingModel>>>(ApiUrlHelper.UserMatchBettingGet(id, _currentSeasonNo));
             if (!response.IsSuccessful)
             {
-                var result = new Result<List<MatchBettingModel>>(new List<MatchBettingModel>(), new List<string> { "COMMON ERROR - TODO Localization" });
+                var result = new Result<List<MatchBettingModel>>(new List<MatchBettingModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                return Ok(result);
+            }
+            return Ok(response.Data);
+        }
+
+        [HttpPatch("{id}/match-betting")]
+        public IActionResult UpdateMatchBetting([FromRoute] Guid id, [FromBody] List<MatchBettingModel> model)
+        {
+            var response = _restService.Patch<Result<bool>>(ApiUrlHelper.UserMatchBettingUpdate(id), model);
+            if (!response.IsSuccessful)
+            {
+                var result = new Result<bool>(new List<string> { ErrorLocalization.ErrorAPIUnknown });
                 return Ok(result);
             }
             return Ok(response.Data);

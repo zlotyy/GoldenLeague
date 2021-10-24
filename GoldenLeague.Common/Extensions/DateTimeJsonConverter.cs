@@ -10,7 +10,8 @@ namespace GoldenLeague.Common.Extensions
         {
             if (DateTime.TryParse(reader.GetString(), out DateTime dateTime))
             {
-                return dateTime.ToLocalTime();
+                //return dateTime.ToLocalTime();
+                return DateTime.SpecifyKind(dateTime, DateTimeKind.Local);
             }
             return DateTime.MinValue;
         }

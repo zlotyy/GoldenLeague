@@ -3,6 +3,7 @@ using GoldenLeague.Database;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoldenLeague.Api.Queries
 {
@@ -28,7 +29,7 @@ namespace GoldenLeague.Api.Queries
         {
             using (var db = _dbContextFactory.Create())
             {
-                return db.GetUserMatchBetting(userId, seasonNo);
+                return db.GetUserMatchBetting(userId, seasonNo).ToList();
             }
         }
     }

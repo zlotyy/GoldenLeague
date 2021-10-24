@@ -61,6 +61,24 @@ namespace GoldenLeague.Common.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wystąpił błąd połączenia z serwerem.
+        /// </summary>
+        public static string ErrorAPIConnection {
+            get {
+                return ResourceManager.GetString("ErrorAPIConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wystąpił błąd serwera.
+        /// </summary>
+        public static string ErrorAPIUnknown {
+            get {
+                return ResourceManager.GetString("ErrorAPIUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wystąpił błąd podczas usuwania danych.
         /// </summary>
         public static string ErrorDBDelete {

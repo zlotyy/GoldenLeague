@@ -14,6 +14,8 @@ namespace GoldenLeague.Services
         IRestResponse Post(string endpoint, object payload);
         IRestResponse<TResponse> Put<TResponse>(string endpoint, object payload) where TResponse : new();
         IRestResponse Put(string endpoint, object payload);
+        IRestResponse<TResponse> Patch<TResponse>(string endpoint, object payload) where TResponse : new();
+        IRestResponse Patch(string endpoint, object payload);
         IRestResponse<TResponse> Delete<TResponse>(string endpoint, object payload) where TResponse : new();
         IRestResponse Delete(string endpoint, object payload);
         IRestResponse<TResponse> Execute<TResponse>(Uri baseUrl, IRestRequest request) where TResponse : new();
@@ -73,6 +75,16 @@ namespace GoldenLeague.Services
         public IRestResponse Put(string endpoint, object payload)
         {
             return Put<object>(endpoint, payload);
+        }
+
+        public IRestResponse<TResponse> Patch<TResponse>(string endpoint, object payload) where TResponse : new()
+        {
+            return Request<TResponse>(Method.PATCH, endpoint, payload);
+        }
+
+        public IRestResponse Patch(string endpoint, object payload)
+        {
+            return Patch<object>(endpoint, payload);
         }
 
         public IRestResponse<TResponse> Delete<TResponse>(string endpoint, object payload) where TResponse : new()
