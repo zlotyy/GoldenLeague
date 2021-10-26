@@ -17,12 +17,12 @@ namespace GoldenLeague.Controllers
     public class UsersController : BaseController
     {
         private readonly IRestService _restService;
-        private readonly ILogger<MatchBettingController> _logger;
+        private readonly ILogger<UsersController> _logger;
         private readonly IBaseQueries _queries;
 
         private readonly int _currentSeasonNo;
 
-        public UsersController(IRestService restService, ILogger<MatchBettingController> logger, IBaseQueries queries)
+        public UsersController(IRestService restService, ILogger<UsersController> logger, IBaseQueries queries)
         {
             _restService = restService;
             _logger = logger;

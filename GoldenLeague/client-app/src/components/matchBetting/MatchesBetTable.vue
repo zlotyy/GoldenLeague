@@ -54,7 +54,8 @@
                 <v-text-field
                   dense
                   outlined
-                  hide-details="true"
+                  hide-details
+                  v-mask="'#'"
                   v-model="item.matchResult.homeTeam.teamScoreBet"
                 ></v-text-field>
               </div>
@@ -65,7 +66,8 @@
                 <v-text-field
                   dense
                   outlined
-                  hide-details="true"
+                  hide-details
+                  v-mask="'#'"
                   v-model="item.matchResult.awayTeam.teamScoreBet"
                 ></v-text-field>
               </div>
@@ -106,6 +108,7 @@
 
 <script>
 import UserService from "@/services/UserService.js";
+import MatchesService from "@/services/MatchService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
@@ -129,7 +132,7 @@ export default {
         items: [],
         loading: false,
       },
-      gameweekNo: 38,
+      gameweekNo: 1,
       gameweeks: [],
       saveLoading: false,
     };
@@ -190,6 +193,7 @@ export default {
             };
           });
           this.gameweeks = this.$_getGameweeks();
+          this.$_setCurrentGameweek();
         }
         this.matchesTable.loading = false;
       });
@@ -198,6 +202,12 @@ export default {
       return [
         ...new Set(this.matchesTable.items.map((x) => x.gameweekNo)),
       ].sort((a, b) => a - b);
+    },
+    $_setCurrentGameweek() {
+      MatchesService.GetCurrentGameweek().then((response) => {
+        const result = response.data;
+        this.gameweekNo = result;
+      });
     },
   },
 };
