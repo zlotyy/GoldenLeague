@@ -39,8 +39,7 @@ namespace GoldenLeague.Api.Commands
                 {
                     matchBetting.ForEach(mb =>
                     {
-                        if (mb.MatchResult.HomeTeam.TeamScoreBet.HasValue 
-                            && mb.MatchResult.AwayTeam.TeamScoreBet.HasValue)
+                        if (mb.MatchResult.HomeTeam.TeamScoreBet.HasValue == mb.MatchResult.AwayTeam.TeamScoreBet.HasValue)
                         {
                             db.MatchBetting
                                 .Where(x => x.MatchId == mb.MatchId && x.UserId == mb.UserId)

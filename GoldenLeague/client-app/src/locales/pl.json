@@ -7,7 +7,9 @@
     "matchBetting": "Typer",
     "info": "Info",
     "squad": "Skład",
-    "gameweek": "Kolejka"
+    "gameweek": "Kolejka",
+    "currentGameweek": "Aktualna kolejka",
+    "premierLeagueTable": "Tabela Premier League"
   },
   "ranking": {
     "matchBettingRanking": "Ranking Typerów",

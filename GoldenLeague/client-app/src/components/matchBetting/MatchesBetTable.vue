@@ -56,7 +56,7 @@
                   outlined
                   hide-details
                   v-mask="'#'"
-                  v-model="item.matchResult.homeTeam.teamScoreBet"
+                  v-model.number="item.matchResult.homeTeam.teamScoreBet"
                 ></v-text-field>
               </div>
               <div class="flex mx-2">
@@ -68,7 +68,7 @@
                   outlined
                   hide-details
                   v-mask="'#'"
-                  v-model="item.matchResult.awayTeam.teamScoreBet"
+                  v-model.number="item.matchResult.awayTeam.teamScoreBet"
                 ></v-text-field>
               </div>
             </div>
@@ -95,7 +95,7 @@
                 outlined
                 :loading="saveLoading"
                 :disabled="saveLoading"
-                @click="UpdateMatchBetting"
+                @click="SaveMatchBetting"
                 >{{ $t("matchBetting.saveYourBets") }}</v-btn
               >
             </td>
@@ -145,6 +145,7 @@ export default {
     },
   },
   mounted() {
+    this.$_setCurrentGameweek();
     this.$_setMatchBettingItems();
   },
   methods: {
@@ -157,19 +158,17 @@ export default {
         ((item.matchResult || {}).awayTeam || {}).teamScoreBet == null
       );
     },
-    GetMatchDate(dateTime) {
-      return dayjs(dateTime).format("DD MMMM YYYY");
-    },
-    GetMatchTime(dateTime) {
-      return dayjs(dateTime).format("HH:mm");
-    },
     RowClass() {
       // NOT WORKING COLOR
       return "betting-hit";
     },
-    UpdateMatchBetting() {
+    SaveMatchBetting() {
       this.saveLoading = true;
-      UserService.UpdateMatchBetting(this.gameweekItems).then((response) => {
+      const dto = this.$_getDto();
+      console.log(dto[0].matchResult.homeTeam.teamScoreBet);
+      console.log(dto[0].matchResult.awayTeam.teamScoreBet);
+      debugger;
+      UserService.UpdateMatchBetting(dto).then((response) => {
         const result = response.data;
         if (result.success) {
           console.log("Updated");
@@ -188,15 +187,20 @@ export default {
           this.matchesTable.items = result.data.map((x) => {
             return {
               ...x,
-              matchDate: this.GetMatchDate(x.matchDateTime),
-              matchTime: this.GetMatchTime(x.matchDateTime),
+              matchDate: this.$_getMatchDate(x.matchDateTime),
+              matchTime: this.$_getMatchTime(x.matchDateTime),
             };
           });
           this.gameweeks = this.$_getGameweeks();
-          this.$_setCurrentGameweek();
         }
         this.matchesTable.loading = false;
       });
+    },
+    $_getMatchDate(dateTime) {
+      return dayjs(dateTime).format("DD MMMM YYYY");
+    },
+    $_getMatchTime(dateTime) {
+      return dayjs(dateTime).format("HH:mm");
     },
     $_getGameweeks() {
       return [
@@ -207,6 +211,17 @@ export default {
       MatchesService.GetCurrentGameweek().then((response) => {
         const result = response.data;
         this.gameweekNo = result;
+      });
+    },
+    $_getDto() {
+      return this.gameweekItems.map((x) => {
+        if (x.matchResult.homeTeam.teamScoreBet === "") {
+          x.matchResult.homeTeam.teamScoreBet = null;
+        }
+        if (x.matchResult.awayTeam.teamScoreBet === "") {
+          x.matchResult.awayTeam.teamScoreBet = null;
+        }
+        return x;
       });
     },
   },
