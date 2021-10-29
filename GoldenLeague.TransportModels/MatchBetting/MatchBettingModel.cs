@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoldenLeague.TransportModels.Common;
+using System;
 
 namespace GoldenLeague.TransportModels.MatchBetting
 {
@@ -9,63 +10,36 @@ namespace GoldenLeague.TransportModels.MatchBetting
 
         }
 
-        public MatchBettingModel(Guid userId, Guid matchId, int seasonNo, int gameweekNo, DateTime matchDateTime, MatchResultModel matchResult)
+        public MatchBettingModel(Guid userId, MatchModel match, MatchResultBetModel matchResultBet)
         {
             UserId = userId;
-            MatchId = matchId;
-            SeasonNo = seasonNo;
-            GameweekNo = gameweekNo;
-            MatchDateTime = matchDateTime;
-            MatchResult = matchResult;
+            Match = match;
+            MatchResultBet = matchResultBet;
         }
 
         public Guid UserId { get; set; }
-        public Guid MatchId { get; set; }
-        public int SeasonNo { get; set; }
-        public int GameweekNo { get; set; }
-        public DateTime MatchDateTime { get; set; }
-        public MatchResultModel MatchResult { get; set; }
+        public MatchModel Match { get; set; }
+        public MatchResultBetModel MatchResultBet { get; set; }
     }
 
-    public class MatchResultModel
+    public class MatchResultBetModel
     {
-        public MatchResultModel()
+        public MatchResultBetModel()
         {
 
         }
 
-        public MatchResultModel(TeamMatchDetailsModel homeTeam, TeamMatchDetailsModel awayTeam, int? bettingPoints, BettingResultEnum? bettingResult)
+        public MatchResultBetModel(int? homeTeamScoreBet, int? awayTeamScoreBet, int? bettingPoints, BettingResultEnum? bettingResult)
         {
-            HomeTeam = homeTeam;
-            AwayTeam = awayTeam;
+            HomeTeamScoreBet = homeTeamScoreBet;
+            AwayTeamScoreBet = awayTeamScoreBet;
             BettingPoints = bettingPoints;
             BettingResult = bettingResult;
         }
 
-        public TeamMatchDetailsModel HomeTeam { get; set; }
-        public TeamMatchDetailsModel AwayTeam { get; set; }
+        public int? HomeTeamScoreBet { get; set; }
+        public int? AwayTeamScoreBet { get; set; }
         public int? BettingPoints { get; set; }
         public BettingResultEnum? BettingResult { get; set; }
-    }
-
-    public class TeamMatchDetailsModel
-    {
-        public TeamMatchDetailsModel()
-        {
-
-        }
-
-        public TeamMatchDetailsModel(Guid teamId, string teamName, int? teamScoreBet, int? teamScoreActual)
-        {
-            TeamId = teamId;
-            TeamName = teamName;
-            TeamScoreBet = teamScoreBet;
-            TeamScoreActual = teamScoreActual;
-        }
-
-        public Guid TeamId { get; set; }
-        public string TeamName { get; set; }
-        public int? TeamScoreBet { get; set; }
-        public int? TeamScoreActual { get; set; }
     }
 }

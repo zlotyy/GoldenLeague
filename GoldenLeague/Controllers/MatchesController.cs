@@ -1,8 +1,12 @@
-﻿using GoldenLeague.Database.Queries;
+﻿using GoldenLeague.Common.Localization;
+using GoldenLeague.Database.Queries;
+using GoldenLeague.Helpers;
 using GoldenLeague.Services;
+using GoldenLeague.TransportModels.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace GoldenLeague.Controllers
 {
@@ -20,11 +24,23 @@ namespace GoldenLeague.Controllers
             _queries = queries;
         }
 
-        [HttpGet("current-gameweek")]
+        [HttpGet("current-gameweek-no")]
         public IActionResult GetCurrentGameweekNo()
         {
-            var gameweek = _queries.GetCurrentGameweek();
+            var gameweek = _queries.GetCurrentGameweekNo();
             return Ok(gameweek);
+        }
+
+        [HttpGet("current-gameweek")]
+        public IActionResult GetCurrentGameweekMatches()
+        {
+            var response = _restService.Get<Result<List<MatchModel>>>(ApiUrlHelper.MatchesCurrentGameweek);
+            if (!response.IsSuccessful)
+            {
+                var result = new Result<List<MatchModel>>(new List<MatchModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                return Ok(result);
+            }
+            return Ok(response.Data);
         }
     }
 }

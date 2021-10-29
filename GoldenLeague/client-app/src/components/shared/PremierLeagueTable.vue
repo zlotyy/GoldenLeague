@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card class="flex">
-      <v-card-title>{{ $t("common.premierLeagueTable") }}</v-card-title>
+      <v-card-subtitle>{{ $t("common.premierLeagueTable") }}</v-card-subtitle>
     </v-card>
   </div>
 </template>

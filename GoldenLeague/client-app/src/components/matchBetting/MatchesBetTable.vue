@@ -31,21 +31,21 @@
         </template>
         <template v-slot:[`group.header`]="{ items }">
           <th colspan="7">
-            {{ items[0].matchDate }}
+            {{ items[0].match.matchDate }}
           </th>
         </template>
         <template v-slot:[`item.matchTime`]="{ item }">
-          {{ item.matchTime }}
+          {{ item.match.matchTime }}
         </template>
         <template v-slot:[`item.homeTeamName`]="{ item }">
-          {{ item.matchResult.homeTeam.teamName }}
+          {{ item.match.homeTeam.teamNameShort }}
         </template>
         <template v-slot:[`item.awayTeamName`]="{ item }">
-          {{ item.matchResult.awayTeam.teamName }}
+          {{ item.match.awayTeam.teamNameShort }}
         </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
         <template v-slot:[`item.resultBet`]="{ item }">
-          <div v-if="AllowBet(item.matchDateTime)">
+          <div v-if="AllowBet(item.match.matchDateTime)">
             <div
               class="d-flex"
               style="align-items: baseline; justify-content: center"
@@ -56,7 +56,7 @@
                   outlined
                   hide-details
                   v-mask="'#'"
-                  v-model.number="item.matchResult.homeTeam.teamScoreBet"
+                  v-model.number="item.matchResultBet.homeTeamScoreBet"
                 ></v-text-field>
               </div>
               <div class="flex mx-2">
@@ -68,7 +68,7 @@
                   outlined
                   hide-details
                   v-mask="'#'"
-                  v-model.number="item.matchResult.awayTeam.teamScoreBet"
+                  v-model.number="item.matchResultBet.awayTeamScoreBet"
                 ></v-text-field>
               </div>
             </div>
@@ -76,15 +76,15 @@
           <div v-else-if="BetEmpty(item)"><span> - </span></div>
           <div v-else>
             <span>
-              {{ item.matchResult.homeTeam.teamScoreBet }} :
-              {{ item.matchResult.awayTeam.teamScoreBet }}
+              {{ item.matchResultBet.homeTeamScoreBet }} :
+              {{ item.matchResultBet.awayTeamScoreBet }}
             </span>
           </div>
         </template>
         <template v-slot:[`item.resultActual`]="{ item }">
           <span>
-            {{ item.matchResult.homeTeam.teamScoreActual }} :
-            {{ item.matchResult.awayTeam.teamScoreActual }}
+            {{ item.match.homeTeamScore }} :
+            {{ item.match.awayTeamScore }}
           </span>
         </template>
         <template v-slot:[`body.append`]>
@@ -140,7 +140,7 @@ export default {
   computed: {
     gameweekItems() {
       return this.matchesTable.items.filter(
-        (x) => x.gameweekNo == this.gameweekNo
+        (x) => x.match.gameweekNo == this.gameweekNo
       );
     },
   },
@@ -154,8 +154,8 @@ export default {
     },
     BetEmpty(item) {
       return (
-        ((item.matchResult || {}).homeTeam || {}).teamScoreBet == null ||
-        ((item.matchResult || {}).awayTeam || {}).teamScoreBet == null
+        (item.matchResultBet || {}).homeTeamScoreBet == null ||
+        (item.matchResultBet || {}).awayTeamScoreBet == null
       );
     },
     RowClass() {
@@ -165,9 +165,6 @@ export default {
     SaveMatchBetting() {
       this.saveLoading = true;
       const dto = this.$_getDto();
-      console.log(dto[0].matchResult.homeTeam.teamScoreBet);
-      console.log(dto[0].matchResult.awayTeam.teamScoreBet);
-      debugger;
       UserService.UpdateMatchBetting(dto).then((response) => {
         const result = response.data;
         if (result.success) {
@@ -185,11 +182,12 @@ export default {
         const result = response.data;
         if (result.success) {
           this.matchesTable.items = result.data.map((x) => {
-            return {
-              ...x,
-              matchDate: this.$_getMatchDate(x.matchDateTime),
-              matchTime: this.$_getMatchTime(x.matchDateTime),
+            x.match = {
+              ...x.match,
+              matchDate: this.$_getMatchDate(x.match.matchDateTime),
+              matchTime: this.$_getMatchTime(x.match.matchDateTime),
             };
+            return x;
           });
           this.gameweeks = this.$_getGameweeks();
         }
@@ -204,22 +202,22 @@ export default {
     },
     $_getGameweeks() {
       return [
-        ...new Set(this.matchesTable.items.map((x) => x.gameweekNo)),
+        ...new Set(this.matchesTable.items.map((x) => x.match.gameweekNo)),
       ].sort((a, b) => a - b);
     },
     $_setCurrentGameweek() {
-      MatchesService.GetCurrentGameweek().then((response) => {
+      MatchesService.GetCurrentGameweekNo().then((response) => {
         const result = response.data;
         this.gameweekNo = result;
       });
     },
     $_getDto() {
       return this.gameweekItems.map((x) => {
-        if (x.matchResult.homeTeam.teamScoreBet === "") {
-          x.matchResult.homeTeam.teamScoreBet = null;
+        if (x.matchResultBet.homeTeamScoreBet === "") {
+          x.matchResultBet.homeTeamScoreBet = null;
         }
-        if (x.matchResult.awayTeam.teamScoreBet === "") {
-          x.matchResult.awayTeam.teamScoreBet = null;
+        if (x.matchResultBet.awayTeamScoreBet === "") {
+          x.matchResultBet.awayTeamScoreBet = null;
         }
         return x;
       });

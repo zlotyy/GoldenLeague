@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GoldenLeague.Database;
+using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.MatchBetting;
 
 namespace GoldenLeague.Api.Automapper
@@ -10,24 +11,32 @@ namespace GoldenLeague.Api.Automapper
         {
             // Note: Do not use with ProjectTo
             CreateMap<VMatchBetting, MatchBettingModel>()
-                .ForMember(d => d.MatchResult, o => o.MapFrom<MatchResultResolver>());
+                .ForMember(d => d.UserId, o => o.MapFrom(s => s.UserId))
+                .ForMember(d => d.Match, o => o.MapFrom<MatchResolver>())
+                .ForMember(d => d.MatchResultBet, o => o.MapFrom<MatchResultBetResolver>());
         }
 
-        public class MatchResultResolver : IValueResolver<VMatchBetting, MatchBettingModel, MatchResultModel>
+        public class MatchResolver : IValueResolver<VMatchBetting, MatchBettingModel, MatchModel>
         {
-            public MatchResultModel Resolve(VMatchBetting s, MatchBettingModel destination, MatchResultModel destMember, ResolutionContext context)
+            public MatchModel Resolve(VMatchBetting source, MatchBettingModel destination, MatchModel destMember, ResolutionContext context)
+            {
+                var homeTeam = new TeamModel(source.HomeTeamId, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
+                var awayTeam = new TeamModel(source.AwayTeamId, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
+                return new MatchModel(source.MatchId, source.SeasonNo, source.GameweekNo, source.MatchDateTime,
+                    homeTeam, awayTeam, source.HomeTeamScoreActual, source.AwayTeamScoreActual);
+            }
+        }
+
+        public class MatchResultBetResolver : IValueResolver<VMatchBetting, MatchBettingModel, MatchResultBetModel>
+        {
+            public MatchResultBetModel Resolve(VMatchBetting s, MatchBettingModel destination, MatchResultBetModel destMember, ResolutionContext context)
             {
                 BettingResultEnum? bettingResult = s.BettingPoints == 0 ? BettingResultEnum.MISSED
                     : s.BettingPoints == 1 ? BettingResultEnum.PARTIALLY_HIT
                     : s.BettingPoints == 3 ? BettingResultEnum.HIT
                     : null;
 
-                return new MatchResultModel(
-                    new TeamMatchDetailsModel(s.HomeTeamId, s.HomeTeamName, s.HomeTeamScoreBet, s.HomeTeamScoreActual),
-                    new TeamMatchDetailsModel(s.AwayTeamId, s.AwayTeamName, s.AwayTeamScoreBet, s.AwayTeamScoreActual),
-                    s.BettingPoints,
-                    bettingResult
-                );
+                return new MatchResultBetModel(s.HomeTeamScoreBet, s.AwayTeamScoreBet, s.BettingPoints, bettingResult);
             }
         }
     }

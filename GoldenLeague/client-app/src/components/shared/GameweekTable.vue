@@ -1,7 +1,9 @@
 <template>
   <div>
     <v-card class="flex">
-      <v-card-title>{{ $t("common.currentGameweek") }}</v-card-title>
+      <v-card-subtitle
+        >{{ $t("common.currentGameweek") }} - {{ gameweekNo }}</v-card-subtitle
+      >
       <v-data-table
         :headers="headers"
         :items="items"
@@ -24,16 +26,16 @@
           {{ item.matchTime }}
         </template>
         <template v-slot:[`item.homeTeamName`]="{ item }">
-          {{ item.matchResult.homeTeam.teamName }}
+          {{ item.homeTeam.teamNameShort }}
         </template>
         <template v-slot:[`item.awayTeamName`]="{ item }">
-          {{ item.matchResult.awayTeam.teamName }}
+          {{ item.awayTeam.teamNameShort }}
         </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
         <template v-slot:[`item.result`]="{ item }">
           <span>
-            {{ item.matchResult.homeTeam.teamScoreActual }} :
-            {{ item.matchResult.awayTeam.teamScoreActual }}
+            {{ item.homeTeamScore }} :
+            {{ item.awayTeamScore }}
           </span>
         </template>
       </v-data-table>
@@ -42,7 +44,7 @@
 </template>
 
 <script>
-import MatchesService from "@/services/MatchService.js";
+import MatchService from "@/services/MatchService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
@@ -51,11 +53,10 @@ export default {
     return {
       headers: [
         { value: "matchTime" },
-        { value: "homeTeamName", align: "end", width: "20%" },
+        { value: "homeTeamName", align: "end", width: "40%" },
         { value: "teamsSpacer", align: "center", width: "1%" },
-        { value: "awayTeamName", align: "start", width: "20%" },
+        { value: "awayTeamName", align: "start", width: "40%" },
         {
-          text: "Wynik",
           value: "result",
           align: "center",
           width: "10%",
@@ -63,16 +64,18 @@ export default {
       ],
       items: [],
       loading: false,
+      gameweekNo: null,
     };
   },
   mounted() {
+    this.$_setCurrentGameweek();
     this.$_setMatches();
   },
   methods: {
     $_setMatches() {
       // TODO - async await
       this.loading = true;
-      MatchesService.GetCurrentGameweekMatches().then((response) => {
+      MatchService.GetCurrentGameweekMatches().then((response) => {
         const result = response.data;
         if (result.success) {
           this.items = result.data.map((x) => {
@@ -87,6 +90,12 @@ export default {
           });
         }
         this.loading = false;
+      });
+    },
+    $_setCurrentGameweek() {
+      MatchService.GetCurrentGameweekNo().then((response) => {
+        const result = response.data;
+        this.gameweekNo = result;
       });
     },
     $_getMatchDate(dateTime) {

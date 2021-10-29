@@ -1,4 +1,5 @@
-﻿using GoldenLeague.Database.Enums;
+﻿using GoldenLeague.Common.Extensions;
+using GoldenLeague.Database.Enums;
 using System;
 using System.Linq;
 
@@ -8,11 +9,11 @@ namespace GoldenLeague.Database.Queries
     {
         string GetConfigValue(ConfigKeys key);
         int GetCurrentSeasonNo();
-        int GetCurrentGameweek();
+        int GetCurrentGameweekNo();
     }
     public class BaseQueries : IBaseQueries
     {
-        private readonly IDbContextFactory _dbContextFactory;
+        protected readonly IDbContextFactory _dbContextFactory;
 
         public BaseQueries(IDbContextFactory dbContextFactory)
         {
@@ -33,14 +34,14 @@ namespace GoldenLeague.Database.Queries
             return int.Parse(GetConfigValue(ConfigKeys.CURRENT_SEASON_NO));
         }
 
-        public int GetCurrentGameweek()
+        public int GetCurrentGameweekNo()
         {
             using (var db = _dbContextFactory.Create())
             {
                 var now = DateTime.Now;
                 var currentSeasonNo = GetCurrentSeasonNo();
 
-                var data = db.Matches.Where(x => x.MatchDateTime >= now).OrderBy(x => x.MatchDateTime).FirstOrDefault()?.GameweekNo;
+                var data = db.Matches.Where(x => x.MatchDateTime >= now.BeginOfDay()).OrderBy(x => x.MatchDateTime).FirstOrDefault()?.GameweekNo;
                 return data ?? 1;
             }
         }

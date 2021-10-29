@@ -39,12 +39,12 @@ namespace GoldenLeague.Api.Commands
                 {
                     matchBetting.ForEach(mb =>
                     {
-                        if (mb.MatchResult.HomeTeam.TeamScoreBet.HasValue == mb.MatchResult.AwayTeam.TeamScoreBet.HasValue)
+                        if (mb.MatchResultBet.HomeTeamScoreBet.HasValue == mb.MatchResultBet.AwayTeamScoreBet.HasValue)
                         {
                             db.MatchBetting
-                                .Where(x => x.MatchId == mb.MatchId && x.UserId == mb.UserId)
-                                .Set(x => x.HomeTeamScore, mb.MatchResult.HomeTeam.TeamScoreBet)
-                                .Set(x => x.AwayTeamScore, mb.MatchResult.AwayTeam.TeamScoreBet)
+                                .Where(x => x.MatchId == mb.Match.MatchId && x.UserId == mb.UserId)
+                                .Set(x => x.HomeTeamScore, mb.MatchResultBet.HomeTeamScoreBet)
+                                .Set(x => x.AwayTeamScore, mb.MatchResultBet.AwayTeamScoreBet)
                                 .Update();
                         }
                     });
