@@ -1,9 +1,9 @@
-﻿using GoldenLeague.Services;
-using GoldenLeague.Utils;
+﻿using GoldenLeague.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using GoldenLeague.TransportModels.Users;
+using GoldenLeague.Common.Services;
 
 namespace GoldenLeague.Controllers
 {

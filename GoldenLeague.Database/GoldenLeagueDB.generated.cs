@@ -27,13 +27,14 @@ namespace GoldenLeague.Database
 	/// </summary>
 	public partial class GoldenLeagueDB : LinqToDB.Data.DataConnection
 	{
-		public ITable<ConfigDictionary> ConfigDictionary { get { return this.GetTable<ConfigDictionary>(); } }
-		public ITable<MatchBetting>     MatchBetting     { get { return this.GetTable<MatchBetting>(); } }
-		public ITable<Matches>          Matches          { get { return this.GetTable<Matches>(); } }
-		public ITable<Teams>            Teams            { get { return this.GetTable<Teams>(); } }
-		public ITable<Users>            Users            { get { return this.GetTable<Users>(); } }
-		public ITable<VMatch>           VMatch           { get { return this.GetTable<VMatch>(); } }
-		public ITable<VMatchBetting>    VMatchBetting    { get { return this.GetTable<VMatchBetting>(); } }
+		public ITable<ConfigDictionary>   ConfigDictionary   { get { return this.GetTable<ConfigDictionary>(); } }
+		public ITable<MatchBetting>       MatchBetting       { get { return this.GetTable<MatchBetting>(); } }
+		public ITable<Matches>            Matches            { get { return this.GetTable<Matches>(); } }
+		public ITable<PremierLeagueTable> PremierLeagueTable { get { return this.GetTable<PremierLeagueTable>(); } }
+		public ITable<Teams>              Teams              { get { return this.GetTable<Teams>(); } }
+		public ITable<Users>              Users              { get { return this.GetTable<Users>(); } }
+		public ITable<VMatch>             VMatch             { get { return this.GetTable<VMatch>(); } }
+		public ITable<VMatchBetting>      VMatchBetting      { get { return this.GetTable<VMatchBetting>(); } }
 
 		public GoldenLeagueDB()
 		{
@@ -145,13 +146,41 @@ namespace GoldenLeague.Database
 		#endregion
 	}
 
+	[Table(Schema="dbo", Name="PremierLeagueTable")]
+	public partial class PremierLeagueTable
+	{
+		[Column(DataType=LinqToDB.DataType.Guid),  PrimaryKey, NotNull] public Guid TeamId        { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  SeasonNo      { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  MatchesPlayed { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  Wins          { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  Draws         { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  Defeats       { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  Points        { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  GoalsScored   { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),             NotNull] public int  GoalsConceded { get; set; } // int
+
+		#region Associations
+
+		/// <summary>
+		/// FK_PremierLeagueTable_Teams
+		/// </summary>
+		[Association(ThisKey="TeamId", OtherKey="TeamId", CanBeNull=false, Relationship=LinqToDB.Mapping.Relationship.OneToOne, KeyName="FK_PremierLeagueTable_Teams", BackReferenceName="PremierLeagueTable")]
+		public Teams Team { get; set; }
+
+		#endregion
+	}
+
 	[Table(Schema="dbo", Name="Teams")]
 	public partial class Teams
 	{
-		[Column(DataType=LinqToDB.DataType.Guid),                 PrimaryKey, NotNull] public Guid   TeamId               { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),             NotNull] public string TeamName             { get; set; } // nvarchar(100)
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),              NotNull] public string TeamNameShort        { get; set; } // nvarchar(15)
-		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),               NotNull] public string TeamNameAbbreviation { get; set; } // varchar(3)
+		[Column(DataType=LinqToDB.DataType.Guid),                 PrimaryKey,  NotNull] public Guid   TeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string TeamName             { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),               NotNull] public string TeamNameShort        { get; set; } // nvarchar(15)
+		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),                NotNull] public string TeamNameAbbreviation { get; set; } // varchar(3)
+		/// <summary>
+		/// Element key in external API, to get element statistics
+		/// </summary>
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable         ] public int?   ForeignKey           { get; set; } // int
 
 		#region Associations
 
@@ -166,6 +195,12 @@ namespace GoldenLeague.Database
 		/// </summary>
 		[Association(ThisKey="TeamId", OtherKey="HomeTeamId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Matches> MatchesHomeTeams { get; set; }
+
+		/// <summary>
+		/// FK_PremierLeagueTable_Teams_BackReference
+		/// </summary>
+		[Association(ThisKey="TeamId", OtherKey="TeamId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToOne, IsBackReference=true)]
+		public PremierLeagueTable PremierLeagueTable { get; set; }
 
 		#endregion
 	}
@@ -199,10 +234,12 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int      GameweekNo               { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.DateTime),             NotNull    ] public DateTime MatchDateTime            { get; set; } // datetime
 		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid     HomeTeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     HomeForeignKey           { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100), NotNull    ] public string   HomeTeamName             { get; set; } // nvarchar(100)
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),  NotNull    ] public string   HomeTeamNameShort        { get; set; } // nvarchar(15)
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),   NotNull    ] public string   HomeTeamNameAbbreviation { get; set; } // varchar(3)
 		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid     AwayTeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     AwayForeignKey           { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100), NotNull    ] public string   AwayTeamName             { get; set; } // nvarchar(100)
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),  NotNull    ] public string   AwayTeamNameShort        { get; set; } // nvarchar(15)
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),   NotNull    ] public string   AwayTeamNameAbbreviation { get; set; } // varchar(3)
@@ -219,10 +256,12 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int      GameweekNo               { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.DateTime),             NotNull    ] public DateTime MatchDateTime            { get; set; } // datetime
 		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid     HomeTeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     HomeForeignKey           { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100), NotNull    ] public string   HomeTeamName             { get; set; } // nvarchar(100)
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),  NotNull    ] public string   HomeTeamNameShort        { get; set; } // nvarchar(15)
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),   NotNull    ] public string   HomeTeamNameAbbreviation { get; set; } // varchar(3)
 		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid     AwayTeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     AwayForeignKey           { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100), NotNull    ] public string   AwayTeamName             { get; set; } // nvarchar(100)
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),  NotNull    ] public string   AwayTeamNameShort        { get; set; } // nvarchar(15)
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),   NotNull    ] public string   AwayTeamNameAbbreviation { get; set; } // varchar(3)
@@ -374,6 +413,12 @@ namespace GoldenLeague.Database
 		{
 			return table.FirstOrDefault(t =>
 				t.MatchId == MatchId);
+		}
+
+		public static PremierLeagueTable Find(this ITable<PremierLeagueTable> table, Guid TeamId)
+		{
+			return table.FirstOrDefault(t =>
+				t.TeamId == TeamId);
 		}
 
 		public static Teams Find(this ITable<Teams> table, Guid TeamId)

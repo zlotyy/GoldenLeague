@@ -24,7 +24,7 @@ namespace GoldenLeague.Api.Automapper
         {
             public TeamModel Resolve(VMatch source, MatchModel destination, TeamModel destMember, ResolutionContext context)
             {
-                return new TeamModel(source.HomeTeamId, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
+                return new TeamModel(source.HomeTeamId, source.HomeForeignKey, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
             }
         }
 
@@ -32,7 +32,7 @@ namespace GoldenLeague.Api.Automapper
         {
             public TeamModel Resolve(VMatch source, MatchModel destination, TeamModel destMember, ResolutionContext context)
             {
-                return new TeamModel(source.AwayTeamId, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
+                return new TeamModel(source.AwayTeamId, source.AwayForeignKey, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
             }
         }
     }

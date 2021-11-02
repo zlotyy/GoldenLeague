@@ -20,8 +20,8 @@ namespace GoldenLeague.Api.Automapper
         {
             public MatchModel Resolve(VMatchBetting source, MatchBettingModel destination, MatchModel destMember, ResolutionContext context)
             {
-                var homeTeam = new TeamModel(source.HomeTeamId, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
-                var awayTeam = new TeamModel(source.AwayTeamId, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
+                var homeTeam = new TeamModel(source.HomeTeamId, source.HomeForeignKey, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
+                var awayTeam = new TeamModel(source.AwayTeamId, source.AwayForeignKey, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
                 return new MatchModel(source.MatchId, source.SeasonNo, source.GameweekNo, source.MatchDateTime,
                     homeTeam, awayTeam, source.HomeTeamScoreActual, source.AwayTeamScoreActual);
             }

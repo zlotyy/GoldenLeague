@@ -1,7 +1,7 @@
 ﻿using GoldenLeague.Common.Localization;
+using GoldenLeague.Common.Services;
 using GoldenLeague.Database.Queries;
 using GoldenLeague.Helpers;
-using GoldenLeague.Services;
 using GoldenLeague.TransportModels.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

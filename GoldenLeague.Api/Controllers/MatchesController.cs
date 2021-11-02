@@ -48,6 +48,26 @@ namespace GoldenLeague.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("current-season")]
+        public IActionResult GetCurrentSeasonMatches()
+        {
+            var result = new Result<IEnumerable<MatchModel>>(new List<MatchModel>());
+
+            try
+            {
+                var data = _queries.GetMatches(_currentSeasonNo);
+                var mappedData = _mapper.Map<List<MatchModel>>(data);
+                result.Data = mappedData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetCurrentSeasonMatches)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("current-gameweek")]
         public IActionResult GetCurrentGameweekMatches()
         {

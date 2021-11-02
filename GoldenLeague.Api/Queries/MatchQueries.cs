@@ -10,6 +10,9 @@ namespace GoldenLeague.Api.Queries
     public interface IMatchQueries : IBaseQueries
     {
         IEnumerable<VMatch> GetMatches(int seasonNo, int gameweekNo);
+        IEnumerable<VMatch> GetMatches(int seasonNo);
+        IEnumerable<VMatch> GetCurrentSeasonMatches();
+        IEnumerable<VMatch> GetCurrentGameweekMatches();
     }
 
     public class MatchQueries : BaseQueries, IMatchQueries
@@ -25,6 +28,35 @@ namespace GoldenLeague.Api.Queries
 
         public IEnumerable<VMatch> GetMatches(int seasonNo, int gameweekNo)
         {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.VMatch.Where(x => x.SeasonNo == seasonNo && x.GameweekNo == gameweekNo).ToList();
+            }
+        }
+
+        public IEnumerable<VMatch> GetMatches(int seasonNo)
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.VMatch.Where(x => x.SeasonNo == seasonNo).OrderBy(o => o.MatchDateTime).ToList();
+            }
+        }
+
+        public IEnumerable<VMatch> GetCurrentSeasonMatches()
+        {
+            var seasonNo = GetCurrentSeasonNo();
+
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.VMatch.Where(x => x.SeasonNo == seasonNo).OrderBy(o => o.MatchDateTime).ToList();
+            }
+        }
+
+        public IEnumerable<VMatch> GetCurrentGameweekMatches()
+        {
+            var seasonNo = GetCurrentSeasonNo();
+            var gameweekNo = GetCurrentGameweekNo();
+
             using (var db = _dbContextFactory.Create())
             {
                 return db.VMatch.Where(x => x.SeasonNo == seasonNo && x.GameweekNo == gameweekNo).ToList();

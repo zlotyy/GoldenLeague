@@ -1,7 +1,7 @@
 using GoldenLeague.Common.Extensions;
+using GoldenLeague.Common.Services;
 using GoldenLeague.Database;
 using GoldenLeague.Database.Queries;
-using GoldenLeague.Services;
 using GoldenLeague.Utils;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VueCliMiddleware;
+using RestService = GoldenLeague.Services.RestService;
 
 namespace GoldenLeague
 {
