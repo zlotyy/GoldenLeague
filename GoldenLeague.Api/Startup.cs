@@ -74,6 +74,7 @@ namespace GoldenLeague.Api
             services.AddTransient<IUserQueries, UserQueries>();
             services.AddTransient<IMatchBettingQueries, MatchBettingQueries>();
             services.AddTransient<IMatchQueries, MatchQueries>();
+            services.AddTransient<ITeamQueries, TeamQueries>();
 
             // commands
             services.AddTransient<IMatchBettingCommands, MatchBettingCommands>();

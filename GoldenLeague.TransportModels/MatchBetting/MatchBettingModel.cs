@@ -10,7 +10,7 @@ namespace GoldenLeague.TransportModels.MatchBetting
 
         }
 
-        public MatchBettingModel(Guid userId, MatchModel match, MatchResultBetModel matchResultBet)
+        public MatchBettingModel(Guid userId, MatchFullModel match, MatchResultBetModel matchResultBet)
         {
             UserId = userId;
             Match = match;
@@ -18,7 +18,7 @@ namespace GoldenLeague.TransportModels.MatchBetting
         }
 
         public Guid UserId { get; set; }
-        public MatchModel Match { get; set; }
+        public MatchFullModel Match { get; set; }
         public MatchResultBetModel MatchResultBet { get; set; }
     }
 

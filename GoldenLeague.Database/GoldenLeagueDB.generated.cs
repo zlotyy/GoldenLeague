@@ -108,20 +108,24 @@ namespace GoldenLeague.Database
 	[Table(Schema="dbo", Name="Matches")]
 	public partial class Matches
 	{
-		[Column(DataType=LinqToDB.DataType.Guid),     PrimaryKey,  NotNull] public Guid     MatchId       { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Guid,     SkipOnInsert=true), PrimaryKey,  NotNull] public Guid     MatchId       { get; set; } // uniqueidentifier
 		/// <summary>
 		/// Sezon pilkarski (np. 2022 oznacza sezon 2021/22)
 		/// </summary>
-		[Column(DataType=LinqToDB.DataType.Int32),                 NotNull] public int      SeasonNo      { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),                                    NotNull] public int      SeasonNo      { get; set; } // int
 		/// <summary>
 		/// Numer kolejki ligowej
 		/// </summary>
-		[Column(DataType=LinqToDB.DataType.Int32),                 NotNull] public int      GameweekNo    { get; set; } // int
-		[Column(DataType=LinqToDB.DataType.DateTime),              NotNull] public DateTime MatchDateTime { get; set; } // datetime
-		[Column(DataType=LinqToDB.DataType.Guid),                  NotNull] public Guid     HomeTeamId    { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.Int32),       Nullable         ] public int?     HomeTeamScore { get; set; } // int
-		[Column(DataType=LinqToDB.DataType.Guid),                  NotNull] public Guid     AwayTeamId    { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.Int32),       Nullable         ] public int?     AwayTeamScore { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),                                    NotNull] public int      GameweekNo    { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.DateTime),                                 NotNull] public DateTime MatchDateTime { get; set; } // datetime
+		[Column(DataType=LinqToDB.DataType.Guid),                                     NotNull] public Guid     HomeTeamId    { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                          Nullable         ] public int?     HomeTeamScore { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Guid),                                     NotNull] public Guid     AwayTeamId    { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                          Nullable         ] public int?     AwayTeamScore { get; set; } // int
+		/// <summary>
+		/// Element key in external API, to get element statistics
+		/// </summary>
+		[Column(DataType=LinqToDB.DataType.Int32),                          Nullable         ] public int?     ForeignKey    { get; set; } // int
 
 		#region Associations
 
@@ -230,6 +234,7 @@ namespace GoldenLeague.Database
 	public partial class VMatch
 	{
 		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid     MatchId                  { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     ForeignKey               { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int      SeasonNo                 { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int      GameweekNo               { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.DateTime),             NotNull    ] public DateTime MatchDateTime            { get; set; } // datetime

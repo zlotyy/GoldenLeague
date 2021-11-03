@@ -9,10 +9,10 @@ namespace GoldenLeague.Api.Queries
 {
     public interface IMatchQueries : IBaseQueries
     {
-        IEnumerable<VMatch> GetMatches(int seasonNo, int gameweekNo);
-        IEnumerable<VMatch> GetMatches(int seasonNo);
-        IEnumerable<VMatch> GetCurrentSeasonMatches();
-        IEnumerable<VMatch> GetCurrentGameweekMatches();
+        IEnumerable<VMatch> GetMatchesFull(int seasonNo, int gameweekNo);
+        IEnumerable<VMatch> GetMatchesFull(int seasonNo);
+        IEnumerable<VMatch> GetCurrentSeasonMatchesFull();
+        IEnumerable<VMatch> GetCurrentGameweekMatchesFull();
     }
 
     public class MatchQueries : BaseQueries, IMatchQueries
@@ -26,7 +26,7 @@ namespace GoldenLeague.Api.Queries
             _mapper = mapper;
         }
 
-        public IEnumerable<VMatch> GetMatches(int seasonNo, int gameweekNo)
+        public IEnumerable<VMatch> GetMatchesFull(int seasonNo, int gameweekNo)
         {
             using (var db = _dbContextFactory.Create())
             {
@@ -34,7 +34,7 @@ namespace GoldenLeague.Api.Queries
             }
         }
 
-        public IEnumerable<VMatch> GetMatches(int seasonNo)
+        public IEnumerable<VMatch> GetMatchesFull(int seasonNo)
         {
             using (var db = _dbContextFactory.Create())
             {
@@ -42,7 +42,7 @@ namespace GoldenLeague.Api.Queries
             }
         }
 
-        public IEnumerable<VMatch> GetCurrentSeasonMatches()
+        public IEnumerable<VMatch> GetCurrentSeasonMatchesFull()
         {
             var seasonNo = GetCurrentSeasonNo();
 
@@ -52,7 +52,7 @@ namespace GoldenLeague.Api.Queries
             }
         }
 
-        public IEnumerable<VMatch> GetCurrentGameweekMatches()
+        public IEnumerable<VMatch> GetCurrentGameweekMatchesFull()
         {
             var seasonNo = GetCurrentSeasonNo();
             var gameweekNo = GetCurrentGameweekNo();

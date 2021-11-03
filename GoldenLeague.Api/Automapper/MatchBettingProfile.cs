@@ -16,13 +16,13 @@ namespace GoldenLeague.Api.Automapper
                 .ForMember(d => d.MatchResultBet, o => o.MapFrom<MatchResultBetResolver>());
         }
 
-        public class MatchResolver : IValueResolver<VMatchBetting, MatchBettingModel, MatchModel>
+        public class MatchResolver : IValueResolver<VMatchBetting, MatchBettingModel, MatchFullModel>
         {
-            public MatchModel Resolve(VMatchBetting source, MatchBettingModel destination, MatchModel destMember, ResolutionContext context)
+            public MatchFullModel Resolve(VMatchBetting source, MatchBettingModel destination, MatchFullModel destMember, ResolutionContext context)
             {
                 var homeTeam = new TeamModel(source.HomeTeamId, source.HomeForeignKey, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
                 var awayTeam = new TeamModel(source.AwayTeamId, source.AwayForeignKey, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
-                return new MatchModel(source.MatchId, source.SeasonNo, source.GameweekNo, source.MatchDateTime,
+                return new MatchFullModel(source.MatchId, source.SeasonNo, source.GameweekNo, source.MatchDateTime,
                     homeTeam, awayTeam, source.HomeTeamScoreActual, source.AwayTeamScoreActual);
             }
         }

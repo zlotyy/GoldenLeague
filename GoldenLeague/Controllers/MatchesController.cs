@@ -34,10 +34,10 @@ namespace GoldenLeague.Controllers
         [HttpGet("current-gameweek")]
         public IActionResult GetCurrentGameweekMatches()
         {
-            var response = _restService.Get<Result<List<MatchModel>>>(ApiUrlHelper.MatchesCurrentGameweek);
+            var response = _restService.Get<Result<List<MatchFullModel>>>(ApiUrlHelper.MatchesCurrentGameweek);
             if (!response.IsSuccessful)
             {
-                var result = new Result<List<MatchModel>>(new List<MatchModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                var result = new Result<List<MatchFullModel>>(new List<MatchFullModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
                 return Ok(result);
             }
             return Ok(response.Data);

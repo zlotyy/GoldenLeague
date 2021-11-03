@@ -9,8 +9,9 @@ namespace GoldenLeague.Api.Automapper
         public MatchProfile()
         {
             // Note: Do not use with ProjectTo
-            CreateMap<VMatch, MatchModel>()
+            CreateMap<VMatch, MatchFullModel>()
                 .ForMember(d => d.MatchId, o => o.MapFrom(s => s.MatchId))
+                .ForMember(d => d.ForeignKey, o => o.MapFrom(s => s.ForeignKey))
                 .ForMember(d => d.SeasonNo, o => o.MapFrom(s => s.SeasonNo))
                 .ForMember(d => d.GameweekNo, o => o.MapFrom(s => s.GameweekNo))
                 .ForMember(d => d.MatchDateTime, o => o.MapFrom(s => s.MatchDateTime))
@@ -20,17 +21,17 @@ namespace GoldenLeague.Api.Automapper
                 .ForMember(d => d.AwayTeam, o => o.MapFrom<AwayTeamResolver>());
         }
 
-        public class HomeTeamResolver : IValueResolver<VMatch, MatchModel, TeamModel>
+        public class HomeTeamResolver : IValueResolver<VMatch, MatchFullModel, TeamModel>
         {
-            public TeamModel Resolve(VMatch source, MatchModel destination, TeamModel destMember, ResolutionContext context)
+            public TeamModel Resolve(VMatch source, MatchFullModel destination, TeamModel destMember, ResolutionContext context)
             {
                 return new TeamModel(source.HomeTeamId, source.HomeForeignKey, source.HomeTeamName, source.HomeTeamNameShort, source.HomeTeamNameAbbreviation);
             }
         }
 
-        public class AwayTeamResolver : IValueResolver<VMatch, MatchModel, TeamModel>
+        public class AwayTeamResolver : IValueResolver<VMatch, MatchFullModel, TeamModel>
         {
-            public TeamModel Resolve(VMatch source, MatchModel destination, TeamModel destMember, ResolutionContext context)
+            public TeamModel Resolve(VMatch source, MatchFullModel destination, TeamModel destMember, ResolutionContext context)
             {
                 return new TeamModel(source.AwayTeamId, source.AwayForeignKey, source.AwayTeamName, source.AwayTeamNameShort, source.AwayTeamNameAbbreviation);
             }

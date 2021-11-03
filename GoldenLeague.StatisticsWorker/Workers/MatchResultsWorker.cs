@@ -1,5 +1,6 @@
+using AutoMapper;
+using GoldenLeague.StatisticsWorker.Commands;
 using GoldenLeague.StatisticsWorker.Services;
-using GoldenLeague.StatisticsWorker.Wrappers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,23 +14,32 @@ namespace GoldenLeague.StatisticsWorker.Workers
     {
         private readonly ILogger<MatchResultsWorker> _logger;
         private readonly AppSettings _config;
-        private readonly IFantasyApiWrapper _fantasyApiWrapper;
-        private readonly IGoldenLeagueApiWrapper _goldenLeagueApiWrapper;
+        private readonly IFantasyService _fantasyApiWrapper;
+        private readonly IMapper _mapper;
+        private readonly IMatchCommands _commands;
 
         private const int _DELAY_MULTIPLIER = 1000 * 60;
+        private readonly int _currentSeasonNo;
 
         public MatchResultsWorker(ILogger<MatchResultsWorker> logger, IOptions<AppSettings> config,
-            IFantasyApiWrapper fantasyApiWrapper, IGoldenLeagueApiWrapper goldenLeagueApiWrapper)
+            IFantasyService fantasyApiWrapper, IMapper mapper, IMatchCommands commands)
         {
             _logger = logger;
             _config = config.Value;
             _fantasyApiWrapper = fantasyApiWrapper;
-            _goldenLeagueApiWrapper = goldenLeagueApiWrapper;
+            _mapper = mapper;
+            _commands = commands;
+
+            _currentSeasonNo = 2022; // goldenLeagueApiWrapper.GetC
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await SynchronizeMatchesForCurrentSeason();
+            if (_config.MatchesInsertEnabled)
+            {
+                await InsertMatchesForCurrentSeason();
+            }
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 await SynchronizeMatchResults();
@@ -37,14 +47,14 @@ namespace GoldenLeague.StatisticsWorker.Workers
             }
         }
 
-        private async Task SynchronizeMatchesForCurrentSeason()
+        private async Task InsertMatchesForCurrentSeason()
         {
-            _logger.LogInformation($"START {nameof(SynchronizeMatchesForCurrentSeason)}, {DateTimeOffset.Now}");
+            _logger.LogInformation($"START {nameof(InsertMatchesForCurrentSeason)}, {DateTimeOffset.Now}");
 
             await Task.Run(() =>
             {
-                var allMatches = _fantasyApiWrapper.GetFixtures();
-                // upsert matches (insert not existing and update existing finished)
+                var allMatches = _fantasyApiWrapper.GetMatches();
+                _commands.UpsertMatches(allMatches);
             });
         }
 
@@ -54,7 +64,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
             
             await Task.Run(() =>
             {
-                var matches = _fantasyApiWrapper.GetFixtures(10);
+                var matches = _fantasyApiWrapper.GetMatches(10);
             });
         }
     }

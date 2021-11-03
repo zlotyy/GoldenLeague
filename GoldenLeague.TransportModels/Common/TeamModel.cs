@@ -9,6 +9,11 @@ namespace GoldenLeague.TransportModels.Common
 
         }
 
+        public TeamModel(int? foreignKey)
+        {
+            ForeignKey = foreignKey;
+        }
+
         public TeamModel(Guid teamId, int? foreignKey, string teamName, string teamNameShort, string teamNameAbbreviation)
         {
             TeamId = teamId;

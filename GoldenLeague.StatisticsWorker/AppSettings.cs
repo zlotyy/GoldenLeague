@@ -2,6 +2,7 @@
 {
     public class AppSettings
     {
+        public bool MatchesInsertEnabled { get; set; }
         public int MatchResultWorkerDelay { get; set; }
         public ServiceSettings FantasyApi { get; set; }
         public ServiceSettings GoldenLeagueApi { get; set; }
