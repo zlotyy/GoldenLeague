@@ -53,12 +53,7 @@ namespace GoldenLeague.StatisticsWorker.Services
                 if (response.IsSuccessful)
                 {
                     _logger.LogTrace($"SUCCESS {nameof(GetMatches)} for gameweek {gameweekNo}, data: {result.ToJson(pretify: true)}");
-                    result = _mapper.Map<List<MatchModel>>(response.Data, opt => opt.Items.Add("SeasonNo", _currentSeasonNo));
-                    result.ForEach(match =>
-                    {
-                        match.HomeTeamId = _teamsDictionary.GetValueOrDefault(match.HomeTeamFK.Value);
-                        match.AwayTeamId = _teamsDictionary.GetValueOrDefault(match.AwayTeamFK.Value);
-                    });
+                    result = MapToMatchModel(response.Data);
                 }
                 else
                 {
@@ -81,12 +76,7 @@ namespace GoldenLeague.StatisticsWorker.Services
                 if (response.IsSuccessful)
                 {
                     _logger.LogTrace($"SUCCESS {nameof(GetMatches)}, data: {result.ToJson(pretify: true)}");
-                    result = _mapper.Map<List<MatchModel>>(response.Data, opt => opt.Items.Add("SeasonNo", _currentSeasonNo));
-                    result.ForEach(match =>
-                    {
-                        match.HomeTeamId = _teamsDictionary.GetValueOrDefault(match.HomeTeamFK.Value);
-                        match.AwayTeamId = _teamsDictionary.GetValueOrDefault(match.AwayTeamFK.Value);
-                    });
+                    result = MapToMatchModel(response.Data);
                 }
                 else
                 {
@@ -100,10 +90,21 @@ namespace GoldenLeague.StatisticsWorker.Services
             return result;
         }
 
+        private List<MatchModel> MapToMatchModel(List<FixtureMatchModel> data)
+        {
+            var result = _mapper.Map<List<MatchModel>>(data, opt => opt.Items.Add("SeasonNo", _currentSeasonNo));
+            result.ForEach(match =>
+            {
+                match.HomeTeamId = _teamsDictionary.GetValueOrDefault(match.HomeTeamFK.Value);
+                match.AwayTeamId = _teamsDictionary.GetValueOrDefault(match.AwayTeamFK.Value);
+            });
+
+            return result;
+        }
+
         private List<Teams> GetTeams()
         {
-            var tmp = _teamQueries.GetTeams().Where(x => x.ForeignKey.HasValue).ToList();
-            return tmp;
+            return _teamQueries.GetTeams().Where(x => x.ForeignKey.HasValue).ToList();
         }
     }
 

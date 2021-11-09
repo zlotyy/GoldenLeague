@@ -35,8 +35,16 @@ namespace GoldenLeague.StatisticsWorker
 
                     services.AddAutoMapper(typeof(Program));
 
+                    // DATETIME TODO !!!
+                    //services.
+                        //.AddJsonOptions(options =>
+                        // {
+                        //     options.JsonSerializerOptions.Converters.Insert(0, new DateTimeJsonConverter());
+                        // });
+
                     // workers
                     services.AddHostedService<MatchResultsWorker>();
+                    services.AddHostedService<MatchRecordsWorker>();
 
                     // services
                     services.AddTransient<IRestServiceFactory, RestServiceFactory>();

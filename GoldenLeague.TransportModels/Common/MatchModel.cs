@@ -4,6 +4,7 @@ namespace GoldenLeague.TransportModels.Common
 {
     public class MatchModel
     {
+        public Guid MatchId { get; set; }
         public int ForeignKey { get; set; }
         public int SeasonNo { get; set; }
         public int GameweekNo { get; set; }

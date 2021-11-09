@@ -279,6 +279,15 @@ namespace GoldenLeague.Database
 
 	public static partial class GoldenLeagueDBStoredProcedures
 	{
+		#region CreateMatchBettingRecords
+
+		public static int CreateMatchBettingRecords(this GoldenLeagueDB dataConnection)
+		{
+			return dataConnection.ExecuteProc("[dbo].[CreateMatchBettingRecords]");
+		}
+
+		#endregion
+
 		#region GetUserMatchBetting
 
 		public static IEnumerable<VMatchBetting> GetUserMatchBetting(this GoldenLeagueDB dataConnection, Guid? @UserId, int? @SeasonNo)
