@@ -1,10 +1,12 @@
 using AutoMapper;
+using GoldenLeague.Database.Queries;
 using GoldenLeague.StatisticsWorker.Commands;
 using GoldenLeague.StatisticsWorker.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,21 +18,26 @@ namespace GoldenLeague.StatisticsWorker.Workers
         private readonly AppSettings _config;
         private readonly IFantasyService _fantasyApiWrapper;
         private readonly IMapper _mapper;
-        private readonly IMatchCommands _commands;
+        private readonly IMatchCommands _matchCommands;
+        private readonly ITeamStatisticsCommands _teamStatisticsCommands;
+        private readonly IBaseQueries _baseQueries;
 
         private const int _DELAY_MULTIPLIER = 1000 * 60;
         private readonly int _currentSeasonNo;
 
         public MatchResultsWorker(ILogger<MatchResultsWorker> logger, IOptions<AppSettings> config,
-            IFantasyService fantasyApiWrapper, IMapper mapper, IMatchCommands commands)
+            IFantasyService fantasyApiWrapper, IMapper mapper, IMatchCommands matchCommands, IBaseQueries baseQueries,
+            ITeamStatisticsCommands teamStatisticsCommands)
         {
             _logger = logger;
             _config = config.Value;
             _fantasyApiWrapper = fantasyApiWrapper;
             _mapper = mapper;
-            _commands = commands;
+            _matchCommands = matchCommands;
+            _baseQueries = baseQueries;
+            _teamStatisticsCommands = teamStatisticsCommands;
 
-            _currentSeasonNo = 2022; // IGoldenLeagueService.GetCurrentSeasonNo
+            _currentSeasonNo = _baseQueries.GetCurrentSeasonNo();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -48,10 +55,18 @@ namespace GoldenLeague.StatisticsWorker.Workers
             
             await Task.Run(() =>
             {
-                var currentGameweekNo = 10;
+                var currentGameweekNo = _baseQueries.GetCurrentGameweekNo();
+                var gameweeksToSync = new List<int> { currentGameweekNo - 1, currentGameweekNo, currentGameweekNo + 1 };
 
-                var matches = _fantasyApiWrapper.GetMatches(currentGameweekNo);
-                _commands.UpsertMatches(matches);
+                gameweeksToSync.ForEach(gameweekNo =>
+                {
+                    var matches = _fantasyApiWrapper.GetMatches(gameweekNo);
+                    var upsertMatchesResult = _matchCommands.UpsertMatchesData(matches);
+                    if (upsertMatchesResult.Success && upsertMatchesResult.Data > 0)
+                    {
+                        _teamStatisticsCommands.UpdateTeamsStatistics();
+                    }
+                });
             });
         }
     }

@@ -9,6 +9,7 @@ using GoldenLeague.TransportModels.Common;
 using System.Linq;
 using GoldenLeague.StatisticsWorker.Queries;
 using GoldenLeague.Database;
+using GoldenLeague.Database.Queries;
 
 namespace GoldenLeague.StatisticsWorker.Services
 {
@@ -26,12 +27,13 @@ namespace GoldenLeague.StatisticsWorker.Services
         private readonly IGoldenLeagueService _goldenLeagueService;
         private readonly IMapper _mapper;
         private readonly ITeamQueries _teamQueries;
+        private readonly IBaseQueries _baseQueries;
 
         private readonly int _currentSeasonNo;
         private Dictionary<int, Guid> _teamsDictionary;
 
         public FantasyService(ILogger<FantasyService> logger, IOptions<AppSettings> config, IRestServiceFactory restServiceFactory,
-            IMapper mapper, IGoldenLeagueService goldenLeagueService, ITeamQueries teamQueries)
+            IMapper mapper, IGoldenLeagueService goldenLeagueService, ITeamQueries teamQueries, IBaseQueries baseQueries)
         {
             _logger = logger;
             _config = config.Value;
@@ -39,8 +41,9 @@ namespace GoldenLeague.StatisticsWorker.Services
             _goldenLeagueService = goldenLeagueService;
             _mapper = mapper;
             _teamQueries = teamQueries;
+            _baseQueries = baseQueries;
 
-            _currentSeasonNo = 2022; // _goldenLeagueService.GetC
+            _currentSeasonNo = _baseQueries.GetCurrentSeasonNo();
             _teamsDictionary = GetTeams().ToDictionary(s => s.ForeignKey.Value, s => s.TeamId);
         }
 
@@ -52,7 +55,7 @@ namespace GoldenLeague.StatisticsWorker.Services
                 var response = _fantasyService.Get<List<FixtureMatchModel>>(FantasyApiEndpoints.Fixtures(gameweekNo));
                 if (response.IsSuccessful)
                 {
-                    _logger.LogTrace($"SUCCESS {nameof(GetMatches)} for gameweek {gameweekNo}, data: {result.ToJson(pretify: true)}");
+                    _logger.LogTrace($"SUCCESS {nameof(GetMatches)} for gameweek {gameweekNo}, data: {response.Data.ToJson()}");
                     result = MapToMatchModel(response.Data);
                 }
                 else
@@ -75,7 +78,7 @@ namespace GoldenLeague.StatisticsWorker.Services
                 var response = _fantasyService.Get<List<FixtureMatchModel>>(FantasyApiEndpoints.FixturesBase);
                 if (response.IsSuccessful)
                 {
-                    _logger.LogTrace($"SUCCESS {nameof(GetMatches)}, data: {result.ToJson(pretify: true)}");
+                    _logger.LogTrace($"SUCCESS {nameof(GetMatches)}, data: {response.Data.ToJson()}");
                     result = MapToMatchModel(response.Data);
                 }
                 else

@@ -1,4 +1,5 @@
 using GoldenLeague.Database;
+using GoldenLeague.Database.Queries;
 using GoldenLeague.StatisticsWorker.Commands;
 using GoldenLeague.StatisticsWorker.Queries;
 using GoldenLeague.StatisticsWorker.Services;
@@ -53,8 +54,10 @@ namespace GoldenLeague.StatisticsWorker
 
                     // commands
                     services.AddTransient<IMatchCommands, MatchCommands>();
+                    services.AddTransient<ITeamStatisticsCommands, TeamStatisticsCommands>();
 
                     // queries
+                    services.AddTransient<IBaseQueries, BaseQueries>();
                     services.AddTransient<ITeamQueries, TeamQueries>();
                 });
         }

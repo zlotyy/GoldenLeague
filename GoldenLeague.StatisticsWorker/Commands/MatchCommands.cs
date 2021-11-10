@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoldenLeague.Common.Localization;
 using GoldenLeague.Database;
 using GoldenLeague.TransportModels.Common;
 using LinqToDB;
@@ -10,13 +11,12 @@ namespace GoldenLeague.StatisticsWorker.Commands
 {
     public interface IMatchCommands
     {
-        bool InsertNewMatches(List<MatchModel> matches);
-        bool UpsertMatches(List<MatchModel> matches);
+        Result<int> InsertNewMatches(List<MatchModel> matches);
+        Result<int> UpsertMatchesData(List<MatchModel> matches);
     }
 
     public class MatchCommands : IMatchCommands
     {
-
         private readonly IDbContextFactory _dbContextFactory;
         private readonly ILogger<MatchCommands> _logger;
         private readonly IMapper _mapper;
@@ -28,13 +28,15 @@ namespace GoldenLeague.StatisticsWorker.Commands
             _mapper = mapper;
         }
 
-        public bool InsertNewMatches(List<MatchModel> matches)
+        public Result<int> InsertNewMatches(List<MatchModel> matches)
         {
+            var result = new Result<int>();
+
             try
             {
                 using (var db = _dbContextFactory.Create())
                 {
-                    var upsertedMatchesCount = db.Matches
+                    var insertedMatchesCount = db.Matches
                         .Merge()
                         .Using(matches)
                         .On((t, s) => t.ForeignKey == s.ForeignKey)
@@ -51,23 +53,28 @@ namespace GoldenLeague.StatisticsWorker.Commands
                         })
                         .Merge();
 
-                    if (upsertedMatchesCount > 0)
+                    if (insertedMatchesCount > 0)
                     {
+                        result.Data = insertedMatchesCount;
+                        _logger.LogInformation($"{nameof(InsertNewMatches)} finished with {insertedMatchesCount} inserted records");
                         db.CreateMatchBettingRecords();
                         db.SetMatchBettingPointsForEmptyBetting();
                     }
                 }
-                return true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error during {nameof(InsertNewMatches)}");
-                return false;
+                result.Errors.Add(ErrorLocalization.ErrorDBUpsert);
             }
+
+            return result;
         }
 
-        public bool UpsertMatches(List<MatchModel> matches)
+        public Result<int> UpsertMatchesData(List<MatchModel> matches)
         {
+            var result = new Result<int>();
+
             try
             {
                 using (var db = _dbContextFactory.Create())
@@ -102,19 +109,23 @@ namespace GoldenLeague.StatisticsWorker.Commands
                         })
                         .Merge();
 
+                    result.Data = upsertedMatchesCount;
+                    
                     if (upsertedMatchesCount > 0)
                     {
+                        _logger.LogInformation($"{nameof(UpsertMatchesData)} finished with {upsertedMatchesCount} upserted records");
                         db.CreateMatchBettingRecords();
                         db.SetMatchBettingPointsForEmptyBetting();
                     }
                 }
-                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(UpsertMatches)}");
-                return false;
+                _logger.LogError(ex, $"Error during {nameof(UpsertMatchesData)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBUpsert);
             }
+
+            return result;
         }
     }
 }

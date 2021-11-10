@@ -11,6 +11,7 @@ namespace GoldenLeague.Database.Queries
         int GetCurrentSeasonNo();
         int GetCurrentGameweekNo();
     }
+
     public class BaseQueries : IBaseQueries
     {
         protected readonly IDbContextFactory _dbContextFactory;
