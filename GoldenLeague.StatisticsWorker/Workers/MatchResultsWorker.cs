@@ -56,17 +56,17 @@ namespace GoldenLeague.StatisticsWorker.Workers
             await Task.Run(() =>
             {
                 var currentGameweekNo = _baseQueries.GetCurrentGameweekNo();
-                var gameweeksToSync = new List<int> { currentGameweekNo - 1, currentGameweekNo, currentGameweekNo + 1 };
 
-                gameweeksToSync.ForEach(gameweekNo =>
+                for (int gameweekNo=1; gameweekNo<=currentGameweekNo; gameweekNo++)
                 {
                     var matches = _fantasyApiWrapper.GetMatches(gameweekNo);
-                    var upsertMatchesResult = _matchCommands.UpsertMatchesData(matches);
-                    if (upsertMatchesResult.Success && upsertMatchesResult.Data > 0)
+                    if (matches != null)
                     {
-                        _teamStatisticsCommands.UpdateTeamsStatistics();
+                        _matchCommands.UpsertMatchesData(matches);
                     }
-                });
+                }
+
+                _teamStatisticsCommands.UpdateTeamsStatistics();
             });
         }
     }
