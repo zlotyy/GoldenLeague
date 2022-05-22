@@ -13,6 +13,7 @@
         group-by="matchDate"
         group-desc
         disable-sort
+        height="400"
         class="elevation-1"
       >
         <template v-slot:[`group.header`]="{ items }">

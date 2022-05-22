@@ -1,12 +1,13 @@
-﻿using GoldenLeague.Common.Services;
+﻿using GoldenLeague.Common.Localization;
+using GoldenLeague.Common.Services;
 using GoldenLeague.Database.Queries;
+using GoldenLeague.Helpers;
+using GoldenLeague.TransportModels.Common;
+using GoldenLeague.TransportModels.Ranking;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GoldenLeague.Controllers
 {
@@ -24,11 +25,16 @@ namespace GoldenLeague.Controllers
             _queries = queries;
         }
 
-        [HttpGet("standings")]
-        public IActionResult GetCurrentGameweekNo()
+        [HttpGet("ranking")]
+        public IActionResult GetPremierLeagueRanking()
         {
-            var gameweek = _queries.GetCurrentGameweekNo();
-            return Ok(gameweek);
+            var response = _restService.Get<Result<IEnumerable<TeamStandingModel>>>(ApiUrlHelper.TeamsRanking);
+            if (!response.IsSuccessful)
+            {
+                var result = new Result<IEnumerable<TeamStandingModel>>(new List<TeamStandingModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                return Ok(result);
+            }
+            return Ok(response.Data);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GoldenLeague.Database;
+using LinqToDB;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,6 +33,7 @@ namespace GoldenLeague.Api.Queries
             using (var db = _dbContextFactory.Create())
             {
                 return db.PremierLeagueTable
+                    .LoadWith(x => x.Team)
                     .OrderByDescending(x => x.Points)
                     .ThenByDescending(x => x.GoalsScored - x.GoalsConceded)
                     .ThenByDescending(x => x.GoalsScored)

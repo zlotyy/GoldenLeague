@@ -10,5 +10,8 @@ namespace GoldenLeague.Helpers
 
         public static string MatchesBase => "matches";
         public static string MatchesCurrentGameweek => $"{MatchesBase}/current-gameweek";
+
+        public static string TeamsBase => "teams";
+        public static string TeamsRanking => $"{TeamsBase}/ranking";
     }
 }
