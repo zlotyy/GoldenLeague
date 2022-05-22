@@ -12,8 +12,6 @@
         hide-default-footer
         group-by="matchDate"
         group-desc
-        sort-by="matchDateTime"
-        sort-desc
         disable-sort
         class="elevation-1"
       >
@@ -52,14 +50,14 @@ export default {
   data() {
     return {
       headers: [
-        { value: "matchTime" },
-        { value: "homeTeamName", align: "end", width: "40%" },
+        { value: "matchTime", width: "5%" },
+        { value: "homeTeamName", align: "end", width: "37%" },
         { value: "teamsSpacer", align: "center", width: "1%" },
-        { value: "awayTeamName", align: "start", width: "40%" },
+        { value: "awayTeamName", align: "start", width: "37%" },
         {
           value: "result",
           align: "center",
-          width: "10%",
+          width: "20%",
         },
       ],
       items: [],
@@ -78,16 +76,18 @@ export default {
       MatchService.GetCurrentGameweekMatches().then((response) => {
         const result = response.data;
         if (result.success) {
-          this.items = result.data.map((x) => {
-            return {
-              ...x,
-              matchDateHumanFriendly: this.$_getMatchDateHumanFriendly(
-                x.matchDateTime
-              ),
-              matchDate: this.$_getMatchDate(x.matchDateTime),
-              matchTime: this.$_getMatchTime(x.matchDateTime),
-            };
-          });
+          this.items = result.data
+            .map((x) => {
+              return {
+                ...x,
+                matchDateHumanFriendly: this.$_getMatchDateHumanFriendly(
+                  x.matchDateTime
+                ),
+                matchDate: this.$_getMatchDate(x.matchDateTime),
+                matchTime: this.$_getMatchTime(x.matchDateTime),
+              };
+            })
+            .sort((a, b) => dayjs(a.matchDateTime) - dayjs(b.matchDateTime));
         }
         this.loading = false;
       });

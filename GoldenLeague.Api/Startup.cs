@@ -78,6 +78,7 @@ namespace GoldenLeague.Api
 
             // commands
             services.AddTransient<IMatchBettingCommands, MatchBettingCommands>();
+            services.AddTransient<IMatchCommands, MatchCommands>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

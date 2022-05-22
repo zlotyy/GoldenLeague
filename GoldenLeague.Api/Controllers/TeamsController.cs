@@ -2,6 +2,7 @@
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Common;
+using GoldenLeague.TransportModels.Ranking;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -36,6 +37,26 @@ namespace GoldenLeague.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error during {nameof(GetTeams)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("ranking")]
+        public IActionResult GetRanking()
+        {
+            var result = new Result<IEnumerable<TeamStandingModel>>(new List<TeamStandingModel>());
+
+            try
+            {
+                var data = _queries.GetTeamsStandings();
+                var mappedData = _mapper.Map<List<TeamStandingModel>>(data);
+                result.Data = mappedData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetRanking)}");
                 result.Errors.Add(ErrorLocalization.ErrorDBGet);
             }
 

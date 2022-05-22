@@ -7,6 +7,7 @@ namespace GoldenLeague.Api.Queries
     public interface ITeamQueries
     {
         List<Teams> GetTeams();
+        List<PremierLeagueTable> GetTeamsStandings();
     }
 
     public class TeamQueries : ITeamQueries
@@ -23,6 +24,19 @@ namespace GoldenLeague.Api.Queries
             using (var db = _dbContextFactory.Create())
             {
                 return db.Teams.ToList();
+            }
+        }
+
+        public List<PremierLeagueTable> GetTeamsStandings()
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.PremierLeagueTable
+                    .OrderByDescending(x => x.Points)
+                    .ThenByDescending(x => x.GoalsScored - x.GoalsConceded)
+                    .ThenByDescending(x => x.GoalsScored)
+                    .ThenBy(x => x.MatchesPlayed)
+                    .ToList();
             }
         }
     }

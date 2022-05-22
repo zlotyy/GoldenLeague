@@ -8,11 +8,10 @@
         :items-per-page="20"
         :loading="matchesTable.loading"
         hide-default-footer
-        group-by="matchDate"
+        group-by="match.matchDate"
         group-desc
-        sort-by="matchDateTime"
+        sort-by="match.matchDateTime"
         sort-desc
-        disable-sort
         :item-class="RowClass"
         class="elevation-1"
       >
