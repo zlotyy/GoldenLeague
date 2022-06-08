@@ -79,9 +79,14 @@ namespace GoldenLeague
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            var spaStaticFileOptions = new StaticFileOptions
+            {
+                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(System.IO.Path.Combine(env.ContentRootPath, "client-app/dist"))
+            };
 
             app.UseRouting();
-            app.UseSpaStaticFiles();
+            app.UseSpaStaticFiles(spaStaticFileOptions);
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -93,15 +98,19 @@ namespace GoldenLeague
             app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
+                {
                     spa.Options.SourcePath = "client-app/";
+                }
                 else
-                    spa.Options.SourcePath = "dist";
+                {
+                    spa.Options.DefaultPageStaticFileOptions = spaStaticFileOptions;
+                    //spa.Options.SourcePath = "dist";
+                }
 
                 if (env.IsDevelopment())
                 {
                     spa.UseVueCli(npmScript: "serve");
                 }
-
             });
         }
     }
