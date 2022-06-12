@@ -8,6 +8,5 @@ namespace GoldenLeague.Api.Controllers
     [Route("api/v1/[controller]")]
     public class BaseController : ControllerBase
     {
-
     }
 }
