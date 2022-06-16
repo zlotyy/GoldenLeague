@@ -16,27 +16,36 @@ namespace GoldenLeague.Api.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IUserQueries _userQueries;
+        private readonly IUserCommands _userCommands;
         private readonly IMatchBettingQueries _matchBettingQueries;
         private readonly IMatchBettingCommands _matchBettingCommands;
         private readonly IMapper _mapper;
 
-        public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IMatchBettingQueries matchBettingQueries,
-            IMatchBettingCommands matchBettingCommands, IMapper mapper)
+        public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IUserCommands userCommands,
+            IMatchBettingQueries matchBettingQueries, IMatchBettingCommands matchBettingCommands, IMapper mapper)
         {
             _logger = logger;
             _userQueries = userQueries;
             _matchBettingQueries = matchBettingQueries;
             _matchBettingCommands = matchBettingCommands;
             _mapper = mapper;
+            _userCommands = userCommands;
         }
 
-        [HttpPost]
+        [HttpPost("authenticate")]
         public UserModel GetUser([FromBody] UserCredentials credentials)
         {
             _logger.LogDebug($"Request {nameof(GetUser)}, login: {credentials.Login}");
             var user = _userQueries.GetUser(credentials);
             var userModel = user != null ? new UserModel(user) : null;
             return userModel;
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] UserCreateModel model)
+        {
+            var result = _userCommands.UserCreate(model);
+            return Ok(result);
         }
 
         [HttpGet("{id}/match-betting")]

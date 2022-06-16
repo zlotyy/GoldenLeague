@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace GoldenLeague.Controllers
 {
-    [AllowAnonymous]
     public class TeamsController : BaseController
     {
         private readonly IRestService _restService;
@@ -25,6 +24,7 @@ namespace GoldenLeague.Controllers
             _queries = queries;
         }
 
+        [AllowAnonymous]
         [HttpGet("ranking")]
         public IActionResult GetPremierLeagueRanking()
         {

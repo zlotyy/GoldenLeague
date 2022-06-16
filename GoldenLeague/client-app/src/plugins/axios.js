@@ -1,6 +1,6 @@
 import axios from "axios";
+import store from "../store";
 // import router from '../router/index';
-// import store from "../store";
 // import { compile } from "vue/types/umd";
 // import { authToken } from "./auth-header";
 
@@ -21,6 +21,9 @@ axios.interceptors.request.use(
     //   config.headers.common.Authorization = `Bearer ${store.state.user.token}`;
     //   config.headers.common["Authorization"] = authToken();
     // }
+    if (store.state.user.token) {
+      config.headers.Authorization = `Bearer ${store.state.user.token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -37,10 +40,13 @@ axios.interceptors.request.use(
 
 // Add a response interceptor
 axios.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // TODO - USUNĄĆ
+    console.log("axios response: " + response);
+    return Promise.resolve(response);
+  },
   (error) => {
-    // TODO - po zrobieniu logowania
-
+    // TODO - dokończyć
     // const {
     //   config,
     //   response: { status, headers },
@@ -63,8 +69,15 @@ axios.interceptors.response.use(
     //   });
     //   return requestSubscribers;
     // }
-    console.log(error);
-    return Promise.reject(error);
+
+    const { response } = error;
+    if (response.status === 500) {
+      console.log("SERVER 500 ERROR");
+    }
+    if (response.status === 401) {
+      console.log("UNAUTHORIZED 401 ERROR");
+    }
+    return Promise.reject(response);
   }
 );
 

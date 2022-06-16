@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 
 namespace GoldenLeague.Controllers
 {
-    [AllowAnonymous]
     public class HomeController : BaseController
     {
         private readonly IRestService _restService;

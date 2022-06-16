@@ -7,27 +7,52 @@
       $t("common.appName")
     }}</v-toolbar-title>
     <v-divider class="mx-4" vertical></v-divider>
-    <v-btn text :to="{ name: 'Ranking' }">
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'Ranking' }">
       <v-icon>fas fa-table</v-icon>
       <span class="ml-1">{{ $t("common.ranking") }}</span>
     </v-btn>
-    <v-btn text :to="{ name: 'MySquad' }">
+    <!-- <v-btn text :to="{ name: 'MySquad' }">
       <v-icon>fas fa-running</v-icon>
       <span class="ml-1">{{ $t("common.squad") }}</span>
-    </v-btn>
-    <v-btn text :to="{ name: 'MatchBetting' }">
+    </v-btn> -->
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'MatchBetting' }">
       <v-icon>fas fa-hand-holding-usd</v-icon>
       <span class="ml-1">{{ $t("common.matchBetting") }}</span>
     </v-btn>
-    <v-btn text :to="{ name: 'Info' }">
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'Info' }">
       <v-icon>fas fa-info-circle</v-icon>
       <span class="ml-1">{{ $t("common.info") }}</span>
+    </v-btn>
+    <v-btn text v-if="isAuthorized()" @click="Logout()">
+      <v-icon>fas fa-user</v-icon>
+      <span class="ml-1">Wyloguj</span>
+    </v-btn>
+    <v-btn text v-if="!isAuthorized()" :to="{ name: 'Login' }">
+      <v-icon>fas fa-user</v-icon>
+      <span class="ml-1">Zaloguj</span>
+    </v-btn>
+    <v-btn text v-if="!isAuthorized()" :to="{ name: 'Register' }">
+      <v-icon>fas fa-user</v-icon>
+      <span class="ml-1">Rejestracja</span>
     </v-btn>
   </v-app-bar>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   name: "TheMenu",
+  methods: {
+    ...mapGetters("user", ["isAuthorized"]),
+    ...mapActions("user", ["logout"]),
+    Logout() {
+      this.logout();
+
+      this.$router.push({
+        name: "Home",
+      });
+    },
+  },
 };
 </script>

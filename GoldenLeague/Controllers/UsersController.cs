@@ -5,7 +5,9 @@ using GoldenLeague.Database.Queries;
 using GoldenLeague.Helpers;
 using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.MatchBetting;
+using GoldenLeague.TransportModels.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,7 +15,6 @@ using System.Collections.Generic;
 
 namespace GoldenLeague.Controllers
 {
-    [AllowAnonymous]    // TODO Usunąć
     public class UsersController : BaseController
     {
         private readonly IRestService _restService;
@@ -53,6 +54,27 @@ namespace GoldenLeague.Controllers
                 return Ok(result);
             }
             return Ok(response.Data);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] UserCreateModel model)
+        {
+            var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersBase, model);
+            if (!response.IsSuccessful)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            if (!response.Data.Success)
+            {
+                var result = new Result<UserModel>(new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            var userModel = response.Data;
+
+            return Ok(userModel);
         }
     }
 }

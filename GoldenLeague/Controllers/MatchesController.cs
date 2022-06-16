@@ -10,7 +10,6 @@ using System.Collections.Generic;
 
 namespace GoldenLeague.Controllers
 {
-    [AllowAnonymous]    // TODO Usunąć
     public class MatchesController : BaseController
     {
         private readonly IRestService _restService;
@@ -24,6 +23,7 @@ namespace GoldenLeague.Controllers
             _queries = queries;
         }
 
+        [AllowAnonymous]
         [HttpGet("current-gameweek-no")]
         public IActionResult GetCurrentGameweekNo()
         {
@@ -31,6 +31,7 @@ namespace GoldenLeague.Controllers
             return Ok(gameweek);
         }
 
+        [AllowAnonymous]
         [HttpGet("current-gameweek")]
         public IActionResult GetCurrentGameweekMatches()
         {

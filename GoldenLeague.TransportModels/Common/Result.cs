@@ -5,11 +5,15 @@ namespace GoldenLeague.TransportModels.Common
 {
     public class Result<T>
     {
-        public Result() { }
+        public Result()
+        {
+            Errors = new List<string>();
+        }
 
         public Result(T data)
         {
             Data = data;
+            Errors = new List<string>();
         }
 
         public Result(List<string> errors)
