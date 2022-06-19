@@ -5,6 +5,7 @@ using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.MatchBetting;
 using GoldenLeague.TransportModels.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -33,18 +34,51 @@ namespace GoldenLeague.Api.Controllers
         }
 
         [HttpPost("authenticate")]
-        public UserModel GetUser([FromBody] UserCredentials credentials)
+        public IActionResult GetUser([FromBody] UserCredentials credentials)
         {
-            _logger.LogDebug($"Request {nameof(GetUser)}, login: {credentials.Login}");
-            var user = _userQueries.GetUser(credentials);
-            var userModel = user != null ? new UserModel(user) : null;
-            return userModel;
+            var result = new Result<UserModel>();
+            var user = _userQueries.GetUser(credentials.Login);
+            
+            if (user == null)
+            {
+                result.Errors.Add("Nie znaleziono użytkownika o podanym loginie");
+                return NotFound(result);
+            }
+
+            // TODO - PasswordHash
+            if (user.Password != credentials.Password)
+            {
+                result.Errors.Add("Podane hasło jest nieprawidłowe");
+                return Unauthorized(result);
+            }
+
+            result.Data = new UserModel
+            {
+                UserId = user.UserId,
+                Login = user.Login,
+                FullName = user.FullName,
+                IsAdmin = user.IsAdmin
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserCreateModel model)
         {
-            var result = _userCommands.UserCreate(model);
+            var result = new Result<UserModel>();
+            if (_userQueries.UserExists(model.Login))
+            {
+                result.Errors.Add("Użytkownik o takim loginie już istnieje");
+                return BadRequest(result);
+            }
+
+            result = _userCommands.UserCreate(model);
+            if (!result.Success)
+            {
+                return InternalServerError(result);
+            }
+
             return Ok(result);
         }
 

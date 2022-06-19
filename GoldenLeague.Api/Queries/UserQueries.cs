@@ -6,7 +6,8 @@ namespace GoldenLeague.Api.Queries
 {
     public interface IUserQueries
     {
-        Users GetUser(UserCredentials credentials);
+        Users GetUser(string login);
+        bool UserExists(string login);
     }
     public class UserQueries : IUserQueries
     {
@@ -17,11 +18,19 @@ namespace GoldenLeague.Api.Queries
             _dbContextFactory = dbContextFactory;
         }
 
-        public Users GetUser(UserCredentials credentials)
+        public Users GetUser(string login)
         {
             using (var db = _dbContextFactory.Create())
             {
-                return db.Users.FirstOrDefault(u => u.Login == credentials.Login && u.Password == credentials.Password); // TODO - PasswordHash
+                return db.Users.FirstOrDefault(x => x.Login == login && !x.IsDeleted);
+            }
+        }
+
+        public bool UserExists(string login)
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.Users.Any(x => x.Login == login && !x.IsDeleted);
             }
         }
     }

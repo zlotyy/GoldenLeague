@@ -40,44 +40,31 @@ export default {
   },
   methods: {
     async Register() {
-      try {
-        if (!this.isValid()) {
-          console.log("Register isValid false");
-          return;
-        }
+      if (!this.isValid()) {
+        return;
+      }
 
-        const response = await UserService.Register(this.login, this.password);
-        console.log("Register response: " + response);
-
-        if (response.status === 200) {
-          this.$router.push({
-            name: "Login",
-          });
-        } else {
-          console.log("Register UNKNOWN ERROR");
-          alert("Wystąpił nieoczekiwany błąd");
-        }
-      } catch (err) {
-        console.log("Register err: " + err);
-        if (err.status === 500) {
-          console.log("SERVER ERROR");
-          alert("Wystąpił błąd serwera");
-        } else {
-          alert("Wystąpił nieoczekiwany błąd");
-        }
+      const response = await UserService.Register(this.login, this.password);
+      if (response.status === 200 && !(response.data || {}).errors[0]) {
+        this.$vToastify.customSuccess(
+          "Użytkownik o nazwie " + this.login + " został utworzony"
+        );
+        this.$router.push({
+          name: "Login",
+        });
       }
     },
     isValid() {
-      if (this.password !== this.passwordConfirm) {
-        alert("Hasła muszą być takie same");
-        return false;
-      }
       if (this.login.length < 1) {
-        alert("Login nie może być pusty");
+        this.$vToastify.validationError("Login nie może być pusty");
         return false;
       }
       if (this.password.length < 1) {
-        alert("Hasło nie może być puste");
+        this.$vToastify.validationError("Hasło nie może być puste");
+        return false;
+      }
+      if (this.password !== this.passwordConfirm) {
+        this.$vToastify.validationError("Hasła muszą być takie same");
         return false;
       }
       return true;

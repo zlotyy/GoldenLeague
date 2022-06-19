@@ -23,17 +23,18 @@
       <v-icon>fas fa-info-circle</v-icon>
       <span class="ml-1">{{ $t("common.info") }}</span>
     </v-btn>
-    <v-btn text v-if="isAuthorized()" @click="Logout()">
-      <v-icon>fas fa-user</v-icon>
-      <span class="ml-1">Wyloguj</span>
+    <v-btn text v-if="!isAuthorized()" :to="{ name: 'Register' }">
+      <v-icon>fas fa-user-plus</v-icon>
+      <span class="ml-1">Rejestracja</span>
     </v-btn>
+    <v-spacer></v-spacer>
     <v-btn text v-if="!isAuthorized()" :to="{ name: 'Login' }">
-      <v-icon>fas fa-user</v-icon>
+      <v-icon>fas fa-sign-in-alt</v-icon>
       <span class="ml-1">Zaloguj</span>
     </v-btn>
-    <v-btn text v-if="!isAuthorized()" :to="{ name: 'Register' }">
-      <v-icon>fas fa-user</v-icon>
-      <span class="ml-1">Rejestracja</span>
+    <v-btn text v-if="isAuthorized()" @click="Logout()">
+      <v-icon>fas fa-sign-out-alt</v-icon>
+      <span class="ml-1">Wyloguj</span>
     </v-btn>
   </v-app-bar>
 </template>
@@ -46,11 +47,13 @@ export default {
   methods: {
     ...mapGetters("user", ["isAuthorized"]),
     ...mapActions("user", ["logout"]),
-    Logout() {
-      this.logout();
+    async Logout() {
+      await this.logout();
+
+      this.$vToastify.customSuccess("Wylogowano z aplikacji");
 
       this.$router.push({
-        name: "Home",
+        name: "Login",
       });
     },
   },

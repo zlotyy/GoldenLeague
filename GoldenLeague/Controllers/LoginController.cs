@@ -7,6 +7,8 @@ using GoldenLeague.Common.Services;
 using Microsoft.AspNetCore.Http;
 using GoldenLeague.Helpers;
 using GoldenLeague.Models.Users;
+using System;
+using GoldenLeague.TransportModels.Common;
 
 namespace GoldenLeague.Controllers
 {
@@ -23,26 +25,38 @@ namespace GoldenLeague.Controllers
             _logger = logger;
         }
 
+        // TODO - odświeżanie logowania powoduje błąd z kodem 405
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult Get()
+        //{
+        //    return Ok();
+        //}
+
         [AllowAnonymous]
         [HttpPost]
         public IActionResult Authenticate([FromBody] UserCredentials model)
         {
-            var userResult = _restService.Post<UserModel>(ApiUrlHelper.UsersAuthenticate, model);
-            if (!userResult.IsSuccessful)
+            try
             {
+                var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersAuthenticate, model);
+                if (!response.IsSuccessful)
+                {
+                    return ResolveApiError<UserModel, UserAuthenticatedModel>(response);
+                }
+
+                var user = response.Data.Data;
+                var token = _authManager.CreateToken(user.UserId.ToString());
+                var userModel = new UserAuthenticatedModel(user, token);
+                var result = new Result<UserAuthenticatedModel>(userModel);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(Authenticate)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            var user = userResult.Data;
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var token = _authManager.CreateToken(user.UserId.ToString());
-            var userModel = new UserAuthenticatedModel(user, token);
-
-            return Ok(userModel);
         }
     }
 }

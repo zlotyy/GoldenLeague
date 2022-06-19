@@ -8,8 +8,17 @@
         <v-card>
           <v-card-title>Logowanie</v-card-title>
           <v-card-text>
-            <v-text-field v-model="login" label="Login"> </v-text-field>
-            <v-text-field type="password" v-model="password" label="Hasło">
+            <v-text-field
+              v-model="login"
+              label="Login"
+              @keyup.enter="LogIn"
+            ></v-text-field>
+            <v-text-field
+              type="password"
+              v-model="password"
+              label="Hasło"
+              @keyup.enter="LogIn"
+            >
             </v-text-field>
           </v-card-text>
           <div class="text-right card-container">
@@ -38,49 +47,43 @@ export default {
     async LogIn() {
       try {
         if (!this.isValid()) {
-          console.log("LogIn isValid false");
           return;
         }
 
         const response = await UserService.LogIn(this.login, this.password);
-        const { data } = response;
-        console.log("LogIn response: " + response);
 
-        if (response.status === 200) {
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          const userData = response.data.data;
           await this.setUser({
-            id: data.userId,
-            login: data.login,
-            token: data.token,
+            id: userData.userId,
+            login: userData.login,
+            token: userData.token,
           });
+
+          this.$vToastify.customSuccess(
+            userData.login + " - zostałeś zalogowany"
+          );
 
           this.$router.push({
-            name: "MatchBetting",
+            name: "Home",
           });
         } else {
-          console.log("Register UNKNOWN ERROR");
-          alert("Wystąpił nieoczekiwany błąd");
           await this.resetUser();
         }
       } catch (err) {
-        console.log("LogIn err: " + err);
-        if (err.status === 500) {
-          console.log("SERVER ERROR");
-          alert("Wystąpił błąd serwera");
-        } else if (err.status === 404) {
-          alert("Nie znaleziono użytkownika");
-        } else {
-          alert("Wystąpił nieoczekiwany błąd");
+        if (err.status === 404) {
+          this.$vToastify.customWarning("Nie znaleziono użytkownika");
         }
         await this.resetUser();
       }
     },
     isValid() {
       if (this.login.length < 1) {
-        alert("Login nie może być pusty");
+        this.$vToastify.validationError("Login nie może być pusty");
         return false;
       }
       if (this.password.length < 1) {
-        alert("Hasło nie może być puste");
+        this.$vToastify.validationError("Hasło nie może być puste");
         return false;
       }
       return true;

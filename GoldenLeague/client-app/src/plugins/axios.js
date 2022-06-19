@@ -1,5 +1,6 @@
 import axios from "axios";
 import store from "../store";
+import Vue from "vue";
 // import router from '../router/index';
 // import { compile } from "vue/types/umd";
 // import { authToken } from "./auth-header";
@@ -41,8 +42,6 @@ axios.interceptors.request.use(
 // Add a response interceptor
 axios.interceptors.response.use(
   (response) => {
-    // TODO - USUNĄĆ
-    console.log("axios response: " + response);
     return Promise.resolve(response);
   },
   (error) => {
@@ -71,12 +70,22 @@ axios.interceptors.response.use(
     // }
 
     const { response } = error;
-    if (response.status === 500) {
-      console.log("SERVER 500 ERROR");
+
+    if ((response.data || {}).errors[0]) {
+      response.data.errors.forEach((err) => Vue.$vToastify.customError(err));
+      return Promise.resolve(response);
     }
+
     if (response.status === 401) {
-      console.log("UNAUTHORIZED 401 ERROR");
+      Vue.$vToastify.unauthorizedError();
+      return Promise.resolve(response);
     }
+
+    if (response.status === 500) {
+      Vue.$vToastify.unexpectedError();
+      return Promise.resolve(response);
+    }
+
     return Promise.reject(response);
   }
 );

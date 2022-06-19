@@ -60,21 +60,16 @@ namespace GoldenLeague.Controllers
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserCreateModel model)
         {
-            var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersBase, model);
-            if (!response.IsSuccessful)
+            try
             {
+                var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersBase, model);
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(CreateUser)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (!response.Data.Success)
-            {
-                var result = new Result<UserModel>(new List<string> { ErrorLocalization.ErrorAPIUnknown });
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
-            }
-
-            var userModel = response.Data;
-
-            return Ok(userModel);
         }
     }
 }

@@ -3,8 +3,10 @@
     <v-col cols="6">
       <div>
         <div class="mb-16 text-center">
-          <span v-if="isAuthorized()">Witaj {{ userLogin }}</span>
-          <span v-else>Jak się tutaj znalazłeś???</span>
+          <h1 v-if="isAuthorized()">Witaj {{ userLogin }}</h1>
+          <span v-else>
+            Jeśli znalazłeś się na tej stronie, zgłoś błąd do administratora
+          </span>
         </div>
       </div>
     </v-col>
