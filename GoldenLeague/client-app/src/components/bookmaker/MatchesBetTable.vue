@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card>
-      <v-card-title>{{ $t("matchBetting.yourBets") }}</v-card-title>
+      <v-card-title>{{ $t("bookmakerBets.yourBets") }}</v-card-title>
       <v-data-table
         :headers="matchesTable.headers"
         :items="gameweekItems"
@@ -94,8 +94,8 @@
                 outlined
                 :loading="saveLoading"
                 :disabled="saveLoading"
-                @click="SaveMatchBetting"
-                >{{ $t("matchBetting.saveYourBets") }}</v-btn
+                @click="SaveBookmakerBets"
+                >{{ $t("bookmakerBets.saveYourBets") }}</v-btn
               >
             </td>
           </tr>
@@ -145,7 +145,7 @@ export default {
   },
   mounted() {
     this.$_setCurrentGameweek();
-    this.$_setMatchBettingItems();
+    this.$_setBookmakerBetsItems();
   },
   methods: {
     AllowBet(matchDateTime) {
@@ -161,23 +161,23 @@ export default {
       // NOT WORKING COLOR
       return "betting-hit";
     },
-    SaveMatchBetting() {
+    SaveBookmakerBets() {
       this.saveLoading = true;
       const dto = this.$_getDto();
-      UserService.UpdateMatchBetting(dto).then((response) => {
+      UserService.UpdateBookmakerBets(dto).then((response) => {
         const result = response.data;
         if (result.success) {
           console.log("Updated");
         } else {
           console.log("Error - not updated");
         }
-        this.$_setMatchBettingItems();
+        this.$_setBookmakerBetsItems();
         this.saveLoading = false;
       });
     },
-    $_setMatchBettingItems() {
+    $_setBookmakerBetsItems() {
       this.matchesTable.loading = true;
-      UserService.GetMatchBetting().then((response) => {
+      UserService.GetBookmakerBets().then((response) => {
         const result = response.data;
         if (result.success) {
           this.matchesTable.items = result.data.map((x) => {

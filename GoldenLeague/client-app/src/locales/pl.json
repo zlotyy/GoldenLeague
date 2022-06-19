@@ -4,7 +4,7 @@
     "player": "Gracz",
     "points": "Punkty",
     "ranking": "Ranking",
-    "matchBetting": "Typer",
+    "bookmakerBets": "Typer",
     "info": "Info",
     "squad": "Skład",
     "gameweek": "Kolejka",
@@ -12,11 +12,11 @@
     "premierLeagueTable": "Tabela Premier League"
   },
   "ranking": {
-    "matchBettingRanking": "Ranking Typerów",
+    "bookmakerBetsRanking": "Ranking Typerów",
     "goldenLeagueRanking": "Ranking Golden League",
     "summaryRanking": "Ranking Podsumowujący"
   },
-  "matchBetting": {
+  "bookmakerBets": {
     "yourBets": "Twoje typy",
     "saveYourBets": "Zapisz typy"
   }

@@ -8,7 +8,9 @@ namespace GoldenLeague.Database.Queries
     public interface IBaseQueries
     {
         string GetConfigValue(ConfigKeys key);
+        [Obsolete("Current season is now individual for competition in DB Competitions table")]
         int GetCurrentSeasonNo();
+        [Obsolete("Current gameweek is now individual for competition in DB Competitions table")]
         int GetCurrentGameweekNo();
     }
 
@@ -30,11 +32,13 @@ namespace GoldenLeague.Database.Queries
             }
         }
 
+        [Obsolete("Current season is now individual for competition in DB Competitions table")]
         public int GetCurrentSeasonNo()
         {
             return int.Parse(GetConfigValue(ConfigKeys.CURRENT_SEASON_NO));
         }
 
+        [Obsolete("Current gameweek is now individual for competition in DB Competitions table")]
         public int GetCurrentGameweekNo()
         {
             using (var db = _dbContextFactory.Create())

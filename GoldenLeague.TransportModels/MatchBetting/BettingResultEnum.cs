@@ -2,7 +2,7 @@
 
 namespace GoldenLeague.TransportModels.MatchBetting
 {
-    public enum BettingResultEnum
+    public enum BetResultEnum
     {
         /// <summary>
         /// Nietrafiony

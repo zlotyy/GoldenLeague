@@ -32,22 +32,22 @@ namespace GoldenLeague.Controllers
             _currentSeasonNo = int.Parse(_queries.GetConfigValue(ConfigKeys.CURRENT_SEASON_NO));
         }
 
-        [HttpGet("{id}/match-betting")]
+        [HttpGet("{id}/bookmaker-bets")]
         public IActionResult GetMatchBetting([FromRoute] Guid id)
         {
-            var response = _restService.Get<Result<List<MatchBettingModel>>>(ApiUrlHelper.UserMatchBettingGet(id, _currentSeasonNo));
+            var response = _restService.Get<Result<List<BookmakerBetModel>>>(ApiUrlHelper.UserBookmakerBetsGet(id, _currentSeasonNo));
             if (!response.IsSuccessful)
             {
-                var result = new Result<List<MatchBettingModel>>(new List<MatchBettingModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
+                var result = new Result<List<BookmakerBetModel>>(new List<BookmakerBetModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
                 return Ok(result);
             }
             return Ok(response.Data);
         }
 
-        [HttpPatch("{id}/match-betting")]
-        public IActionResult UpdateMatchBetting([FromRoute] Guid id, [FromBody] List<MatchBettingModel> model)
+        [HttpPatch("{id}/bookmaker-bets")]
+        public IActionResult UpdateBookmakerBets([FromRoute] Guid id, [FromBody] List<BookmakerBetModel> model)
         {
-            var response = _restService.Patch<Result<bool>>(ApiUrlHelper.UserMatchBettingUpdate(id), model);
+            var response = _restService.Patch<Result<bool>>(ApiUrlHelper.UserBookmakerBetsUpdate(id), model);
             if (!response.IsSuccessful)
             {
                 var result = new Result<bool>(new List<string> { ErrorLocalization.ErrorAPIUnknown });

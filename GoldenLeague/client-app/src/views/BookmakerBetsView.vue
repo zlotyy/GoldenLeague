@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import MatchesBetTable from "@/components/matchBetting/MatchesBetTable.vue";
+import MatchesBetTable from "@/components/bookmaker/MatchesBetTable.vue";
 
 export default {
-  name: "MatchBettingView",
+  name: "BookmakerBetsView",
   components: {
     MatchesBetTable,
   },

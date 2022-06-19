@@ -18,17 +18,17 @@ namespace GoldenLeague.Api.Controllers
         private readonly ILogger<UsersController> _logger;
         private readonly IUserQueries _userQueries;
         private readonly IUserCommands _userCommands;
-        private readonly IMatchBettingQueries _matchBettingQueries;
-        private readonly IMatchBettingCommands _matchBettingCommands;
+        private readonly IBookmakerBetQueries _bookmakerBetQueries;
+        private readonly IBookmakerBetCommands _bookmakerBetCommands;
         private readonly IMapper _mapper;
 
         public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IUserCommands userCommands,
-            IMatchBettingQueries matchBettingQueries, IMatchBettingCommands matchBettingCommands, IMapper mapper)
+            IBookmakerBetQueries bookmakerBetQueries, IBookmakerBetCommands bookmakerBetCommands, IMapper mapper)
         {
             _logger = logger;
             _userQueries = userQueries;
-            _matchBettingQueries = matchBettingQueries;
-            _matchBettingCommands = matchBettingCommands;
+            _bookmakerBetQueries = bookmakerBetQueries;
+            _bookmakerBetCommands = bookmakerBetCommands;
             _mapper = mapper;
             _userCommands = userCommands;
         }
@@ -82,34 +82,34 @@ namespace GoldenLeague.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}/match-betting")]
-        public IActionResult GetMatchBetting([FromRoute] Guid id, [FromQuery] int seasonNo)
+        [HttpGet("{id}/bookmaker-bets")]
+        public IActionResult GetBookmakerBets([FromRoute] Guid id, [FromQuery] int seasonNo)
         {
-            var result = new Result<IEnumerable<MatchBettingModel>>(new List<MatchBettingModel>());
+            var result = new Result<IEnumerable<BookmakerBetModel>>(new List<BookmakerBetModel>());
 
             try
             {
-                var data = _matchBettingQueries.GetMatchBetting(id, seasonNo);
-                var mappedData = _mapper.Map<List<MatchBettingModel>>(data);
+                var data = _bookmakerBetQueries.GetBets(id, seasonNo);
+                var mappedData = _mapper.Map<List<BookmakerBetModel>>(data);
                 result.Data = mappedData;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetMatchBetting)}");
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerBets)}");
                 result.Errors.Add(ErrorLocalization.ErrorDBGet);
             }
 
             return Ok(result);
         }
 
-        [HttpPatch("{id}/match-betting")]
-        public IActionResult UpdateMatchBetting([FromRoute] Guid id, [FromBody] List<MatchBettingModel> model)
+        [HttpPatch("{id}/bookmaker-bets")]
+        public IActionResult UpdateBookmakerBet([FromRoute] Guid id, [FromBody] List<BookmakerBetModel> model)
         {
             var result = new Result<bool>();
 
             try
             {
-                var updateResult = _matchBettingCommands.UpdateMatchBetting(model);
+                var updateResult = _bookmakerBetCommands.UpdateBet(model);
                 if (!updateResult)
                 {
                     result.Errors.Add(ErrorLocalization.ErrorDBUpsert);
@@ -121,7 +121,7 @@ namespace GoldenLeague.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetMatchBetting)}");
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerBets)}");
                 result.Errors.Add(ErrorLocalization.ErrorDBGet);
             }
 

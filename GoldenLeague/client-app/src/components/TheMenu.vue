@@ -15,9 +15,9 @@
       <v-icon>fas fa-running</v-icon>
       <span class="ml-1">{{ $t("common.squad") }}</span>
     </v-btn> -->
-    <v-btn text v-if="isAuthorized()" :to="{ name: 'MatchBetting' }">
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'BookmakerBets' }">
       <v-icon>fas fa-hand-holding-usd</v-icon>
-      <span class="ml-1">{{ $t("common.matchBetting") }}</span>
+      <span class="ml-1">{{ $t("common.bookmakerBets") }}</span>
     </v-btn>
     <v-btn text v-if="isAuthorized()" :to="{ name: 'Info' }">
       <v-icon>fas fa-info-circle</v-icon>

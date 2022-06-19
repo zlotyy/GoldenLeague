@@ -3,14 +3,14 @@ using System;
 
 namespace GoldenLeague.TransportModels.MatchBetting
 {
-    public class MatchBettingModel
+    public class BookmakerBetModel
     {
-        public MatchBettingModel()
+        public BookmakerBetModel()
         {
 
         }
 
-        public MatchBettingModel(Guid userId, MatchFullModel match, MatchResultBetModel matchResultBet)
+        public BookmakerBetModel(Guid userId, MatchFullModel match, MatchResultBetModel matchResultBet)
         {
             UserId = userId;
             Match = match;
@@ -29,7 +29,7 @@ namespace GoldenLeague.TransportModels.MatchBetting
 
         }
 
-        public MatchResultBetModel(int? homeTeamScoreBet, int? awayTeamScoreBet, int? bettingPoints, BettingResultEnum? bettingResult)
+        public MatchResultBetModel(int? homeTeamScoreBet, int? awayTeamScoreBet, int? bettingPoints, BetResultEnum? bettingResult)
         {
             HomeTeamScoreBet = homeTeamScoreBet;
             AwayTeamScoreBet = awayTeamScoreBet;
@@ -40,6 +40,6 @@ namespace GoldenLeague.TransportModels.MatchBetting
         public int? HomeTeamScoreBet { get; set; }
         public int? AwayTeamScoreBet { get; set; }
         public int? BettingPoints { get; set; }
-        public BettingResultEnum? BettingResult { get; set; }
+        public BetResultEnum? BettingResult { get; set; }
     }
 }

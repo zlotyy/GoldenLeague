@@ -10,10 +10,10 @@ export default {
   async Register(login, password) {
     return axios.post(API_URL, { login, password });
   },
-  GetMatchBetting() {
-    return axios.get(`${API_URL}/${userId}/match-betting`);
+  GetBookmakerBets() {
+    return axios.get(`${API_URL}/${userId}/bookmaker-bets`);
   },
-  UpdateMatchBetting(items) {
-    return axios.patch(`${API_URL}/${userId}/match-betting`, items);
+  UpdateBookmakerBets(items) {
+    return axios.patch(`${API_URL}/${userId}/bookmaker-bets`, items);
   },
 };

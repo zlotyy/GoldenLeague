@@ -7,29 +7,29 @@ using System.Linq;
 
 namespace GoldenLeague.Api.Queries
 {
-    public interface IMatchBettingQueries
+    public interface IBookmakerBetQueries
     {
-        IEnumerable<VMatchBetting> GetMatchBetting(Guid userId, int seasonNo);
+        IEnumerable<VBookmakerBet> GetBets(Guid userId, int seasonNo);
     }
 
-    public class MatchBettingQueries : IMatchBettingQueries
+    public class BookmakerBetQueries : IBookmakerBetQueries
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly ILogger<MatchBettingQueries> _logger;
+        private readonly ILogger<BookmakerBetQueries> _logger;
         private readonly IMapper _mapper;
 
-        public MatchBettingQueries(IDbContextFactory dbContextFactory, ILogger<MatchBettingQueries> logger, IMapper mapper)
+        public BookmakerBetQueries(IDbContextFactory dbContextFactory, ILogger<BookmakerBetQueries> logger, IMapper mapper)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
             _mapper = mapper;
         }
 
-        public IEnumerable<VMatchBetting> GetMatchBetting(Guid userId, int seasonNo)
+        public IEnumerable<VBookmakerBet> GetBets(Guid userId, int seasonNo)
         {
             using (var db = _dbContextFactory.Create())
             {
-                return db.GetUserMatchBetting(userId, seasonNo).ToList();
+                return db.GetUserBookmakerBet(userId, seasonNo).ToList();
             }
         }
     }

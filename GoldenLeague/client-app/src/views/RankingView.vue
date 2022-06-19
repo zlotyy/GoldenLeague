@@ -2,8 +2,8 @@
   <v-row>
     <v-col cols="4">
       <StandingsTable
-        :header="$t('ranking.matchBettingRanking')"
-        :users="matchBettingStandings"
+        :header="$t('ranking.bookmakerBetsRanking')"
+        :users="bookmakerBetsStandings"
       />
     </v-col>
     <v-col cols="4">
@@ -31,13 +31,13 @@ export default {
   },
   data() {
     return {
-      matchBettingStandings: [],
+      bookmakerBetsStandings: [],
       goldenLeagueStandings: [],
       summaryStandings: [],
     };
   },
   mounted() {
-    this.matchBettingStandings = [
+    this.bookmakerBetsStandings = [
       { id: 1, login: "zlotyy", points: 101 },
       { id: 2, login: "mrówa", points: 79 },
       { id: 3, login: "adi", points: 89 },
@@ -53,7 +53,7 @@ export default {
       { id: 5, login: "kucyk", points: 146 },
     ].sort((x, y) => y.points - x.points);
 
-    this.summaryStandings = this.matchBettingStandings
+    this.summaryStandings = this.bookmakerBetsStandings
       .map((x) => ({
         ...x,
         points:

@@ -21,8 +21,4 @@
     <ProjectReference Include="..\GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

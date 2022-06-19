@@ -10,20 +10,20 @@ using System.Linq;
 
 namespace GoldenLeague.Api.Commands
 {
-    public interface IMatchBettingCommands
+    public interface IBookmakerBetCommands
     {
-        bool UpdateMatchBetting(List<MatchBettingModel> matchBetting);
+        bool UpdateBet(List<BookmakerBetModel> matchBetting);
     }
 
-    public class MatchBettingCommands : IMatchBettingCommands
+    public class BookmakerBetCommands : IBookmakerBetCommands
     {
         private readonly IDbContextFactory _dbContextFactory;
-        private readonly IMatchBettingQueries _queries;
-        private readonly ILogger<MatchBettingCommands> _logger;
+        private readonly IBookmakerBetQueries _queries;
+        private readonly ILogger<BookmakerBetCommands> _logger;
         private readonly IMapper _mapper;
 
-        public MatchBettingCommands(IDbContextFactory dbContextFactory, IMatchBettingQueries queries,
-            ILogger<MatchBettingCommands> logger, IMapper mapper)
+        public BookmakerBetCommands(IDbContextFactory dbContextFactory, IBookmakerBetQueries queries,
+            ILogger<BookmakerBetCommands> logger, IMapper mapper)
         {
             _dbContextFactory = dbContextFactory;
             _queries = queries;
@@ -31,17 +31,17 @@ namespace GoldenLeague.Api.Commands
             _mapper = mapper;
         }
 
-        public bool UpdateMatchBetting(List<MatchBettingModel> matchBetting)
+        public bool UpdateBet(List<BookmakerBetModel> bets)
         {
             try
             {
                 using (var db = _dbContextFactory.Create())
                 {
-                    matchBetting.ForEach(mb =>
+                    bets.ForEach(mb =>
                     {
                         if (mb.MatchResultBet.HomeTeamScoreBet.HasValue == mb.MatchResultBet.AwayTeamScoreBet.HasValue)
                         {
-                            db.MatchBetting
+                            db.BookmakerBets
                                 .Where(x => x.MatchId == mb.Match.MatchId && x.UserId == mb.UserId)
                                 .Set(x => x.HomeTeamScore, mb.MatchResultBet.HomeTeamScoreBet)
                                 .Set(x => x.AwayTeamScore, mb.MatchResultBet.AwayTeamScoreBet)
@@ -53,7 +53,7 @@ namespace GoldenLeague.Api.Commands
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(UpdateMatchBetting)}");
+                _logger.LogError(ex, $"Error during {nameof(UpdateBet)}");
                 return false;
             }
         }

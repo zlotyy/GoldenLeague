@@ -44,10 +44,10 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/RankingView.vue"),
   },
   {
-    path: "/match-betting",
-    name: "MatchBetting",
+    path: "/bookmaker-bets",
+    name: "BookmakerBets",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MatchBettingView.vue"),
+      import(/* webpackChunkName: "about" */ "../views/BookmakerBetsView.vue"),
   },
   {
     path: "/info",

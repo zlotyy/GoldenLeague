@@ -7,6 +7,7 @@ using GoldenLeague.TransportModels.Ranking;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace GoldenLeague.Controllers
@@ -24,6 +25,7 @@ namespace GoldenLeague.Controllers
             _queries = queries;
         }
 
+        [Obsolete("Introduced new competitions")]
         [AllowAnonymous]
         [HttpGet("ranking")]
         public IActionResult GetPremierLeagueRanking()
