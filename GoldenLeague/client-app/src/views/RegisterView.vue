@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center" class="mt-16">
-    <v-col cols="6">
+  <v-row justify="center">
+    <v-col cols="12" lg="6">
       <div>
         <v-card>
           <v-card-title>Rejestracja</v-card-title>

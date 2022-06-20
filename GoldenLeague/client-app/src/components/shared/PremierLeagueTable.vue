@@ -11,7 +11,6 @@
         class="elevation-1"
         height="400"
         :items-per-page="-1"
-        mobile-breakpoint="0"
       >
         <template v-slot:item.standing="{ item }">
           {{ $_teamStanding(item) }}

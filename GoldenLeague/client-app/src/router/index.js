@@ -37,24 +37,26 @@ const routes = [
   //   component: () =>
   //     import(/* webpackChunkName: "about" */ "../views/MySquadView.vue"),
   // },
-  {
-    path: "/ranking",
-    name: "Ranking",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/RankingView.vue"),
-  },
-  {
-    path: "/bookmaker",
-    name: "Bookmaker",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/BookmakerView.vue"),
-  },
   // {
-  //   path: "/bookmaker-bets",
-  //   name: "BookmakerBets",
+  //   path: "/ranking",
+  //   name: "Ranking",
   //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/BookmakerBetsView.vue"),
+  //     import(/* webpackChunkName: "about" */ "../views/RankingView.vue"),
   // },
+  {
+    path: "/bookmaker-leagues",
+    name: "BookmakerLeagues",
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/BookmakerLeaguesView.vue"
+      ),
+  },
+  {
+    path: "/bookmaker-bets",
+    name: "BookmakerBets",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/BookmakerBetsView.vue"),
+  },
   {
     path: "/info",
     name: "Info",
@@ -67,6 +69,9 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
 });
 
 router.beforeEach((to, from, next) => {
@@ -78,7 +83,7 @@ router.beforeEach((to, from, next) => {
     !isAuthorized
   ) {
     next({ name: "Login" });
-  } else if (to.name === "Login" && isAuthorized) {
+  } else if ((to.name === "Login" || to.name === "Register") && isAuthorized) {
     next({ name: "Home" });
   } else next();
 });

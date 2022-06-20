@@ -1,5 +1,8 @@
 <template>
-  <div>Info - Strona w trakcie budowy</div>
+  <div>
+    Aplikacja jest w trakcie rozwoju, z czasem będą pojawiać się kolejne
+    funkcjonalności
+  </div>
 </template>
 
 <script>

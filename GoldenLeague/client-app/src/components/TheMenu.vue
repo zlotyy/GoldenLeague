@@ -7,15 +7,21 @@
       $t("common.appName")
     }}</v-toolbar-title>
     <v-divider class="mx-4" vertical></v-divider>
-    <v-btn text v-if="isAuthorized()" :to="{ name: 'Ranking' }">
+    <!-- <v-btn text v-if="isAuthorized()" :to="{ name: 'Ranking' }">
       <v-icon>fas fa-table</v-icon>
       <span class="ml-1 d-none d-md-flex">{{ $t("common.ranking") }}</span>
-    </v-btn>
+    </v-btn> -->
     <!-- <v-btn text :to="{ name: 'MySquad' }">
       <v-icon>fas fa-running</v-icon>
       <span class="ml-1">{{ $t("common.squad") }}</span>
     </v-btn> -->
-    <v-btn text v-if="isAuthorized()" :to="{ name: 'Bookmaker' }">
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'BookmakerLeagues' }">
+      <v-icon>fas fa-table</v-icon>
+      <span class="ml-1 d-none d-md-flex">{{
+        $t("common.bookmakerLeagues")
+      }}</span>
+    </v-btn>
+    <v-btn text v-if="isAuthorized()" :to="{ name: 'BookmakerBets' }">
       <v-icon>fas fa-hand-holding-usd</v-icon>
       <span class="ml-1 d-none d-md-flex">{{
         $t("common.bookmakerBets")

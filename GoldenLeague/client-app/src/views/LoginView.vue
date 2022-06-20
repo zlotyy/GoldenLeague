@@ -1,10 +1,7 @@
 <template>
-  <v-row justify="center" class="mt-16">
-    <v-col cols="6">
+  <v-row justify="center">
+    <v-col cols="12" lg="6">
       <div>
-        <div class="mb-16 text-center">
-          <span>Aby móc korzystać z aplikacji musisz się zalogować</span>
-        </div>
         <v-card>
           <v-card-title>Logowanie</v-card-title>
           <v-card-text>
@@ -91,9 +88,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.card-container {
-  padding: 16px;
-}
-</style>

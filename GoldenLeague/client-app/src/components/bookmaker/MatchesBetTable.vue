@@ -1,7 +1,28 @@
 <template>
   <div>
     <v-card>
-      <v-card-title>{{ $t("bookmakerBets.yourBets") }}</v-card-title>
+      <v-row>
+        <!-- TODO - wydzielić do widoku wyżej, dorobić filtry daty i kolejek - do wyboru -->
+        <v-col class="d-flex flex-column" cols="6" sm="3" lg="2">
+          <v-select
+            dense
+            outlined
+            label="Rozgrywki"
+            :items="gameweeks"
+            v-model="gameweekNo"
+          ></v-select>
+        </v-col>
+        <v-col class="d-flex flex-column" cols="6" sm="3" lg="2">
+          <v-select
+            dense
+            outlined
+            :label="$t('common.gameweek')"
+            :items="gameweeks"
+            v-model="gameweekNo"
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-divider class="mt-3"></v-divider>
       <v-data-table
         :headers="matchesTable.headers"
         :items="gameweekItems"
@@ -15,19 +36,6 @@
         :item-class="RowClass"
         class="elevation-1"
       >
-        <template v-slot:[`top`]>
-          <v-row justify="start">
-            <v-col class="mx-3" cols="2">
-              <v-select
-                dense
-                outlined
-                :label="$t('common.gameweek')"
-                :items="gameweeks"
-                v-model="gameweekNo"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </template>
         <template v-slot:[`group.header`]="{ items }">
           <th colspan="7">
             {{ items[0].match.matchDate }}

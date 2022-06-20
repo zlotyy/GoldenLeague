@@ -1,0 +1,4 @@
+Tworzenie użytkownika:
+  Ma tworzyć wpis [BookmakerLeagues_l_Users] dla ligi globalnej
+
+Aktualizacja punktów typera ma aktualizować rankingi w tabeli [BookmakerLeagues_l_Users]
