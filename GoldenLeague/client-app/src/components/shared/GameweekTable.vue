@@ -15,6 +15,7 @@
         disable-sort
         height="400"
         class="elevation-1"
+        mobile-breakpoint="0"
       >
         <template v-slot:[`group.header`]="{ items }">
           <th colspan="5">

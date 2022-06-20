@@ -1,18 +1,18 @@
 <template>
   <v-row>
-    <v-col cols="4">
+    <v-col cols="12" lg="4">
       <StandingsTable
         :header="$t('ranking.bookmakerBetsRanking')"
         :users="bookmakerBetsStandings"
       />
     </v-col>
-    <v-col cols="4">
+    <v-col cols="12" lg="4">
       <StandingsTable
         :header="$t('ranking.goldenLeagueRanking')"
         :users="goldenLeagueStandings"
       />
     </v-col>
-    <v-col cols="4">
+    <v-col cols="12" lg="4">
       <StandingsTable
         :header="$t('ranking.summaryRanking')"
         :users="summaryStandings"
