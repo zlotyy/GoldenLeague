@@ -1,9 +1,10 @@
 <template>
   <v-row>
     <v-col cols="12">
-      <span>Wybierz ligę</span>
+      Typer - Strona w trakcie budowy
+      <!-- <span>Wybierz ligę</span>
       <span>Utwórz ligę</span>
-      <span>Dołącz do ligi</span>
+      <span>Dołącz do ligi</span> -->
     </v-col>
   </v-row>
 </template>

@@ -20,7 +20,7 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/HomeView.vue"),
   },
   {
-    path: "/login",
+    path: "/log-in",
     name: "Login",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LoginView.vue"),
@@ -31,12 +31,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/RegisterView.vue"),
   },
-  {
-    path: "/my-squad",
-    name: "MySquad",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MySquadView.vue"),
-  },
+  // {
+  //   path: "/my-squad",
+  //   name: "MySquad",
+  //   component: () =>
+  //     import(/* webpackChunkName: "about" */ "../views/MySquadView.vue"),
+  // },
   {
     path: "/ranking",
     name: "Ranking",
@@ -44,11 +44,17 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/RankingView.vue"),
   },
   {
-    path: "/bookmaker-bets",
-    name: "BookmakerBets",
+    path: "/bookmaker",
+    name: "Bookmaker",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/BookmakerBetsView.vue"),
+      import(/* webpackChunkName: "about" */ "../views/BookmakerView.vue"),
   },
+  // {
+  //   path: "/bookmaker-bets",
+  //   name: "BookmakerBets",
+  //   component: () =>
+  //     import(/* webpackChunkName: "about" */ "../views/BookmakerBetsView.vue"),
+  // },
   {
     path: "/info",
     name: "Info",
@@ -72,6 +78,8 @@ router.beforeEach((to, from, next) => {
     !isAuthorized
   ) {
     next({ name: "Login" });
+  } else if (to.name === "Login" && isAuthorized) {
+    next({ name: "Home" });
   } else next();
 });
 

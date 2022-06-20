@@ -1,5 +1,5 @@
 <template>
-  <div>Info</div>
+  <div>Info - Strona w trakcie budowy</div>
 </template>
 
 <script>
