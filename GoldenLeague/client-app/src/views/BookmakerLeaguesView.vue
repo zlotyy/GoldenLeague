@@ -4,12 +4,8 @@
       <div class="text-h5 mb-5">Ligi typerów</div>
       <v-card>
         <v-row>
-          <v-col class="d-flex flex-column" cols="12" md="6">
-            <v-btn class="primary" outlined>Utwórz ligę</v-btn>
-          </v-col>
-          <v-col class="d-flex flex-column" cols="12" md="6">
-            <v-btn class="primary" outlined>Dołącz do ligi</v-btn>
-          </v-col>
+          <LeagueCreateDialog></LeagueCreateDialog>
+          <LeagueJoinDialog></LeagueJoinDialog>
         </v-row>
         <!-- <v-divider class="mt-3"></v-divider> -->
         <v-card-title class="mt-5">Liga globalna</v-card-title>
@@ -35,8 +31,20 @@
           :items-per-page="-1"
           mobile-breakpoint="0"
         >
-          <template v-slot:item.options="{ item }">
-            <v-icon>fas fa-ellipsis-v</v-icon>
+          <template v-slot:item.options="{}">
+            <v-menu offset-y rounded="lg">
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">fas fa-ellipsis-v</v-icon>
+              </template>
+              <v-list>
+                <v-list-item>
+                  <v-list-item-title>Skopiuj kod ligi</v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>Opuść ligę</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </template>
         </v-data-table>
       </v-card>
@@ -45,12 +53,18 @@
 </template>
 
 <script>
+import LeagueCreateDialog from "@/components/bookmaker/LeagueCreateDialog.vue";
+import LeagueJoinDialog from "@/components/bookmaker/LeagueJoinDialog.vue";
+import UserService from "@/services/UserService";
+import { mapGetters } from "vuex";
+
 export default {
   name: "BookmakerLeaguesView",
+  components: { LeagueCreateDialog, LeagueJoinDialog },
   data() {
     return {
       headers: [
-        { text: "Liga", value: "name", width: "50%" },
+        { text: "Liga", value: "leagueName", width: "50%" },
         { text: "Pozycja", value: "ranking", width: "40%" },
         { value: "options", width: "10%" },
       ],
@@ -70,21 +84,20 @@ export default {
     this.$_setLeaguesData();
   },
   methods: {
-    $_setLeaguesData() {
-      this.leagues = [
-        {
-          id: "DA1F3389-EC5E-464C-8945-A83AF3EAD7CB",
-          name: "GoldenLeague",
-          isPrivate: false,
-          ranking: 2,
-        },
-        {
-          id: "44466491-8B6B-4F83-9E6A-6CC85CA9C14A",
-          name: "Liga tymczasowa",
-          isPrivate: true,
-          ranking: 1,
-        },
-      ];
+    ...mapGetters("user", ["getUserId"]),
+    async $_setLeaguesData() {
+      try {
+        const response = await UserService.GetBookmakerLeaguesJoined(
+          this.getUserId()
+        );
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          this.leagues = response.data.data;
+        } else {
+          this.$vToastify.customError("Nie udało się pobrać lig użytkownika");
+        }
+      } catch (err) {
+        this.$vToastify.customError("Nie udało się pobrać lig użytkownika");
+      }
     },
   },
 };

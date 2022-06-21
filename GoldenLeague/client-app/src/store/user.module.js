@@ -1,4 +1,5 @@
 const moduleState = { id: null, login: "", token: "" };
+
 const mutations = {
   SET_USER(state, { id, login, token }) {
     state.id = id;
@@ -9,11 +10,13 @@ const mutations = {
     state.token = token;
   },
 };
+
 const getters = {
   isAuthorized: (state) => state.id && state.token,
   getLogin: (state) => state.login,
   getUserId: (state) => state.id,
 };
+
 const actions = {
   async setUser({ commit }, { id, login, token }) {
     commit("SET_USER", { id, login, token });

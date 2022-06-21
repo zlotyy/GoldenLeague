@@ -9,7 +9,6 @@ using System;
 
 namespace GoldenLeague.Controllers
 {
-    [Route("bookmaker-leagues")]
     public class BookmakerLeaguesController : BaseController
     {
         private readonly IRestService _restService;

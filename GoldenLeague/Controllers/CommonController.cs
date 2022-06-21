@@ -1,13 +1,11 @@
 ﻿using GoldenLeague.Common.Services;
 using GoldenLeague.Helpers;
-using GoldenLeague.Models.Common;
 using GoldenLeague.TransportModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GoldenLeague.Controllers
 {
@@ -22,30 +20,17 @@ namespace GoldenLeague.Controllers
             _logger = logger;
         }
 
-        [HttpGet("competitions-select")]
-        public IActionResult GetCompetitionsSelect()
+        [HttpGet("competitions")]
+        public IActionResult GetCompetitions()
         {
             try
             {
                 var response = _restService.Get<Result<IEnumerable<CompetitionModel>>>(ApiUrlHelper.Competitions);
-                if (!response.IsSuccessful)
-                {
-                    return ResolveApiError<IEnumerable<CompetitionModel>, IEnumerable<SelectModel<Guid>>>(response);
-                }
-
-                var selectModel = response.Data.Data.Select(x => new SelectModel<Guid>
-                {
-                    Id = x.CompetitionId,
-                    Value = x.CompetitionName
-                });
-
-                var result = new Result<IEnumerable<SelectModel<Guid>>>(selectModel);
-
-                return Ok(result);
+                return ResolveApiResponse(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetCompetitionsSelect)}");
+                _logger.LogError(ex, $"Error during {nameof(GetCompetitions)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

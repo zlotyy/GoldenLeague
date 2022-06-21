@@ -41,6 +41,7 @@ export default {
   },
   methods: {
     ...mapActions("user", ["setUser", "resetUser"]),
+    ...mapActions("common", ["resetCompetitions"]),
     async LogIn() {
       try {
         if (!this.isValid()) {
@@ -60,6 +61,8 @@ export default {
           this.$vToastify.customSuccess(
             userData.login + " - zostałeś zalogowany"
           );
+
+          await this.resetCompetitions();
 
           this.$router.push({
             name: "Home",
