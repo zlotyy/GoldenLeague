@@ -30,6 +30,7 @@ namespace GoldenLeague.Database
 		public ITable<BookmakerBets>                 BookmakerBets                 { get { return this.GetTable<BookmakerBets>(); } }
 		public ITable<BookmakerLeagues>              BookmakerLeagues              { get { return this.GetTable<BookmakerLeagues>(); } }
 		public ITable<BookmakerLeaguesLCompetitions> BookmakerLeaguesLCompetitions { get { return this.GetTable<BookmakerLeaguesLCompetitions>(); } }
+		public ITable<BookmakerLeaguesLUsers>        BookmakerLeaguesLUsers        { get { return this.GetTable<BookmakerLeaguesLUsers>(); } }
 		public ITable<Competitions>                  Competitions                  { get { return this.GetTable<Competitions>(); } }
 		public ITable<ConfigDictionary>              ConfigDictionary              { get { return this.GetTable<ConfigDictionary>(); } }
 		public ITable<Matches>                       Matches                       { get { return this.GetTable<Matches>(); } }
@@ -102,9 +103,34 @@ namespace GoldenLeague.Database
 	[Table(Schema="dbo", Name="BookmakerLeagues")]
 	public partial class BookmakerLeagues
 	{
-		[Column(DataType=LinqToDB.DataType.Guid),                PrimaryKey, NotNull] public Guid   LeagueId   { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),             NotNull] public string LeagueName { get; set; } // nvarchar(50)
-		[Column(DataType=LinqToDB.DataType.Char,     Length=1),              NotNull] public char   IsPrivate  { get; set; } // char(1)
+		[Column(DataType=LinqToDB.DataType.Guid),                PrimaryKey,  NotNull] public Guid     LeagueId     { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),              NotNull] public string   LeagueName   { get; set; } // nvarchar(50)
+		[Column(DataType=LinqToDB.DataType.Boolean),                          NotNull] public bool     IsPrivate    { get; set; } // bit
+		[Column(DataType=LinqToDB.DataType.Guid),                   Nullable         ] public Guid?    InsertUserId { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.DateTime),                         NotNull] public DateTime InsertDate   { get; set; } // datetime
+		[Column(DataType=LinqToDB.DataType.Boolean),                          NotNull] public bool     IsDeleted    { get; set; } // bit
+
+		#region Associations
+
+		/// <summary>
+		/// FK_BookmakerLeagues_Users
+		/// </summary>
+		[Association(ThisKey="InsertUserId", OtherKey="UserId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_BookmakerLeagues_Users", BackReferenceName="BookmakerLeagues")]
+		public Users InsertUser { get; set; }
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Competitions_BookmakerLeagues_BackReference
+		/// </summary>
+		[Association(ThisKey="LeagueId", OtherKey="LeagueId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<BookmakerLeaguesLCompetitions> LCompetitions { get; set; }
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Users_BookmakerLeagues_BackReference
+		/// </summary>
+		[Association(ThisKey="LeagueId", OtherKey="LeagueId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<BookmakerLeaguesLUsers> LUsers { get; set; }
+
+		#endregion
 	}
 
 	[Table(Schema="dbo", Name="BookmakerLeagues_l_Competitions")]
@@ -112,6 +138,57 @@ namespace GoldenLeague.Database
 	{
 		[Column(DataType=LinqToDB.DataType.Guid), PrimaryKey(1), NotNull] public Guid LeagueId      { get; set; } // uniqueidentifier
 		[Column(DataType=LinqToDB.DataType.Guid), PrimaryKey(2), NotNull] public Guid CompetitionId { get; set; } // uniqueidentifier
+
+		#region Associations
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Competitions_Competitions
+		/// </summary>
+		[Association(ThisKey="CompetitionId", OtherKey="CompetitionId", CanBeNull=false, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_BookmakerLeagues_l_Competitions_Competitions", BackReferenceName="BookmakerLeaguesls")]
+		public Competitions Competition { get; set; }
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Competitions_BookmakerLeagues
+		/// </summary>
+		[Association(ThisKey="LeagueId", OtherKey="LeagueId", CanBeNull=false, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_BookmakerLeagues_l_Competitions_BookmakerLeagues", BackReferenceName="LCompetitions")]
+		public BookmakerLeagues League { get; set; }
+
+		#endregion
+	}
+
+	[Table(Schema="dbo", Name="BookmakerLeagues_l_Users")]
+	public partial class BookmakerLeaguesLUsers
+	{
+		[Column(DataType=LinqToDB.DataType.Guid),     PrimaryKey(1), NotNull] public Guid      LeagueId           { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Guid),     PrimaryKey(2), NotNull] public Guid      UserId             { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   NotNull] public int       UserPoints         { get; set; } // int
+		/// <summary>
+		/// Trafiony typ, ale nie wynik
+		/// </summary>
+		[Column(DataType=LinqToDB.DataType.Int32),                   NotNull] public int       UserCorrectBets    { get; set; } // int
+		/// <summary>
+		/// Trafiony dokladny wynik
+		/// </summary>
+		[Column(DataType=LinqToDB.DataType.Int32),                   NotNull] public int       UserCorrectResults { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),       Nullable           ] public int?      UserRanking        { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.DateTime),                NotNull] public DateTime  UserJoinDate       { get; set; } // datetime
+		[Column(DataType=LinqToDB.DataType.DateTime),    Nullable           ] public DateTime? UserLeaveDate      { get; set; } // datetime
+
+		#region Associations
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Users_BookmakerLeagues
+		/// </summary>
+		[Association(ThisKey="LeagueId", OtherKey="LeagueId", CanBeNull=false, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_BookmakerLeagues_l_Users_BookmakerLeagues", BackReferenceName="LUsers")]
+		public BookmakerLeagues League { get; set; }
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Users_Users
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="UserId", CanBeNull=false, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_BookmakerLeagues_l_Users_Users", BackReferenceName="BookmakerLeaguesls")]
+		public Users User { get; set; }
+
+		#endregion
 	}
 
 	[Table(Schema="dbo", Name="Competitions")]
@@ -133,10 +210,22 @@ namespace GoldenLeague.Database
 		#region Associations
 
 		/// <summary>
+		/// FK_BookmakerLeagues_l_Competitions_Competitions_BackReference
+		/// </summary>
+		[Association(ThisKey="CompetitionId", OtherKey="CompetitionId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<BookmakerLeaguesLCompetitions> BookmakerLeaguesls { get; set; }
+
+		/// <summary>
 		/// FK_Matches_Competitions_BackReference
 		/// </summary>
 		[Association(ThisKey="CompetitionId", OtherKey="CompetitionId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
 		public IEnumerable<Matches> Matches { get; set; }
+
+		/// <summary>
+		/// FK_Teams_Competitions_BackReference
+		/// </summary>
+		[Association(ThisKey="CompetitionId", OtherKey="CompetitionId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<Teams> Teams { get; set; }
 
 		#endregion
 	}
@@ -237,8 +326,15 @@ namespace GoldenLeague.Database
 		/// Element key in external API, to get element statistics
 		/// </summary>
 		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable         ] public int?   ForeignKey           { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Guid),                    Nullable         ] public Guid?  CompetitionId        { get; set; } // uniqueidentifier
 
 		#region Associations
+
+		/// <summary>
+		/// FK_Teams_Competitions
+		/// </summary>
+		[Association(ThisKey="CompetitionId", OtherKey="CompetitionId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.ManyToOne, KeyName="FK_Teams_Competitions", BackReferenceName="Teams")]
+		public Competitions Competition { get; set; }
 
 		/// <summary>
 		/// FK_Matches_Teams_AwayTeam_BackReference
@@ -272,6 +368,18 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Boolean),                           NotNull] public bool   IsDeleted { get; set; } // bit
 
 		#region Associations
+
+		/// <summary>
+		/// FK_BookmakerLeagues_Users_BackReference
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="InsertUserId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<BookmakerLeagues> BookmakerLeagues { get; set; }
+
+		/// <summary>
+		/// FK_BookmakerLeagues_l_Users_Users_BackReference
+		/// </summary>
+		[Association(ThisKey="UserId", OtherKey="UserId", CanBeNull=true, Relationship=LinqToDB.Mapping.Relationship.OneToMany, IsBackReference=true)]
+		public IEnumerable<BookmakerLeaguesLUsers> BookmakerLeaguesls { get; set; }
 
 		/// <summary>
 		/// FK_MatchBetting_Users_BackReference
@@ -480,6 +588,13 @@ namespace GoldenLeague.Database
 			return table.FirstOrDefault(t =>
 				t.LeagueId      == LeagueId &&
 				t.CompetitionId == CompetitionId);
+		}
+
+		public static BookmakerLeaguesLUsers Find(this ITable<BookmakerLeaguesLUsers> table, Guid LeagueId, Guid UserId)
+		{
+			return table.FirstOrDefault(t =>
+				t.LeagueId == LeagueId &&
+				t.UserId   == UserId);
 		}
 
 		public static Competitions Find(this ITable<Competitions> table, Guid CompetitionId)

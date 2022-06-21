@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Database;
-using GoldenLeague.TransportModels.MatchBetting;
+using GoldenLeague.TransportModels.Bookmaker;
 using LinqToDB;
 using Microsoft.Extensions.Logging;
 using System;

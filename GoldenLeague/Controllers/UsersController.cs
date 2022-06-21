@@ -4,7 +4,7 @@ using GoldenLeague.Database.Enums;
 using GoldenLeague.Database.Queries;
 using GoldenLeague.Helpers;
 using GoldenLeague.TransportModels.Common;
-using GoldenLeague.TransportModels.MatchBetting;
+using GoldenLeague.TransportModels.Bookmaker;
 using GoldenLeague.TransportModels.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -68,6 +68,51 @@ namespace GoldenLeague.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error during {nameof(CreateUser)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("{id}/bookmaker-leagues-joined")]
+        public IActionResult GetBookmakerLeaguesJoined([FromRoute] Guid id)
+        {
+            try
+            {
+                var response = _restService.Get<Result<IEnumerable<LeagueModel>>>(ApiUrlHelper.UserBookmakerLeaguesJoined(id));
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeaguesJoined)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("{id}/bookmaker-league-join")]
+        public IActionResult GetBookmakerLeagueJoin([FromRoute] Guid id, [FromBody] LeagueJoinModel model)
+        {
+            try
+            {
+                var response = _restService.Post<Result<bool>>(ApiUrlHelper.UserBookmakerLeagueJoin(id), model);
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeagueJoin)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("{id}/bookmaker-league-leave")]
+        public IActionResult GetBookmakerLeagueLeave([FromRoute] Guid id, [FromBody] LeagueLeaveModel model)
+        {
+            try
+            {
+                var response = _restService.Post<Result<bool>>(ApiUrlHelper.UserBookmakerLeagueLeave(id), model);
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeagueLeave)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

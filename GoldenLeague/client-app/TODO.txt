@@ -1,3 +1,5 @@
+Hashowanie hasła
+
 Tworzenie użytkownika:
   Ma tworzyć wpis [BookmakerLeagues_l_Users] dla ligi globalnej
 

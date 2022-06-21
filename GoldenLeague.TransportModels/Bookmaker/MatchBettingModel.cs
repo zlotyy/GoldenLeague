@@ -1,7 +1,7 @@
 ﻿using GoldenLeague.TransportModels.Common;
 using System;
 
-namespace GoldenLeague.TransportModels.MatchBetting
+namespace GoldenLeague.TransportModels.Bookmaker
 {
     public class BookmakerBetModel
     {

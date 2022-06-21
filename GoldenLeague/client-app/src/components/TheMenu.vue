@@ -3,18 +3,10 @@
     <v-app-bar-nav-icon :to="{ name: 'Home' }">
       <v-icon>fas fa-futbol</v-icon>
     </v-app-bar-nav-icon>
-    <v-toolbar-title :to="{ name: 'Home' }" class="d-none d-md-flex">{{
-      $t("common.appName")
-    }}</v-toolbar-title>
+    <v-toolbar-title :to="{ name: 'Home' }" class="d-none d-md-flex">
+      {{ toolbarTitle }}
+    </v-toolbar-title>
     <v-divider class="mx-4" vertical></v-divider>
-    <!-- <v-btn text v-if="isAuthorized()" :to="{ name: 'Ranking' }">
-      <v-icon>fas fa-table</v-icon>
-      <span class="ml-1 d-none d-md-flex">{{ $t("common.ranking") }}</span>
-    </v-btn> -->
-    <!-- <v-btn text :to="{ name: 'MySquad' }">
-      <v-icon>fas fa-running</v-icon>
-      <span class="ml-1">{{ $t("common.squad") }}</span>
-    </v-btn> -->
     <v-btn text v-if="isAuthorized()" :to="{ name: 'BookmakerLeagues' }">
       <v-icon>fas fa-table</v-icon>
       <span class="ml-1 d-none d-md-flex">{{
@@ -52,8 +44,13 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "TheMenu",
+  computed: {
+    toolbarTitle() {
+      return this.isAuthorized() ? this.getLogin() : this.$t("common.appName");
+    },
+  },
   methods: {
-    ...mapGetters("user", ["isAuthorized"]),
+    ...mapGetters("user", ["isAuthorized", "getLogin"]),
     ...mapActions("user", ["logout"]),
     async Logout() {
       await this.logout();

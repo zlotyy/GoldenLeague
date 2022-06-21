@@ -3,7 +3,7 @@ using GoldenLeague.Api.Commands;
 using GoldenLeague.Api.Queries;
 using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Common;
-using GoldenLeague.TransportModels.MatchBetting;
+using GoldenLeague.TransportModels.Bookmaker;
 using GoldenLeague.TransportModels.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +19,14 @@ namespace GoldenLeague.Api.Controllers
         private readonly IUserQueries _userQueries;
         private readonly IUserCommands _userCommands;
         private readonly IBookmakerBetQueries _bookmakerBetQueries;
+        private readonly IBookmakerLeagueQueries _bookmakerLeagueQueries;
         private readonly IBookmakerBetCommands _bookmakerBetCommands;
+        private readonly IBookmakerLeagueCommands _bookmakerLeagueCommands;
         private readonly IMapper _mapper;
 
         public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IUserCommands userCommands,
-            IBookmakerBetQueries bookmakerBetQueries, IBookmakerBetCommands bookmakerBetCommands, IMapper mapper)
+            IBookmakerBetQueries bookmakerBetQueries, IBookmakerBetCommands bookmakerBetCommands, IMapper mapper, 
+            IBookmakerLeagueQueries bookmakerLeagueQueries, IBookmakerLeagueCommands bookmakerLeagueCommands)
         {
             _logger = logger;
             _userQueries = userQueries;
@@ -31,6 +34,8 @@ namespace GoldenLeague.Api.Controllers
             _bookmakerBetCommands = bookmakerBetCommands;
             _mapper = mapper;
             _userCommands = userCommands;
+            _bookmakerLeagueQueries = bookmakerLeagueQueries;
+            _bookmakerLeagueCommands = bookmakerLeagueCommands;
         }
 
         [HttpPost("authenticate")]
@@ -97,6 +102,7 @@ namespace GoldenLeague.Api.Controllers
             {
                 _logger.LogError(ex, $"Error during {nameof(GetBookmakerBets)}");
                 result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
             }
 
             return Ok(result);
@@ -113,6 +119,7 @@ namespace GoldenLeague.Api.Controllers
                 if (!updateResult)
                 {
                     result.Errors.Add(ErrorLocalization.ErrorDBUpsert);
+                    return InternalServerError(result);
                 }
                 else
                 {
@@ -123,6 +130,50 @@ namespace GoldenLeague.Api.Controllers
             {
                 _logger.LogError(ex, $"Error during {nameof(GetBookmakerBets)}");
                 result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/bookmaker-leagues-joined")]
+        public IActionResult GetBookmakerLeaguesJoined([FromRoute] Guid id)
+        {
+            var result = new Result<IEnumerable<LeagueModel>>(new List<LeagueModel>());
+
+            try
+            {
+                result.Data = _bookmakerLeagueQueries.GetJoinedLeagues(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeaguesJoined)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/bookmaker-league-join")]
+        public IActionResult JoinLeague([FromBody] LeagueJoinModel model)
+        {
+            var result = _bookmakerLeagueCommands.LeagueJoin(model);
+            if (!result.Success)
+            {
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/bookmaker-league-leave")]
+        public IActionResult LeaveLeague([FromBody] LeagueLeaveModel model)
+        {
+            var result = _bookmakerLeagueCommands.LeagueLeave(model);
+            if (!result.Success)
+            {
+                return InternalServerError(result);
             }
 
             return Ok(result);

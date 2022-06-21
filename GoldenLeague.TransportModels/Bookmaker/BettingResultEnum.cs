@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace GoldenLeague.TransportModels.MatchBetting
+namespace GoldenLeague.TransportModels.Bookmaker
 {
     public enum BetResultEnum
     {

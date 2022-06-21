@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GoldenLeague.Database;
 using GoldenLeague.TransportModels.Common;
-using GoldenLeague.TransportModels.MatchBetting;
+using GoldenLeague.TransportModels.Bookmaker;
 
 namespace GoldenLeague.Api.Automapper
 {
