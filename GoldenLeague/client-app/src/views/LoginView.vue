@@ -44,7 +44,7 @@ export default {
     ...mapActions("common", ["resetCompetitions"]),
     async LogIn() {
       try {
-        if (!this.isValid()) {
+        if (!this.$_isValid()) {
           return;
         }
 
@@ -77,7 +77,7 @@ export default {
         await this.resetUser();
       }
     },
-    isValid() {
+    $_isValid() {
       if (this.login.length < 1) {
         this.$vToastify.validationError("Login nie może być pusty");
         return false;

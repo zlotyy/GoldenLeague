@@ -1,3 +1,5 @@
+import UserService from "@/services/UserService.js";
+
 const moduleState = { id: null, login: "", token: "" };
 
 const mutations = {
@@ -27,13 +29,16 @@ const actions = {
   async logout({ commit }) {
     commit("SET_USER", {});
   },
-  // TODO
-  // updateToken({ commit, state }) {
-  //   return LoginService.refreshToken(state.token).then(r => {
-  //     const { token } = r.data;
-  //     commit('UPDATE_TOKEN', token);
-  //   });
-  // }
+  async updateToken({ commit, state }) {
+    try {
+      const response = await UserService.RefreshToken(state.token);
+      const token = response.data.data;
+      commit("UPDATE_TOKEN", token);
+      return Promise.resolve(response);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
 };
 
 export default {

@@ -1,5 +1,6 @@
 ﻿using GoldenLeague.Database;
 using GoldenLeague.TransportModels.Users;
+using System;
 using System.Linq;
 
 namespace GoldenLeague.Api.Queries
@@ -8,6 +9,7 @@ namespace GoldenLeague.Api.Queries
     {
         Users GetUser(string login);
         bool UserExists(string login);
+        bool UserExists(Guid userId);
     }
     public class UserQueries : IUserQueries
     {
@@ -31,6 +33,14 @@ namespace GoldenLeague.Api.Queries
             using (var db = _dbContextFactory.Create())
             {
                 return db.Users.Any(x => x.Login == login && !x.IsDeleted);
+            }
+        }
+
+        public bool UserExists(Guid userId)
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.Users.Any(x => x.UserId == userId && !x.IsDeleted);
             }
         }
     }

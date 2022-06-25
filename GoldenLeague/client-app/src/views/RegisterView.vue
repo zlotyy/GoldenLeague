@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     async Register() {
-      if (!this.isValid()) {
+      if (!this.$_isValid()) {
         return;
       }
 
@@ -54,7 +54,7 @@ export default {
         });
       }
     },
-    isValid() {
+    $_isValid() {
       if (this.login.length < 1) {
         this.$vToastify.validationError("Login nie może być pusty");
         return false;

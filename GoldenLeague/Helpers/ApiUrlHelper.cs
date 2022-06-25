@@ -8,7 +8,8 @@ namespace GoldenLeague.Helpers
         public static string Competitions => $"{CommonBase}/competitions";
 
         public static string UsersBase => "users";
-        public static string UsersAuthenticate => $"{UsersBase}/authenticate";
+        public static string UserAuthenticate => $"{UsersBase}/authenticate";
+        public static string UserExists(Guid userId) => $"{UsersBase}/{userId}/exists";
         public static string UserBookmakerBetsGet(Guid userId, int seasonNo) => $"{UsersBase}/{userId}/bookmaker-bets/?seasonNo={seasonNo}";
         public static string UserBookmakerBetsUpdate(Guid userId) => $"{UsersBase}/{userId}/bookmaker-bets";
         public static string UserBookmakerLeaguesJoined(Guid userId) => $"{UsersBase}/{userId}/bookmaker-leagues-joined";

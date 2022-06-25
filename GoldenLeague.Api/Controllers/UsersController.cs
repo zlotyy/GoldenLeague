@@ -39,7 +39,7 @@ namespace GoldenLeague.Api.Controllers
         }
 
         [HttpPost("authenticate")]
-        public IActionResult GetUser([FromBody] UserCredentials credentials)
+        public IActionResult AuthUser([FromBody] UserCredentials credentials)
         {
             var result = new Result<UserModel>();
             var user = _userQueries.GetUser(credentials.Login);
@@ -64,6 +64,32 @@ namespace GoldenLeague.Api.Controllers
                 FullName = user.FullName,
                 IsAdmin = user.IsAdmin
             };
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/exists")]
+        public IActionResult UserExists([FromRoute] Guid id)
+        {
+            var result = new Result<bool>();
+            try
+            {
+                var user = _userQueries.UserExists(id);
+
+                if (!user)
+                {
+                    result.Errors.Add("Nie znaleziono użytkownika o podanym id");
+                    return NotFound(result);
+                }
+
+                result.Data = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(UserExists)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
+            }
 
             return Ok(result);
         }
@@ -158,6 +184,18 @@ namespace GoldenLeague.Api.Controllers
         [HttpPost("{id}/bookmaker-league-join")]
         public IActionResult JoinLeague([FromBody] LeagueJoinModel model)
         {
+            var leagueExists = _bookmakerLeagueQueries.LeagueExists(model.LeagueId);
+            if (!leagueExists)
+            {
+                return BadRequest(new Result<bool>($"Liga o identyfikatorze '{model.LeagueId}' nie istnieje"));
+            }
+
+            var leagueJoined = _bookmakerLeagueQueries.LeagueAlreadyJoined(model.LeagueId, model.UserId);
+            if (leagueJoined)
+            {
+                return BadRequest(new Result<bool>("Dołączyłeś już do tej ligi"));
+            }
+
             var result = _bookmakerLeagueCommands.LeagueJoin(model);
             if (!result.Success)
             {

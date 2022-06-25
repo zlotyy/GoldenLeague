@@ -10,6 +10,13 @@ Vue.use(VueToastify, {
       canTimeout: true,
       duration: "4000",
     },
+    authorizationError: {
+      defaultTitle: false,
+      body: "Wystąpił błąd podczas autoryzacji, zaloguj się ponownie",
+      type: "error",
+      canTimeout: true,
+      duration: "4000",
+    },
     unexpectedError: {
       defaultTitle: false,
       body: "Wystąpił nieoczekiwany błąd",

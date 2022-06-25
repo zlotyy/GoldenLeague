@@ -5,7 +5,9 @@
       <v-card>
         <v-row>
           <LeagueCreateDialog></LeagueCreateDialog>
-          <LeagueJoinDialog></LeagueJoinDialog>
+          <LeagueJoinDialog
+            @league-joined="SetLeaguesData()"
+          ></LeagueJoinDialog>
         </v-row>
         <!-- <v-divider class="mt-3"></v-divider> -->
         <v-card-title class="mt-5">Liga globalna</v-card-title>
@@ -81,22 +83,21 @@ export default {
     },
   },
   mounted() {
-    this.$_setLeaguesData();
+    this.SetLeaguesData();
   },
   methods: {
     ...mapGetters("user", ["getUserId"]),
-    async $_setLeaguesData() {
+    async SetLeaguesData() {
       try {
         const response = await UserService.GetBookmakerLeaguesJoined(
           this.getUserId()
         );
+
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.leagues = response.data.data;
-        } else {
-          this.$vToastify.customError("Nie udało się pobrać lig użytkownika");
         }
       } catch (err) {
-        this.$vToastify.customError("Nie udało się pobrać lig użytkownika");
+        return;
       }
     },
   },

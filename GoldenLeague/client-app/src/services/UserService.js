@@ -11,6 +11,9 @@ export default {
   async Register(login, password) {
     return axios.post(API_URL, { login, password });
   },
+  async RefreshToken(token) {
+    return axios.post("login/refresh-token", { token });
+  },
   async GetBookmakerLeaguesJoined(userId) {
     return axios.get(`${API_URL}/${userId}/bookmaker-leagues-joined`);
   },

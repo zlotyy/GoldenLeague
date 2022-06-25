@@ -13,6 +13,7 @@ namespace GoldenLeague.Api.Queries
     {
         IEnumerable<LeagueModel> GetJoinedLeagues(Guid userId);
         IEnumerable<CompetitionModel> GetCompetitions();
+        bool LeagueExists(Guid leagueId);
         bool LeagueExists(string name);
         bool LeagueAlreadyJoined(Guid leagueId, Guid userId);
     }
@@ -77,6 +78,14 @@ namespace GoldenLeague.Api.Queries
                     .ToList();
 
                 return data;
+            }
+        }
+
+        public bool LeagueExists(Guid leagueId)
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.BookmakerLeagues.Any(x => x.LeagueId == leagueId && !x.IsDeleted);
             }
         }
 

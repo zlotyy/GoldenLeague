@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.Tasks;
 using VueCliMiddleware;
 using RestService = GoldenLeague.Services.RestService;
 
@@ -52,7 +53,17 @@ namespace GoldenLeague
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
-                // TODO? RefreshToken
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddControllers()

@@ -8,13 +8,24 @@
       </v-col>
     </template>
     <v-card>
-      <v-card-title>Dołącz do prywatnej ligi</v-card-title>
+      <v-card-title>
+        Dołącz do prywatnej ligi
+        <v-spacer></v-spacer>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon v-bind="attrs" v-on="on"> fas fa-info-circle </v-icon>
+          </template>
+          <span>
+            Aby dołączyć do prywatnej ligi musisz poprosić jej założyciela o kod
+          </span>
+        </v-tooltip>
+      </v-card-title>
       <v-card-text>
         <v-text-field label="Kod ligi" v-model="leagueCode"> </v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn class="primary" outlined @click="dialog = false"> Anuluj </v-btn>
+        <v-btn class="primary" outlined @click="CloseDialog()"> Anuluj </v-btn>
         <v-btn class="primary" outlined @click="SubmitLeagueJoin()">
           Dołącz
         </v-btn>
@@ -37,7 +48,9 @@ export default {
     ...mapGetters("user", ["getUserId"]),
     async SubmitLeagueJoin() {
       try {
-        // TODO walidacja
+        if (!this.$_isValid()) {
+          return;
+        }
 
         const response = await UserService.BookmakerLeagueJoin(
           this.getUserId(),
@@ -46,15 +59,36 @@ export default {
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.$vToastify.customSuccess("Dołączyłeś do nowej ligi");
-          this.dialog = false;
-          this.leagueCode = "";
-          // TODO Emituj event żeby przeładować ligi
-        } else {
-          this.$vToastify.customError("Nie udało się dołączyć do ligi");
+          this.CloseDialog();
+          this.$emit("league-joined");
         }
       } catch (err) {
-        this.$vToastify.customError("Nie udało się dołączyć do ligi");
+        if (err.status === 404) {
+          this.$vToastify.customWarning("Nie znaleziono użytkownika");
+        }
       }
+    },
+    CloseDialog() {
+      this.dialog = false;
+      this.leagueCode = "";
+    },
+    $_isValid() {
+      const pattern =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+      if (!this.leagueCode) {
+        this.$vToastify.validationError("Wprowadź kod ligi");
+        return false;
+      }
+
+      if (!pattern.test(this.leagueCode)) {
+        this.$vToastify.validationError(
+          "Wprowadzony kod ligi jest nieprawidłowy"
+        );
+        return false;
+      }
+
+      return true;
     },
   },
 };

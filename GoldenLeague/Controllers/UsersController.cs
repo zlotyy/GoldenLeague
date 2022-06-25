@@ -32,6 +32,22 @@ namespace GoldenLeague.Controllers
             _currentSeasonNo = int.Parse(_queries.GetConfigValue(ConfigKeys.CURRENT_SEASON_NO));
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] UserCreateModel model)
+        {
+            try
+            {
+                var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersBase, model);
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(CreateUser)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpGet("{id}/bookmaker-bets")]
         public IActionResult GetMatchBetting([FromRoute] Guid id)
         {
@@ -56,22 +72,6 @@ namespace GoldenLeague.Controllers
             return Ok(response.Data);
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult CreateUser([FromBody] UserCreateModel model)
-        {
-            try
-            {
-                var response = _restService.Post<Result<UserModel>>(ApiUrlHelper.UsersBase, model);
-                return ResolveApiResponse(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error during {nameof(CreateUser)}");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
         [HttpGet("{id}/bookmaker-leagues-joined")]
         public IActionResult GetBookmakerLeaguesJoined([FromRoute] Guid id)
         {
@@ -88,7 +88,7 @@ namespace GoldenLeague.Controllers
         }
 
         [HttpPost("{id}/bookmaker-league-join")]
-        public IActionResult GetBookmakerLeagueJoin([FromRoute] Guid id, [FromBody] LeagueJoinModel model)
+        public IActionResult BookmakerLeagueJoin([FromRoute] Guid id, [FromBody] LeagueJoinModel model)
         {
             try
             {
@@ -97,13 +97,13 @@ namespace GoldenLeague.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeagueJoin)}");
+                _logger.LogError(ex, $"Error during {nameof(BookmakerLeagueJoin)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPost("{id}/bookmaker-league-leave")]
-        public IActionResult GetBookmakerLeagueLeave([FromRoute] Guid id, [FromBody] LeagueLeaveModel model)
+        public IActionResult BookmakerLeagueLeave([FromRoute] Guid id, [FromBody] LeagueLeaveModel model)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace GoldenLeague.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetBookmakerLeagueLeave)}");
+                _logger.LogError(ex, $"Error during {nameof(BookmakerLeagueLeave)}");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

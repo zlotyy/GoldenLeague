@@ -16,6 +16,11 @@ namespace GoldenLeague.TransportModels.Common
             Errors = new List<string>();
         }
 
+        public Result(string error)
+        {
+            Errors = new List<string> { error };
+        }
+
         public Result(List<string> errors)
         {
             Errors = errors;
