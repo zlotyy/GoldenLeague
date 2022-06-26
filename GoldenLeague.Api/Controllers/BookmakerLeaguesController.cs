@@ -28,7 +28,7 @@ namespace GoldenLeague.Api.Controllers
             var result = new Result<bool>();
             if (_leagueQueries.LeagueExists(model.Name))
             {
-                result.Errors.Add("Liga o takiej nazwie już istnieje");
+                result.Errors.Add("Liga prywatna o takiej nazwie już istnieje");
                 return BadRequest(result);
             }
 

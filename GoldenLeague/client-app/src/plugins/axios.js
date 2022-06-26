@@ -76,12 +76,17 @@ axios.interceptors.response.use(
       return Promise.resolve(response);
     }
 
-    if (response.status === 401) {
+    if (status === 401) {
       Vue.$vToastify.unauthorizedError();
       return Promise.resolve(response);
     }
 
-    if (response.status === 500) {
+    if (status === 404) {
+      Vue.$vToastify.unexpectedError();
+      return Promise.resolve(response);
+    }
+
+    if (status === 500) {
       Vue.$vToastify.unexpectedError();
       return Promise.resolve(response);
     }

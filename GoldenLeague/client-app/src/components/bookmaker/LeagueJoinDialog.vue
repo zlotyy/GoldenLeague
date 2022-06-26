@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog
+    v-model="dialog"
+    persistent
+    max-width="600px"
+    @keydown.esc="CloseDialog()"
+  >
     <template v-slot:activator="{ on, attrs }">
       <v-col class="d-flex flex-column" cols="12" md="6">
         <v-btn class="primary" outlined v-bind="attrs" v-on="on">
@@ -36,7 +41,6 @@
 
 <script>
 import UserService from "@/services/UserService";
-import { mapGetters } from "vuex";
 
 export default {
   name: "LeagueJoinDialog",
@@ -45,17 +49,13 @@ export default {
     leagueCode: "",
   }),
   methods: {
-    ...mapGetters("user", ["getUserId"]),
     async SubmitLeagueJoin() {
       try {
         if (!this.$_isValid()) {
           return;
         }
 
-        const response = await UserService.BookmakerLeagueJoin(
-          this.getUserId(),
-          this.leagueCode
-        );
+        const response = await UserService.BookmakerLeagueJoin(this.leagueCode);
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.$vToastify.customSuccess("Dołączyłeś do nowej ligi");
@@ -71,6 +71,7 @@ export default {
     CloseDialog() {
       this.dialog = false;
       this.leagueCode = "";
+      this.$emit("input");
     },
     $_isValid() {
       const pattern =

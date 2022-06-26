@@ -35,30 +35,37 @@ namespace GoldenLeague.Api.Commands
             {
                 using (var db = _dbContextFactory.Create())
                 {
+                    var now = DateTime.Now;
                     var leagueId = Guid.NewGuid();
-                    var leagueCompetitions = model.Competitions
+                    var leagueCompetitions = model.CompetitionIds
                         .Select(competitionId => new BookmakerLeaguesLCompetitions
                         {
                             LeagueId = leagueId,
                             CompetitionId = competitionId
                         });
 
-                    db.Insert(new BookmakerLeagues
+                    using (var transaction = db.BeginTransaction())
                     {
-                        LeagueId = leagueId,
-                        LeagueName = model.Name,
-                        InsertUserId = model.InsertUserId,
-                        IsPrivate = true,
-                        InsertDate = DateTime.Now
-                    });
+                        db.Insert(new BookmakerLeagues
+                        {
+                            LeagueId = leagueId,
+                            LeagueName = model.Name,
+                            InsertUserId = model.InsertUserId,
+                            IsPrivate = true,
+                            InsertDate = now
+                        });
 
-                    db.Insert(new BookmakerLeaguesLUsers
-                    {
-                        LeagueId = leagueId,
-                        UserId = model.InsertUserId
-                    });
+                        db.BulkCopy(leagueCompetitions);
 
-                    db.BulkCopy(leagueCompetitions);
+                        db.Insert(new BookmakerLeaguesLUsers
+                        {
+                            LeagueId = leagueId,
+                            UserId = model.InsertUserId,
+                            UserJoinDate = now
+                        });
+
+                        transaction.Commit();
+                    }
                 }
 
                 result.Data = true;

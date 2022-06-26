@@ -1,8 +1,6 @@
 import axios from "@/plugins/axios.js";
+import store from "../store";
 const API_URL = "users";
-
-// TODO GetBookmakerBets i UpdateBookmakerBets - UserId jest już w Store
-// const userId = "35CE5DF3-CBCD-4A43-9582-A51CBEC26B91";
 
 export default {
   async LogIn(login, password) {
@@ -14,29 +12,35 @@ export default {
   async RefreshToken(token) {
     return axios.post("login/refresh-token", { token });
   },
-  async GetBookmakerLeaguesJoined(userId) {
-    return axios.get(`${API_URL}/${userId}/bookmaker-leagues-joined`);
+  async GetBookmakerLeaguesJoined() {
+    return axios.get(
+      `${API_URL}/${store.state.user.id}/bookmaker-leagues-joined`
+    );
   },
-  async BookmakerLeagueJoin(userId, leagueId) {
-    return axios.post(`${API_URL}/${userId}/bookmaker-league-join`, {
-      userId,
-      leagueId,
-    });
+  async BookmakerLeagueJoin(leagueId) {
+    return axios.post(
+      `${API_URL}/${store.state.user.id}/bookmaker-league-join`,
+      {
+        userId: store.state.user.id,
+        leagueId,
+      }
+    );
   },
-  async BookmakerLeagueLeave(userId, leagueId) {
-    return axios.post(`${API_URL}/${userId}/bookmaker-league-leave`, {
-      userId,
-      leagueId,
-    });
+  async BookmakerLeagueLeave(leagueId) {
+    return axios.post(
+      `${API_URL}/${store.state.user.id}/bookmaker-league-leave`,
+      {
+        userId: store.state.user.id,
+        leagueId,
+      }
+    );
   },
   GetBookmakerBets() {
-    return axios.get(
-      `${API_URL}/35CE5DF3-CBCD-4A43-9582-A51CBEC26B91/bookmaker-bets`
-    );
+    return axios.get(`${API_URL}/${store.state.user.id}/bookmaker-bets`);
   },
   UpdateBookmakerBets(items) {
     return axios.patch(
-      `${API_URL}/35CE5DF3-CBCD-4A43-9582-A51CBEC26B91/bookmaker-bets`,
+      `${API_URL}/${store.state.user.id}/bookmaker-bets`,
       items
     );
   },

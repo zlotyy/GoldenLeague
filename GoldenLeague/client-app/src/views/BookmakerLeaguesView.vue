@@ -4,7 +4,9 @@
       <div class="text-h5 mb-5">Ligi typerów</div>
       <v-card>
         <v-row>
-          <LeagueCreateDialog></LeagueCreateDialog>
+          <LeagueCreateDialog
+            @league-created="SetLeaguesData()"
+          ></LeagueCreateDialog>
           <LeagueJoinDialog
             @league-joined="SetLeaguesData()"
           ></LeagueJoinDialog>
@@ -33,22 +35,41 @@
           :items-per-page="-1"
           mobile-breakpoint="0"
         >
-          <template v-slot:item.options="{}">
-            <v-menu offset-y rounded="lg">
+          <template v-slot:[`item.options`]="{ item }">
+            <v-menu offset-y bottom rounded="lg">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on">fas fa-ellipsis-v</v-icon>
+                <v-btn icon>
+                  <v-icon v-bind="attrs" v-on="on">fas fa-ellipsis-v</v-icon>
+                </v-btn>
               </template>
               <v-list>
-                <v-list-item>
+                <v-list-item @click="CopyLeagueCode(item.leagueId)">
                   <v-list-item-title>Skopiuj kod ligi</v-list-item-title>
                 </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>Opuść ligę</v-list-item-title>
-                </v-list-item>
+                <base-confirm
+                  :message="
+                    'Czy jesteś pewien że chcesz opuścić ligę ' +
+                    item.leagueName +
+                    '?'
+                  "
+                  @confirm="LeaveLeague(item.leagueId)"
+                >
+                  <template v-slot:default="{ on }">
+                    <v-list-item @click="() => {}">
+                      <v-list-item-title v-on="on">
+                        Opuść ligę
+                      </v-list-item-title>
+                    </v-list-item>
+                  </template>
+                </base-confirm>
               </v-list>
             </v-menu>
           </template>
         </v-data-table>
+        <base-confirm
+          :show="!!selectedItem"
+          confirm-text="Text 1"
+        ></base-confirm>
       </v-card>
     </v-col>
   </v-row>
@@ -57,12 +78,12 @@
 <script>
 import LeagueCreateDialog from "@/components/bookmaker/LeagueCreateDialog.vue";
 import LeagueJoinDialog from "@/components/bookmaker/LeagueJoinDialog.vue";
+import BaseConfirm from "@/components/base/BaseConfirm.vue";
 import UserService from "@/services/UserService";
-import { mapGetters } from "vuex";
 
 export default {
   name: "BookmakerLeaguesView",
-  components: { LeagueCreateDialog, LeagueJoinDialog },
+  components: { LeagueCreateDialog, LeagueJoinDialog, BaseConfirm },
   data() {
     return {
       headers: [
@@ -72,6 +93,8 @@ export default {
       ],
       leagues: [],
       loading: false,
+      selectedItem: undefined,
+      showDeleteConfirm: false,
     };
   },
   computed: {
@@ -86,15 +109,28 @@ export default {
     this.SetLeaguesData();
   },
   methods: {
-    ...mapGetters("user", ["getUserId"]),
     async SetLeaguesData() {
       try {
-        const response = await UserService.GetBookmakerLeaguesJoined(
-          this.getUserId()
-        );
+        const response = await UserService.GetBookmakerLeaguesJoined();
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.leagues = response.data.data;
+        }
+      } catch (err) {
+        return;
+      }
+    },
+    async CopyLeagueCode(code) {
+      await window.navigator.clipboard.writeText(code);
+      this.$vToastify.customSuccess("Kod ligi został skopiowany");
+    },
+    async LeaveLeague(leagueId) {
+      try {
+        const response = await UserService.BookmakerLeagueLeave(leagueId);
+
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          this.$vToastify.customSuccess("Opuściłeś ligę");
+          this.SetLeaguesData();
         }
       } catch (err) {
         return;
