@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoldenLeague.Api.Controllers
 {
@@ -114,15 +115,38 @@ namespace GoldenLeague.Api.Controllers
         }
 
         [HttpGet("{id}/bookmaker-bets")]
-        public IActionResult GetBookmakerBets([FromRoute] Guid id, [FromQuery] int seasonNo)
+        public IActionResult GetBookmakerBets([FromRoute] Guid id)
         {
-            var result = new Result<IEnumerable<BookmakerBetModel>>(new List<BookmakerBetModel>());
+            var result = new Result<IEnumerable<BookmakerUserBetsModel>>(new List<BookmakerUserBetsModel>());
 
             try
             {
-                var data = _bookmakerBetQueries.GetBets(id, seasonNo);
-                var mappedData = _mapper.Map<List<BookmakerBetModel>>(data);
-                result.Data = mappedData;
+                var data = _bookmakerBetQueries.GetUserBets(id);
+                var competitionsGroupedData = data
+                    .GroupBy(x => x.CompetitionsId)
+                    .Select(x => new BookmakerUserBetsModel
+                    {
+                        CompetitionsId = x.Key,
+                        UserBets = x.Select(s => new BookmakerBetRecord
+                        {
+                            Match = new MatchFullModel(
+                                s.MatchId,
+                                s.SeasonNo,
+                                s.GameweekNo,
+                                s.MatchDateTime,
+                                new TeamModel(s.HomeTeamId, s.HomeForeignKey, s.HomeTeamName, s.HomeTeamNameShort, s.HomeTeamNameAbbreviation),
+                                new TeamModel(s.AwayTeamId, s.AwayForeignKey, s.AwayTeamName, s.AwayTeamNameShort, s.AwayTeamNameAbbreviation),
+                                s.HomeTeamScoreActual,
+                                s.AwayTeamScoreActual),
+                            MatchResultBet = new MatchResultBetModel(
+                                s.HomeTeamScoreBet,
+                                s.AwayTeamScoreBet,
+                                s.BettingPoints)
+                        })
+                    })
+                    .ToList();
+
+                result.Data = competitionsGroupedData;
             }
             catch (Exception ex)
             {
@@ -135,13 +159,13 @@ namespace GoldenLeague.Api.Controllers
         }
 
         [HttpPatch("{id}/bookmaker-bets")]
-        public IActionResult UpdateBookmakerBet([FromRoute] Guid id, [FromBody] List<BookmakerBetModel> model)
+        public IActionResult UpdateBookmakerBet([FromRoute] Guid id, [FromBody] List<BookmakerBetRecord> model)
         {
             var result = new Result<bool>();
 
             try
             {
-                var updateResult = _bookmakerBetCommands.UpdateBet(model);
+                var updateResult = _bookmakerBetCommands.UpdateBets(model, id);
                 if (!updateResult)
                 {
                     result.Errors.Add(ErrorLocalization.ErrorDBUpsert);

@@ -9,7 +9,7 @@ namespace GoldenLeague.Api.Queries
 {
     public interface IBookmakerBetQueries
     {
-        IEnumerable<VBookmakerBet> GetBets(Guid userId, int seasonNo);
+        IEnumerable<VBookmakerBet> GetUserBets(Guid userId);
     }
 
     public class BookmakerBetQueries : IBookmakerBetQueries
@@ -25,11 +25,11 @@ namespace GoldenLeague.Api.Queries
             _mapper = mapper;
         }
 
-        public IEnumerable<VBookmakerBet> GetBets(Guid userId, int seasonNo)
+        public IEnumerable<VBookmakerBet> GetUserBets(Guid userId)
         {
             using (var db = _dbContextFactory.Create())
             {
-                return db.GetUserBookmakerBet(userId, seasonNo).ToList();
+                return db.GetUserBookmakerBets(userId).ToList();
             }
         }
     }

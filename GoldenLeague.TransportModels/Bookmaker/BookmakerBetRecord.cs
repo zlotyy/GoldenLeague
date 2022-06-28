@@ -1,23 +1,20 @@
 ﻿using GoldenLeague.TransportModels.Common;
-using System;
 
 namespace GoldenLeague.TransportModels.Bookmaker
 {
-    public class BookmakerBetModel
+    public class BookmakerBetRecord
     {
-        public BookmakerBetModel()
+        public BookmakerBetRecord()
         {
 
         }
 
-        public BookmakerBetModel(Guid userId, MatchFullModel match, MatchResultBetModel matchResultBet)
+        public BookmakerBetRecord(MatchFullModel match, MatchResultBetModel matchResultBet)
         {
-            UserId = userId;
             Match = match;
             MatchResultBet = matchResultBet;
         }
 
-        public Guid UserId { get; set; }
         public MatchFullModel Match { get; set; }
         public MatchResultBetModel MatchResultBet { get; set; }
     }
@@ -29,17 +26,20 @@ namespace GoldenLeague.TransportModels.Bookmaker
 
         }
 
-        public MatchResultBetModel(int? homeTeamScoreBet, int? awayTeamScoreBet, int? bettingPoints, BetResultEnum? bettingResult)
+        public MatchResultBetModel(int? homeTeamScoreBet, int? awayTeamScoreBet, int? bettingPoints)
         {
             HomeTeamScoreBet = homeTeamScoreBet;
             AwayTeamScoreBet = awayTeamScoreBet;
             BettingPoints = bettingPoints;
-            BettingResult = bettingResult;
         }
 
         public int? HomeTeamScoreBet { get; set; }
         public int? AwayTeamScoreBet { get; set; }
         public int? BettingPoints { get; set; }
-        public BetResultEnum? BettingResult { get; set; }
+        public BookmakerBetResultEnum? BettingResult
+            => BettingPoints == 0 ? BookmakerBetResultEnum.MISSED
+                : BettingPoints == 1 ? BookmakerBetResultEnum.PARTIALLY_HIT
+                : BettingPoints == 3 ? BookmakerBetResultEnum.HIT
+                : default(BookmakerBetResultEnum?);
     }
 }

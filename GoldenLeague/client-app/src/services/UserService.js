@@ -35,10 +35,10 @@ export default {
       }
     );
   },
-  GetBookmakerBets() {
+  async GetBookmakerBets() {
     return axios.get(`${API_URL}/${store.state.user.id}/bookmaker-bets`);
   },
-  UpdateBookmakerBets(items) {
+  async UpdateBookmakerBets(items) {
     return axios.patch(
       `${API_URL}/${store.state.user.id}/bookmaker-bets`,
       items

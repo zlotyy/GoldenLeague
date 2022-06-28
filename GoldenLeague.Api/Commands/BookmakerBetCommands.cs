@@ -12,7 +12,7 @@ namespace GoldenLeague.Api.Commands
 {
     public interface IBookmakerBetCommands
     {
-        bool UpdateBet(List<BookmakerBetModel> matchBetting);
+        bool UpdateBets(List<BookmakerBetRecord> matchBetting, Guid userId);
     }
 
     public class BookmakerBetCommands : IBookmakerBetCommands
@@ -31,7 +31,7 @@ namespace GoldenLeague.Api.Commands
             _mapper = mapper;
         }
 
-        public bool UpdateBet(List<BookmakerBetModel> bets)
+        public bool UpdateBets(List<BookmakerBetRecord> bets, Guid userId)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace GoldenLeague.Api.Commands
                         if (mb.MatchResultBet.HomeTeamScoreBet.HasValue == mb.MatchResultBet.AwayTeamScoreBet.HasValue)
                         {
                             db.BookmakerBets
-                                .Where(x => x.MatchId == mb.Match.MatchId && x.UserId == mb.UserId)
+                                .Where(x => x.MatchId == mb.Match.MatchId && x.UserId == userId)
                                 .Set(x => x.HomeTeamScore, mb.MatchResultBet.HomeTeamScoreBet)
                                 .Set(x => x.AwayTeamScore, mb.MatchResultBet.AwayTeamScoreBet)
                                 .Update();
@@ -53,7 +53,7 @@ namespace GoldenLeague.Api.Commands
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(UpdateBet)}");
+                _logger.LogError(ex, $"Error during {nameof(UpdateBets)}");
                 return false;
             }
         }

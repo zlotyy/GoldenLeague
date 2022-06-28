@@ -2,7 +2,7 @@
 
 namespace GoldenLeague.TransportModels.Bookmaker
 {
-    public enum BetResultEnum
+    public enum BookmakerBetResultEnum
     {
         /// <summary>
         /// Nietrafiony

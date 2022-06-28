@@ -4,3 +4,30 @@ Tworzenie użytkownika:
   Ma tworzyć wpis [BookmakerLeagues_l_Users] dla ligi globalnej
 
 Aktualizacja punktów typera ma aktualizować rankingi w tabeli [BookmakerLeagues_l_Users]
+
+
+
+
+Przydatny SQL
+
+  Tworzenie terminarza
+
+  select * from teams 
+
+  DECLARE @homeTeam uniqueidentifier = (select teamid from teams where teamname like '%west ha%')
+  DECLARE @awayTeam uniqueidentifier = (select teamid from teams where teamname like '%manchester city%')
+  DECLARE @date datetime = '2022-08-07 17:30:00.000'
+
+  insert into matches 
+  values (
+	newid(),
+	'9B84BDFB-008C-4678-A425-727FD98A5A15',
+	2023,
+	1,
+	@date,
+	@homeTeam,
+	NULL,
+	@awayTeam,
+	NULL,
+	NULL
+  )

@@ -47,9 +47,9 @@ namespace GoldenLeague.Api.Queries
                         InsertUserId = x.League.InsertUserId,
                         Competitions = x.League.LCompetitions.Select(s => new CompetitionModel
                         {
-                            CompetitionId = s.CompetitionId,
-                            CompetitionName = s.Competition.CompetitionName,
-                            CompetitionIcon = s.Competition.CompetitionIcon,
+                            CompetitionsId = s.CompetitionId,
+                            CompetitionsName = s.Competition.CompetitionsName,
+                            CompetitionsIcon = s.Competition.CompetitionsIcon,
                             CountryIcon = s.Competition.CountryIcon,
                             CurrentSeasonNo = s.Competition.CurrentSeasonNo,
                             CurrentGameweekNo = s.Competition.CurrentGameweekNo
@@ -68,9 +68,9 @@ namespace GoldenLeague.Api.Queries
                 var data = db.Competitions
                     .Select(x => new CompetitionModel
                     {
-                        CompetitionId = x.CompetitionId,
-                        CompetitionName = x.CompetitionName,
-                        CompetitionIcon = x.CompetitionIcon,
+                        CompetitionsId = x.CompetitionsId,
+                        CompetitionsName = x.CompetitionsName,
+                        CompetitionsIcon = x.CompetitionsIcon,
                         CountryIcon = x.CountryIcon,
                         CurrentSeasonNo = x.CurrentSeasonNo,
                         CurrentGameweekNo = x.CurrentGameweekNo

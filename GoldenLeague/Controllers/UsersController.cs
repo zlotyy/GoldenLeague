@@ -51,25 +51,31 @@ namespace GoldenLeague.Controllers
         [HttpGet("{id}/bookmaker-bets")]
         public IActionResult GetMatchBetting([FromRoute] Guid id)
         {
-            var response = _restService.Get<Result<List<BookmakerBetModel>>>(ApiUrlHelper.UserBookmakerBetsGet(id, _currentSeasonNo));
-            if (!response.IsSuccessful)
+            try
             {
-                var result = new Result<List<BookmakerBetModel>>(new List<BookmakerBetModel>(), new List<string> { ErrorLocalization.ErrorAPIUnknown });
-                return Ok(result);
+                var response = _restService.Get<Result<List<BookmakerUserBetsModel>>>(ApiUrlHelper.UserBookmakerBetsGet(id));
+                return ResolveApiResponse(response);
             }
-            return Ok(response.Data);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetMatchBetting)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPatch("{id}/bookmaker-bets")]
-        public IActionResult UpdateBookmakerBets([FromRoute] Guid id, [FromBody] List<BookmakerBetModel> model)
+        public IActionResult UpdateBookmakerBets([FromRoute] Guid id, [FromBody] List<BookmakerBetRecord> model)
         {
-            var response = _restService.Patch<Result<bool>>(ApiUrlHelper.UserBookmakerBetsUpdate(id), model);
-            if (!response.IsSuccessful)
+            try
             {
-                var result = new Result<bool>(new List<string> { ErrorLocalization.ErrorAPIUnknown });
-                return Ok(result);
+                var response = _restService.Patch<Result<bool>>(ApiUrlHelper.UserBookmakerBetsUpdate(id), model);
+                return ResolveApiResponse(response);
             }
-            return Ok(response.Data);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(UpdateBookmakerBets)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpGet("{id}/bookmaker-leagues-joined")]

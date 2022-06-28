@@ -2,16 +2,7 @@
   <div>
     <v-card>
       <v-row>
-        <!-- TODO - wydzielić do widoku wyżej, dorobić filtry daty i kolejek - do wyboru -->
-        <v-col class="d-flex flex-column" cols="6" sm="3" lg="2">
-          <v-select
-            dense
-            outlined
-            label="Rozgrywki"
-            :items="gameweeks"
-            v-model="gameweekNo"
-          ></v-select>
-        </v-col>
+        <!-- TODO - dorobić filtry daty i kolejek - do wyboru -->
         <v-col class="d-flex flex-column" cols="6" sm="3" lg="2">
           <v-select
             dense
@@ -21,6 +12,12 @@
             v-model="gameweekNo"
           ></v-select>
         </v-col>
+        <v-spacer></v-spacer>
+        <div class="d-flex flex-column text-center pa-3">
+          <v-chip label large>
+            {{ competitions.competitionsName }}
+          </v-chip>
+        </div>
       </v-row>
       <v-divider class="mt-3"></v-divider>
       <v-data-table
@@ -115,11 +112,20 @@
 
 <script>
 import UserService from "@/services/UserService.js";
-import MatchesService from "@/services/MatchService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
   name: "MatchesBetTable",
+  props: {
+    competitions: {
+      type: Object,
+      require: true,
+    },
+    betRecords: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       matchesTable: {
@@ -136,28 +142,36 @@ export default {
             width: "10%",
           },
         ],
-        items: [],
         loading: false,
       },
       gameweekNo: 1,
-      gameweeks: [],
       saveLoading: false,
     };
   },
   computed: {
     gameweekItems() {
-      return this.matchesTable.items.filter(
+      return this.betRecords.filter(
         (x) => x.match.gameweekNo == this.gameweekNo
       );
     },
+    gameweeks() {
+      return [...new Set(this.betRecords.map((x) => x.match.gameweekNo))].sort(
+        (a, b) => a - b
+      );
+    },
+  },
+  watch: {
+    betRecords() {
+      this.$_setCurrentGameweek();
+    },
   },
   mounted() {
-    this.$_setCurrentGameweek();
-    this.$_setBookmakerBetsItems();
+    // this.$_setCurrentGameweek();
   },
   methods: {
     AllowBet(matchDateTime) {
-      return dayjs(matchDateTime) > dayjs();
+      // pozwól typować najpóźniej godzinę przed meczem
+      return dayjs(matchDateTime) > dayjs().subtract(1, "hour");
     },
     BetEmpty(item) {
       return (
@@ -169,26 +183,52 @@ export default {
       // NOT WORKING COLOR
       return "betting-hit";
     },
-    SaveBookmakerBets() {
-      this.saveLoading = true;
-      const dto = this.$_getDto();
-      UserService.UpdateBookmakerBets(dto).then((response) => {
-        const result = response.data;
-        if (result.success) {
-          console.log("Updated");
-        } else {
-          console.log("Error - not updated");
+    async SaveBookmakerBets() {
+      try {
+        this.saveLoading = true;
+        const dto = this.$_getDto();
+        if (!this.$_isValid(dto)) {
+          return;
         }
-        this.$_setBookmakerBetsItems();
+
+        const response = await UserService.UpdateBookmakerBets(dto);
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          this.$vToastify.customSuccess(
+            `Zapisano typy dla rozgrywek: ${this.competitions.competitionsId}, kolejka: ${this.gameweekNo}`
+          );
+          this.$emit("bets-saved", this.competitions);
+          // TODO przeładuj tabelę w parencie?
+        }
+      } catch (err) {
+        //
+      } finally {
         this.saveLoading = false;
-      });
+      }
+    },
+    $_isValid(dto) {
+      const anyBetInserted = dto.some(
+        (x) =>
+          (x.matchResultBet.homeTeamScoreBet ||
+            x.matchResultBet.homeTeamScoreBet == 0) &&
+          (x.matchResultBet.awayTeamScoreBet ||
+            x.matchResultBet.awayTeamScoreBet == 0)
+      );
+      if (!anyBetInserted) {
+        this.$vToastify.validationError(
+          "Aby zapisać zmiany musisz wprowadzić typ przynajmniej dla jednego meczu"
+        );
+        return false;
+      }
+
+      return true;
     },
     $_setBookmakerBetsItems() {
       this.matchesTable.loading = true;
+      // TODO async
       UserService.GetBookmakerBets().then((response) => {
         const result = response.data;
         if (result.success) {
-          this.matchesTable.items = result.data.map((x) => {
+          this.betRecords = result.data.map((x) => {
             x.match = {
               ...x.match,
               matchDate: this.$_getMatchDate(x.match.matchDateTime),
@@ -196,7 +236,6 @@ export default {
             };
             return x;
           });
-          this.gameweeks = this.$_getGameweeks();
         }
         this.matchesTable.loading = false;
       });
@@ -207,16 +246,24 @@ export default {
     $_getMatchTime(dateTime) {
       return dayjs(dateTime).format("HH:mm");
     },
-    $_getGameweeks() {
-      return [
-        ...new Set(this.matchesTable.items.map((x) => x.match.gameweekNo)),
-      ].sort((a, b) => a - b);
-    },
     $_setCurrentGameweek() {
-      MatchesService.GetCurrentGameweekNo().then((response) => {
-        const result = response.data;
-        this.gameweekNo = result;
-      });
+      const orderedRecords = (this.betRecords || [])
+        .map((x) => x.match)
+        .sort((a, b) => dayjs(a.matchDateTime) - dayjs(b.matchDateTime));
+
+      const closestMatchToBet = orderedRecords.find(
+        (x) =>
+          dayjs(x.matchDateTime) >
+          dayjs().set("hour", 23).set("minute", 59).set("second", 59)
+      );
+
+      if (closestMatchToBet) {
+        this.gameweekNo = closestMatchToBet.gameweekNo;
+      } else {
+        this.gameweekNo = (
+          orderedRecords[orderedRecords.length - 1] || {}
+        ).gameweekNo;
+      }
     },
     $_getDto() {
       return this.gameweekItems.map((x) => {

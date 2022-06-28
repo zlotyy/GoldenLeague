@@ -37,7 +37,7 @@ namespace GoldenLeague.Api.Commands
                 {
                     var now = DateTime.Now;
                     var leagueId = Guid.NewGuid();
-                    var leagueCompetitions = model.CompetitionIds
+                    var leagueCompetitions = model.CompetitionsIds
                         .Select(competitionId => new BookmakerLeaguesLCompetitions
                         {
                             LeagueId = leagueId,

@@ -22,8 +22,8 @@
           multiple
           label="Rozgrywki"
           :items="competitions"
-          item-text="competitionName"
-          item-value="competitionId"
+          item-text="competitionsName"
+          item-value="competitionsId"
           v-model="competitionsSelected"
         ></v-select>
       </v-card-text>
@@ -67,7 +67,7 @@ export default {
         const response = await BookmakerService.LeagueCreate({
           Name: this.leagueName,
           InsertUserId: this.getUserId(),
-          CompetitionIds: this.competitionsSelected,
+          CompetitionsIds: this.competitionsSelected,
         });
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
