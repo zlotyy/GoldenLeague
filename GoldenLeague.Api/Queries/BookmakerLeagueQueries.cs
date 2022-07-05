@@ -11,8 +11,9 @@ namespace GoldenLeague.Api.Queries
 {
     public interface IBookmakerLeagueQueries
     {
-        IEnumerable<LeagueModel> GetJoinedLeagues(Guid userId);
+        IEnumerable<EntryLeagueModel> GetJoinedLeagues(Guid userId);
         IEnumerable<CompetitionModel> GetCompetitions();
+        LeagueRankModel GetLeagueRanking(Guid leagueId);
         bool LeagueExists(Guid leagueId);
         bool LeagueExists(string name);
         bool LeagueAlreadyJoined(Guid leagueId, Guid userId);
@@ -29,7 +30,7 @@ namespace GoldenLeague.Api.Queries
             _logger = logger;
         }
 
-        public IEnumerable<LeagueModel> GetJoinedLeagues(Guid userId)
+        public IEnumerable<EntryLeagueModel> GetJoinedLeagues(Guid userId)
         {
             using (var db = _dbContextFactory.Create())
             {
@@ -37,14 +38,17 @@ namespace GoldenLeague.Api.Queries
                     .LoadWith(x => x.User)
                     .LoadWith(x => x.League)
                         .ThenLoad(x => x.LCompetitions)
+                    .LoadWith(x => x.League)
+                        .ThenLoad(x => x.InsertUser)
                     .Where(x => x.UserId == userId && !x.UserLeaveDate.HasValue)
-                    .Select(x => new LeagueModel
+                    .Select(x => new EntryLeagueModel
                     {
                         LeagueId = x.LeagueId,
                         LeagueName = x.League.LeagueName,
                         IsPrivate = x.League.IsPrivate,
                         InsertDate = x.League.InsertDate,
                         InsertUserId = x.League.InsertUserId,
+                        InsertUserLogin = x.League.InsertUser.Login,
                         Competitions = x.League.LCompetitions.Select(s => new CompetitionModel
                         {
                             CompetitionsId = s.CompetitionId,
@@ -53,7 +57,8 @@ namespace GoldenLeague.Api.Queries
                             CountryIcon = s.Competition.CountryIcon,
                             CurrentSeasonNo = s.Competition.CurrentSeasonNo,
                             CurrentGameweekNo = s.Competition.CurrentGameweekNo
-                        })
+                        }),
+                        EntryRank = x.UserRanking
                     })
                     .ToList();
 
@@ -78,6 +83,34 @@ namespace GoldenLeague.Api.Queries
                     .ToList();
 
                 return data;
+            }
+        }
+
+        public LeagueRankModel GetLeagueRanking(Guid leagueId)
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.VBookmakerLeagueRank
+                    .Where(x => x.LeagueId == leagueId && x.UserRanking.HasValue)
+                    .OrderBy(x => x.UserRanking)
+                    .GroupBy(x => x.LeagueId)
+                    .DisableGuard()
+                    .Select(x => new LeagueRankModel
+                    {
+                        LeagueId = x.First().LeagueId,
+                        LeagueName = x.First().LeagueName,
+                        SeasonNo = x.First().SeasonNo,
+                        Users = x.Select(s => new LeagueRankRecordModel
+                        {
+                            UserId = s.UserId,
+                            UserLogin = s.UserLogin,
+                            UserRanking = s.UserRanking.Value,
+                            UserPoints = s.UserPoints,
+                            UserCorrectBets = s.UserCorrectBets,
+                            UserCorrectResults = s.UserCorrectResults
+                        }).ToList()
+                    })
+                    .FirstOrDefault();
             }
         }
 

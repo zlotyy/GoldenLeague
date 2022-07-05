@@ -11,7 +11,6 @@
             @league-joined="SetLeaguesData()"
           ></LeagueJoinDialog>
         </v-row>
-        <!-- <v-divider class="mt-3"></v-divider> -->
         <v-card-title class="mt-5">Liga globalna</v-card-title>
         <v-data-table
           :headers="headers"
@@ -22,6 +21,7 @@
           class="elevation-1"
           :items-per-page="-1"
           mobile-breakpoint="0"
+          @click:row="ShowLeagueRank"
         >
         </v-data-table>
         <v-card-title class="mt-5">Ligi prywatne</v-card-title>
@@ -34,6 +34,7 @@
           class="elevation-1"
           :items-per-page="-1"
           mobile-breakpoint="0"
+          @click:row="ShowLeagueRank"
         >
           <template v-slot:[`item.options`]="{ item }">
             <v-menu offset-y bottom rounded="lg">
@@ -66,10 +67,6 @@
             </v-menu>
           </template>
         </v-data-table>
-        <base-confirm
-          :show="!!selectedItem"
-          confirm-text="Text 1"
-        ></base-confirm>
       </v-card>
     </v-col>
   </v-row>
@@ -88,7 +85,7 @@ export default {
     return {
       headers: [
         { text: "Liga", value: "leagueName", width: "50%" },
-        { text: "Pozycja", value: "ranking", width: "40%" },
+        { text: "Pozycja", value: "entryRank", width: "40%" },
         { value: "options", width: "10%" },
       ],
       leagues: [],
@@ -135,6 +132,12 @@ export default {
       } catch (err) {
         return;
       }
+    },
+    async ShowLeagueRank(row) {
+      this.$router.push({
+        name: "BookmakerLeague",
+        params: { leagueId: row.leagueId },
+      });
     },
   },
 };

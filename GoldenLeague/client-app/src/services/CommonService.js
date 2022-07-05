@@ -1,5 +1,5 @@
 import axios from "@/plugins/axios.js";
-const API_URL = "common";
+const API_URL = "/common";
 
 export default {
   ApiTest() {

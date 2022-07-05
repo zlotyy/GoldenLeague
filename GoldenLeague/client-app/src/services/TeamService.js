@@ -1,5 +1,5 @@
 import axios from "@/plugins/axios.js";
-const API_URL = "teams";
+const API_URL = "/teams";
 
 export default {
   GetTeamsRanking() {

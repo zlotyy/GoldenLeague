@@ -1,6 +1,6 @@
 import axios from "@/plugins/axios.js";
 import store from "../store";
-const API_URL = "users";
+const API_URL = "/users";
 
 export default {
   async LogIn(login, password) {

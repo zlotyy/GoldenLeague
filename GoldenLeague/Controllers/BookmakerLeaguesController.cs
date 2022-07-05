@@ -20,6 +20,21 @@ namespace GoldenLeague.Controllers
             _logger = logger;
         }
 
+        [HttpGet("{id}/rank")]
+        public IActionResult GetLeagueRank([FromRoute] Guid id)
+        {
+            try
+            {
+                var response = _restService.Get<Result<LeagueRankModel>>(ApiUrlHelper.BookmakerLeagueRank(id));
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetLeagueRank)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPost]
         public IActionResult CreateLeague([FromBody] LeagueCreateModel model)
         {

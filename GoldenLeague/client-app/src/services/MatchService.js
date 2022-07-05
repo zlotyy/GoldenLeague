@@ -1,5 +1,5 @@
 import axios from "@/plugins/axios.js";
-const API_URL = "matches";
+const API_URL = "/matches";
 
 export default {
   GetCurrentGameweekNo() {

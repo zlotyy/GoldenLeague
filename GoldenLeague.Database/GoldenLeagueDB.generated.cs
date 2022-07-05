@@ -38,6 +38,7 @@ namespace GoldenLeague.Database
 		public ITable<Teams>                         Teams                         { get { return this.GetTable<Teams>(); } }
 		public ITable<Users>                         Users                         { get { return this.GetTable<Users>(); } }
 		public ITable<VBookmakerBet>                 VBookmakerBet                 { get { return this.GetTable<VBookmakerBet>(); } }
+		public ITable<VBookmakerLeagueRank>          VBookmakerLeagueRank          { get { return this.GetTable<VBookmakerLeagueRank>(); } }
 		public ITable<VMatch>                        VMatch                        { get { return this.GetTable<VMatch>(); } }
 
 		public GoldenLeagueDB()
@@ -109,6 +110,7 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Guid),                   Nullable         ] public Guid?    InsertUserId { get; set; } // uniqueidentifier
 		[Column(DataType=LinqToDB.DataType.DateTime),                         NotNull] public DateTime InsertDate   { get; set; } // datetime
 		[Column(DataType=LinqToDB.DataType.Boolean),                          NotNull] public bool     IsDeleted    { get; set; } // bit
+		[Column(DataType=LinqToDB.DataType.Int32),                            NotNull] public int      SeasonNo     { get; set; } // int
 
 		#region Associations
 
@@ -419,6 +421,20 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?     BettingPoints                 { get; set; } // int
 	}
 
+	[Table(Schema="dbo", Name="vBookmakerLeagueRank", IsView=true)]
+	public partial class VBookmakerLeagueRank
+	{
+		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid   UserId             { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100), NotNull    ] public string UserLogin          { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.Guid),                 NotNull    ] public Guid   LeagueId           { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Int32),                   Nullable] public int?   UserRanking        { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int    UserPoints         { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int    UserCorrectBets    { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int    UserCorrectResults { get; set; } // int
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),  NotNull    ] public string LeagueName         { get; set; } // nvarchar(50)
+		[Column(DataType=LinqToDB.DataType.Int32),                NotNull    ] public int    SeasonNo           { get; set; } // int
+	}
+
 	[Table(Schema="dbo", Name="vMatch", IsView=true)]
 	public partial class VMatch
 	{
@@ -452,6 +468,16 @@ namespace GoldenLeague.Database
 
 		#endregion
 
+		#region CreateBookmakerBetRecordsForSpecificUser
+
+		public static int CreateBookmakerBetRecordsForSpecificUser(this GoldenLeagueDB dataConnection, Guid? @UserId)
+		{
+			return dataConnection.ExecuteProc("[dbo].[CreateBookmakerBetRecordsForSpecificUser]",
+				new DataParameter("@UserId", @UserId, LinqToDB.DataType.Guid));
+		}
+
+		#endregion
+
 		#region GetUserBookmakerBets
 
 		public static IEnumerable<VBookmakerBet> GetUserBookmakerBets(this GoldenLeagueDB dataConnection, Guid? @UserId)
@@ -467,6 +493,25 @@ namespace GoldenLeague.Database
 		public static int SetBookmakerBetPointsForUnsetBetting(this GoldenLeagueDB dataConnection)
 		{
 			return dataConnection.ExecuteProc("[dbo].[SetBookmakerBetPointsForUnsetBetting]");
+		}
+
+		#endregion
+
+		#region SetBookmakerLeagueResults
+
+		public static int SetBookmakerLeagueResults(this GoldenLeagueDB dataConnection, Guid? @LeagueId)
+		{
+			return dataConnection.ExecuteProc("[dbo].[SetBookmakerLeagueResults]",
+				new DataParameter("@LeagueId", @LeagueId, LinqToDB.DataType.Guid));
+		}
+
+		#endregion
+
+		#region SetBookmakerLeaguesResults
+
+		public static int SetBookmakerLeaguesResults(this GoldenLeagueDB dataConnection)
+		{
+			return dataConnection.ExecuteProc("[dbo].[SetBookmakerLeaguesResults]");
 		}
 
 		#endregion

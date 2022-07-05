@@ -1,9 +1,11 @@
 ﻿using GoldenLeague.Api.Commands;
 using GoldenLeague.Api.Queries;
+using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Bookmaker;
 using GoldenLeague.TransportModels.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace GoldenLeague.Api.Controllers
 {
@@ -20,6 +22,32 @@ namespace GoldenLeague.Api.Controllers
             _logger = logger;
             _leagueQueries = leagueQueries;
             _leagueCommands = leagueCommands;
+        }
+
+        [HttpGet("{id}/rank")]
+        public IActionResult GetLeagueRank([FromRoute] Guid id)
+        {
+            var result = new Result<LeagueRankModel>();
+
+            try
+            {
+                var data = _leagueQueries.GetLeagueRanking(id);
+                if (data == null)
+                {
+                    result.Errors.Add("Nie znaleziono ligi");
+                    return NotFound(result);
+                }
+
+                result.Data = data;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetLeagueRank)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost]

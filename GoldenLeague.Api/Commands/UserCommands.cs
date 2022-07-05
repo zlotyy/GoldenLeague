@@ -4,6 +4,7 @@ using GoldenLeague.TransportModels.Users;
 using LinqToDB;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace GoldenLeague.Api.Commands
 {
@@ -41,7 +42,19 @@ namespace GoldenLeague.Api.Commands
                         IsDeleted = false                        
                     };
 
+                    var globalLeagueId = db.BookmakerLeagues.Where(x => !x.InsertUserId.HasValue).Select(x => x.LeagueId).First();
+                    var globalLeagueLUser = new BookmakerLeaguesLUsers
+                    {
+                        LeagueId = globalLeagueId,
+                        UserId = user.UserId,
+                        UserJoinDate = DateTime.Now
+                    };
+
                     db.Insert(user);
+                    db.Insert(globalLeagueLUser);
+                    db.CreateBookmakerBetRecordsForSpecificUser(user.UserId);
+                    //db.SetBookmakerBetPointsForUnsetBetting();
+                    db.SetBookmakerLeagueResults(globalLeagueId);
 
                     result.Data = new UserModel
                     {

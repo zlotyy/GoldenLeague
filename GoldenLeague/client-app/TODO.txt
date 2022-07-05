@@ -1,10 +1,12 @@
-Hashowanie hasła
+Hashowanie hasła - salted hash 
 
 Tworzenie użytkownika:
   Ma tworzyć wpis [BookmakerLeagues_l_Users] dla ligi globalnej
 
 Aktualizacja punktów typera ma aktualizować rankingi w tabeli [BookmakerLeagues_l_Users]
 
+Tworzenie ligi:
+  Powinno przeliczyć ranking ligi
 
 
 

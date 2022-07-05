@@ -189,7 +189,7 @@ namespace GoldenLeague.Api.Controllers
         [HttpGet("{id}/bookmaker-leagues-joined")]
         public IActionResult GetBookmakerLeaguesJoined([FromRoute] Guid id)
         {
-            var result = new Result<IEnumerable<LeagueModel>>(new List<LeagueModel>());
+            var result = new Result<IEnumerable<EntryLeagueModel>>(new List<EntryLeagueModel>());
 
             try
             {

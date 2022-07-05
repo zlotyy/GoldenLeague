@@ -23,5 +23,6 @@ namespace GoldenLeague.Helpers
         public static string TeamsRanking => $"{TeamsBase}/ranking";
 
         public static string BookmakerLeaguesBase => "bookmaker-leagues";
+        public static string BookmakerLeagueRank(Guid leagueId) => $"{BookmakerLeaguesBase}/{leagueId}/rank";
     }
 }

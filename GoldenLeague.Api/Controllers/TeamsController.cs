@@ -43,6 +43,7 @@ namespace GoldenLeague.Api.Controllers
             return Ok(result);
         }
 
+        // TODO USUNAC
         [HttpGet("ranking")]
         public IActionResult GetRanking()
         {

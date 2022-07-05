@@ -30,7 +30,7 @@
         group-desc
         sort-by="match.matchDateTime"
         sort-desc
-        :item-class="RowClass"
+        :item-class="RowClass()"
         class="elevation-1"
       >
         <template v-slot:[`group.header`]="{ items }">
@@ -205,20 +205,21 @@ export default {
         this.saveLoading = false;
       }
     },
-    $_isValid(dto) {
-      const anyBetInserted = dto.some(
-        (x) =>
-          (x.matchResultBet.homeTeamScoreBet ||
-            x.matchResultBet.homeTeamScoreBet == 0) &&
-          (x.matchResultBet.awayTeamScoreBet ||
-            x.matchResultBet.awayTeamScoreBet == 0)
-      );
-      if (!anyBetInserted) {
-        this.$vToastify.validationError(
-          "Aby zapisać zmiany musisz wprowadzić typ przynajmniej dla jednego meczu"
-        );
-        return false;
-      }
+    $_isValid() {
+      // $_isValid(dto) {
+      // const anyBetInserted = dto.some(
+      //   (x) =>
+      //     (x.matchResultBet.homeTeamScoreBet ||
+      //       x.matchResultBet.homeTeamScoreBet == 0) &&
+      //     (x.matchResultBet.awayTeamScoreBet ||
+      //       x.matchResultBet.awayTeamScoreBet == 0)
+      // );
+      // if (!anyBetInserted) {
+      //   this.$vToastify.validationError(
+      //     "Aby zapisać zmiany musisz wprowadzić typ przynajmniej dla jednego meczu"
+      //   );
+      //   return false;
+      // }
 
       return true;
     },

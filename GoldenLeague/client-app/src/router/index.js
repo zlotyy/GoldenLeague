@@ -50,6 +50,27 @@ const routes = [
       import(
         /* webpackChunkName: "about" */ "../views/BookmakerLeaguesView.vue"
       ),
+    // TODO zrobić jako children
+    // children: [
+    //   {
+    //     path: ":leagueId/rank",
+    //     name: "BookmakerLeague",
+    //     props: true,
+    //     component: () =>
+    //       import(
+    //         /* webpackChunkName: "about" */ "../views/BookmakerLeagueView.vue"
+    //       ),
+    //   },
+    // ],
+  },
+  {
+    path: "/bookmaker-leagues/:leagueId/rank",
+    name: "BookmakerLeague",
+    props: true,
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/BookmakerLeagueView.vue"
+      ),
   },
   {
     path: "/bookmaker-bets",

@@ -83,7 +83,7 @@ namespace GoldenLeague.Controllers
         {
             try
             {
-                var response = _restService.Get<Result<IEnumerable<LeagueModel>>>(ApiUrlHelper.UserBookmakerLeaguesJoined(id));
+                var response = _restService.Get<Result<IEnumerable<EntryLeagueModel>>>(ApiUrlHelper.UserBookmakerLeaguesJoined(id));
                 return ResolveApiResponse(response);
             }
             catch (Exception ex)
