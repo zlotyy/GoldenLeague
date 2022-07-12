@@ -19,7 +19,6 @@ namespace GoldenLeague.StatisticsWorker.Workers
         private readonly IMatchCommands _commands;
 
         private const int _DELAY_MULTIPLIER = 1000 * 60 * 60 * 24;
-        private readonly int _currentSeasonNo;
 
         public MatchRecordsWorker(ILogger<MatchRecordsWorker> logger, IOptions<AppSettings> config,
             IFantasyService fantasyApiWrapper, IMapper mapper, IMatchCommands commands)
@@ -29,8 +28,6 @@ namespace GoldenLeague.StatisticsWorker.Workers
             _fantasyApiWrapper = fantasyApiWrapper;
             _mapper = mapper;
             _commands = commands;
-
-            _currentSeasonNo = 2022; // IGoldenLeagueService.GetCurrentSeasonNo
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

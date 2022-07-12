@@ -8,13 +8,21 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GoldenLeague.Common\GoldenLeague.Common.csproj" />
     <ProjectReference Include="..\GoldenLeague.TransportModels\GoldenLeague.TransportModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

@@ -51,10 +51,6 @@ namespace GoldenLeague.Api.Commands
                     };
 
                     db.Insert(user);
-                    db.Insert(globalLeagueLUser);
-                    db.CreateBookmakerBetRecordsForSpecificUser(user.UserId);
-                    //db.SetBookmakerBetPointsForUnsetBetting();
-                    db.SetBookmakerLeagueResults(globalLeagueId);
 
                     result.Data = new UserModel
                     {

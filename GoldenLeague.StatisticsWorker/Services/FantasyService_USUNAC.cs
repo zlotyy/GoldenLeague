@@ -19,12 +19,11 @@ namespace GoldenLeague.StatisticsWorker.Services
         List<MatchModel> GetMatches();
     }
 
-    public class FantasyService : IFantasyService
+    public class FantasyService_USUNAC : IFantasyService
     {
-        private readonly ILogger<FantasyService> _logger;
+        private readonly ILogger<FantasyService_USUNAC> _logger;
         private readonly AppSettings _config;
         private readonly RestService _fantasyService;
-        private readonly IGoldenLeagueService _goldenLeagueService;
         private readonly IMapper _mapper;
         private readonly ITeamQueries _teamQueries;
         private readonly IBaseQueries _baseQueries;
@@ -32,19 +31,18 @@ namespace GoldenLeague.StatisticsWorker.Services
         private readonly int _currentSeasonNo;
         private Dictionary<int, Guid> _teamsDictionary;
 
-        public FantasyService(ILogger<FantasyService> logger, IOptions<AppSettings> config, IRestServiceFactory restServiceFactory,
-            IMapper mapper, IGoldenLeagueService goldenLeagueService, ITeamQueries teamQueries, IBaseQueries baseQueries)
+        public FantasyService_USUNAC(ILogger<FantasyService_USUNAC> logger, IOptions<AppSettings> config, IRestServiceFactory restServiceFactory,
+            IMapper mapper, ITeamQueries teamQueries, IBaseQueries baseQueries)
         {
             _logger = logger;
             _config = config.Value;
             _fantasyService = restServiceFactory.CreateFantasyService();
-            _goldenLeagueService = goldenLeagueService;
             _mapper = mapper;
             _teamQueries = teamQueries;
             _baseQueries = baseQueries;
 
             _currentSeasonNo = _baseQueries.GetCurrentSeasonNo();
-            _teamsDictionary = GetTeams().ToDictionary(s => s.ForeignKey.Value, s => s.TeamId);
+            //_teamsDictionary = GetTeams().ToDictionary(s => s.ForeignKey.Value, s => s.TeamId);
         }
 
         public List<MatchModel> GetMatches(int gameweekNo)
@@ -105,10 +103,10 @@ namespace GoldenLeague.StatisticsWorker.Services
             return result;
         }
 
-        private List<Teams> GetTeams()
-        {
-            return _teamQueries.GetTeams().Where(x => x.ForeignKey.HasValue).ToList();
-        }
+        //private List<Teams> GetTeams()
+        //{
+        //    return _teamQueries.GetTeams().Where(x => x.ForeignKey.HasValue).ToList();
+        //}
     }
 
     public static class FantasyApiEndpoints

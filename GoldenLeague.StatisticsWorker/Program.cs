@@ -1,5 +1,6 @@
 using GoldenLeague.Database;
 using GoldenLeague.Database.Queries;
+using GoldenLeague.StatisticsWorker.Adapters;
 using GoldenLeague.StatisticsWorker.Commands;
 using GoldenLeague.StatisticsWorker.Queries;
 using GoldenLeague.StatisticsWorker.Services;
@@ -8,6 +9,9 @@ using LinqToDB.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Extensions.Logging;
 using System;
 
 namespace GoldenLeague.StatisticsWorker
@@ -16,7 +20,22 @@ namespace GoldenLeague.StatisticsWorker
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var logger = LogManager.GetCurrentClassLogger();
+            try
+            {
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                // NLog: catch any exception and log it.
+                logger.Error(ex, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                LogManager.Shutdown();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -34,6 +53,14 @@ namespace GoldenLeague.StatisticsWorker
                     DataConnection.DefaultSettings = new LinqToDBSettings(configuration.GetConnectionString("GoldenLeagueDB"));
                     services.AddSingleton<IDbContextFactory, DbContextFactory>();
 
+                    services.AddLogging(loggingBuilder =>
+                    {
+                        // configure Logging with NLog
+                        loggingBuilder.ClearProviders();
+                        loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                        loggingBuilder.AddNLog(configuration);
+                    });
+
                     services.AddAutoMapper(typeof(Program));
 
                     // DATETIME TODO !!!
@@ -44,21 +71,27 @@ namespace GoldenLeague.StatisticsWorker
                         // });
 
                     // workers
-                    services.AddHostedService<MatchResultsWorker>();
-                    services.AddHostedService<MatchRecordsWorker>();
+                    //services.AddHostedService<MatchResultsWorker>();
+                    //services.AddHostedService<MatchRecordsWorker>();
+                    services.AddHostedService<PerDayWorker>();
 
                     // services
                     services.AddTransient<IRestServiceFactory, RestServiceFactory>();
-                    services.AddTransient<IGoldenLeagueService, GoldenLeagueService>();
-                    services.AddTransient<IFantasyService, FantasyService>();
+                    services.AddTransient<IFantasyService, FantasyService_USUNAC>();
+                    services.AddTransient<IFootballApiService, FootballApiService>();
 
                     // commands
+                    services.AddTransient<ITeamCommands, TeamCommands>();
                     services.AddTransient<IMatchCommands, MatchCommands>();
                     services.AddTransient<ITeamStatisticsCommands, TeamStatisticsCommands>();
+                    services.AddTransient<ICompetitionsCommands, CompetitionsCommands>();
 
                     // queries
                     services.AddTransient<IBaseQueries, BaseQueries>();
                     services.AddTransient<ITeamQueries, TeamQueries>();
+
+                    // adapter
+                    services.AddTransient<IFootballApiAdapter, FootballApiAdapter>();
                 });
         }
     }

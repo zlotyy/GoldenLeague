@@ -64,9 +64,6 @@ namespace GoldenLeague.Api.Commands
                             UserJoinDate = now
                         });
 
-                        // TODO PRZETESTOWAC
-                        db.SetBookmakerLeagueResults(leagueId);
-
                         transaction.Commit();
                     }
                 }
@@ -112,8 +109,6 @@ namespace GoldenLeague.Api.Commands
                                 .Update();
                         }
                     }
-
-                    db.SetBookmakerLeagueResults(model.LeagueId);
                 }
 
                 result.Data = true;

@@ -57,8 +57,8 @@ namespace GoldenLeague.StatisticsWorker.Commands
                     {
                         result.Data = insertedMatchesCount;
                         _logger.LogInformation($"{nameof(InsertNewMatches)} finished with {insertedMatchesCount} inserted records");
-                        db.CreateMatchBettingRecords();
-                        db.SetMatchBettingPointsForEmptyBetting();
+                        //db.CreateMatchBettingRecords();
+                        //db.SetMatchBettingPointsForEmptyBetting();
                     }
                 }
             }
@@ -114,8 +114,8 @@ namespace GoldenLeague.StatisticsWorker.Commands
                     if (upsertedMatchesCount > 0)
                     {
                         _logger.LogInformation($"{nameof(UpsertMatchesData)} finished with {upsertedMatchesCount} upserted records");
-                        db.CreateMatchBettingRecords();
-                        db.SetMatchBettingPointsForEmptyBetting();
+                        //db.CreateMatchBettingRecords();
+                        //db.SetMatchBettingPointsForEmptyBetting();
                     }
                 }
             }
