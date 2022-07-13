@@ -114,6 +114,8 @@
 	//Tables["DictDamageGroups"].Columns["GroupId"].SkipOnInsert = true;
 	Tables["Matches"].Columns["MatchId"].SkipOnInsert = true;
 	Tables["Competitions"].Columns["CompetitionsId"].SkipOnInsert = true;
+	Tables["Teams"].Columns["TeamId"].SkipOnInsert = true;
+	Tables["Matches"].Columns["MatchId"].SkipOnInsert = true;
 
 	// TRIK ŻEBY PROCEDURA W KODZIE ZWRACAŁA JAKO TYP OKREŚLONY WIDOK - DODAĆ DO PROCEDURY KAWAŁEK KODU KTÓRY SIĘ NIE WYKONA, ALE ZWRACA CAŁY WIDOK:
 	// IF 1=0

@@ -89,9 +89,10 @@ namespace GoldenLeague.StatisticsWorker
                     // queries
                     services.AddTransient<IBaseQueries, BaseQueries>();
                     services.AddTransient<ITeamQueries, TeamQueries>();
+                    services.AddTransient<ICompetitionsQueries, CompetitionsQueries>();
 
-                    // adapter
-                    services.AddTransient<IFootballApiAdapter, FootballApiAdapter>();
+                    // adapter - jeœli zmieni siê serwis do pobierania danych, wystarczy zmieniæ tutaj adapter na inny
+                    services.AddTransient<IFootballDataAdapter, FootballApiAdapter>();
                 });
         }
     }

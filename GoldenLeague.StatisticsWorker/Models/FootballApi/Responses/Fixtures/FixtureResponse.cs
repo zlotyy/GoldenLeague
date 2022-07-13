@@ -1,6 +1,8 @@
-﻿namespace GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Fixtures
+﻿using GoldenLeague.StatisticsWorker.Models.Interfaces;
+
+namespace GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Fixtures
 {
-    public class FixtureResponse
+    public class FixtureResponse : IFixtureResponse
     {
         public FixtureModel Fixture { get; set; }
         public FixtureLeagueModel League { get; set; }

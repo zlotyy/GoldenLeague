@@ -1,5 +1,6 @@
 ﻿using GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Base;
 using GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Fixtures;
+using GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Teams;
 using GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Leagues;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,8 +13,9 @@ namespace GoldenLeague.StatisticsWorker.Services
 {
     public interface IFootballApiService
     {
-        public IEnumerable<LeagueResponse> GetCurrentLeagues();
-        public IEnumerable<FixtureResponse> GetFixtures();
+        IEnumerable<LeagueResponse> GetCurrentLeagues();
+        IEnumerable<TeamResponse> GetTeams(int leagueId, int season);
+        IEnumerable<FixtureResponse> GetFixtures();
     }
 
     public class FootballApiService : IFootballApiService
@@ -55,6 +57,32 @@ namespace GoldenLeague.StatisticsWorker.Services
             return result;
         }
 
+        public IEnumerable<TeamResponse> GetTeams(int leagueId, int season)
+        {
+            var result = new List<TeamResponse>();
+            _logger.LogTrace($"START {nameof(GetTeams)}");
+
+            try
+            {
+                var response = _restService.Get<ArrayResponseModel<TeamResponse>>(FootballApiEndpoints.TeamsCurrent(leagueId, season));
+                if (response.IsSuccessful)
+                {
+                    _logger.LogTrace($"SUCCESS {nameof(GetTeams)}, data: {response.Data.ToJson()}");
+                    result = response.Data.Response.ToList();
+                }
+                else
+                {
+                    _logger.LogError($"Error during {nameof(GetTeams)} | {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetTeams)}");
+            }
+
+            return result;
+        }
+
         public IEnumerable<FixtureResponse> GetFixtures()
         {
             var result = new List<FixtureResponse>();
@@ -86,6 +114,8 @@ namespace GoldenLeague.StatisticsWorker.Services
     {
         public static string Leagues => "leagues";
         public static string LeaguesCurrent => $"{Leagues}?current=true";
+        public static string Teams => "teams";
+        public static string TeamsCurrent(int leagueId, int season) => $"{Teams}?league={leagueId}&season={season}";
         public static string Fixtures => "fixtures";
     }
 }

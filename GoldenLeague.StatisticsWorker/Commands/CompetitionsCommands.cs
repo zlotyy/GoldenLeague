@@ -40,7 +40,9 @@ namespace GoldenLeague.StatisticsWorker.Commands
                         .UpdateWhenMatched((t, s) => new Competitions
                         {
                             CompetitionsName = s.CompetitionsName,
-                            CurrentSeasonNo = s.CurrentSeasonNo
+                            CurrentSeasonNo = s.CurrentSeasonNo,
+                            CountryName = s.CountryName,
+                            CountryCode = s.CountryCode
                         })
                         .Merge();
                 }

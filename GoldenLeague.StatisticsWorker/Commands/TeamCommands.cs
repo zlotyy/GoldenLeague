@@ -1,17 +1,14 @@
 ﻿using GoldenLeague.Database;
-using GoldenLeague.StatisticsWorker.Models.FootballApi.Responses.Fixtures;
+using LinqToDB;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoldenLeague.StatisticsWorker.Commands
 {
     public interface ITeamCommands
     {
-        void UpdateTeams(IEnumerable<TeamModel> teams);
+        void UpsertTeams(IEnumerable<Teams> teams);
     }
 
     public class TeamCommands : ITeamCommands
@@ -25,9 +22,31 @@ namespace GoldenLeague.StatisticsWorker.Commands
             _logger = logger;
         }
 
-        public void UpdateTeams(IEnumerable<TeamModel> teams)
+        public void UpsertTeams(IEnumerable<Teams> teams)
         {
-
+            try
+            {
+                using (var db = _dbContextFactory.Create())
+                {
+                    db.Teams
+                        .Merge()
+                        .Using(teams)
+                        .On((t, s) => t.ForeignKey == s.ForeignKey)
+                        .InsertWhenNotMatched()
+                        .UpdateWhenMatched((t, s) => new Teams
+                        {
+                            TeamName = s.TeamName,
+                            TeamNameShort = s.TeamNameShort,
+                            TeamNameAbbreviation = s.TeamNameAbbreviation,
+                            CompetitionId = s.CompetitionId
+                        })
+                        .Merge();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(UpsertTeams)}");
+            }
         }
     }
 }

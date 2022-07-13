@@ -199,12 +199,15 @@ namespace GoldenLeague.Database
 		[Column(DataType=LinqToDB.DataType.Guid,     SkipOnInsert=true), PrimaryKey,  NotNull] public Guid   CompetitionsId   { get; set; } // uniqueidentifier
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=500),                     NotNull] public string CompetitionsName { get; set; } // nvarchar(500)
 		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),            Nullable         ] public string CompetitionsIcon { get; set; } // nvarchar(50)
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),            Nullable         ] public string CountryIcon      { get; set; } // nvarchar(50)
 		/// <summary>
 		/// Aktualny sezon pilkarski (np. 2021 oznacza sezon 2021/22)
 		/// </summary>
 		[Column(DataType=LinqToDB.DataType.Int32),                                    NotNull] public int    CurrentSeasonNo  { get; set; } // int
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=50),            Nullable         ] public string ForeignKey       { get; set; } // varchar(50)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),           Nullable         ] public string CountryName      { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),             Nullable         ] public string CountryCode      { get; set; } // varchar(3)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=50),            Nullable         ] public string CountryIcon      { get; set; } // nvarchar(50)
+		[Column(DataType=LinqToDB.DataType.VarChar,  Length=50),            Nullable         ] public string CoutryForeignKey { get; set; } // varchar(50)
 		[Column(DataType=LinqToDB.DataType.Boolean),                                  NotNull] public bool   IsActive         { get; set; } // bit
 
 		#region Associations
@@ -318,15 +321,15 @@ namespace GoldenLeague.Database
 	[Table(Schema="dbo", Name="Teams")]
 	public partial class Teams
 	{
-		[Column(DataType=LinqToDB.DataType.Guid),                 PrimaryKey,  NotNull] public Guid   TeamId               { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string TeamName             { get; set; } // nvarchar(100)
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),               NotNull] public string TeamNameShort        { get; set; } // nvarchar(15)
-		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),                NotNull] public string TeamNameAbbreviation { get; set; } // varchar(3)
-		[Column(DataType=LinqToDB.DataType.Guid),                    Nullable         ] public Guid?  CompetitionId        { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.Guid,     SkipOnInsert=true), PrimaryKey,  NotNull] public Guid   TeamId               { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),                     NotNull] public string TeamName             { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=15),            Nullable         ] public string TeamNameShort        { get; set; } // nvarchar(15)
+		[Column(DataType=LinqToDB.DataType.VarChar,  Length=3),                       NotNull] public string TeamNameAbbreviation { get; set; } // varchar(3)
+		[Column(DataType=LinqToDB.DataType.Guid),                           Nullable         ] public Guid?  CompetitionId        { get; set; } // uniqueidentifier
 		/// <summary>
 		/// Element key in external API, to get element statistics
 		/// </summary>
-		[Column(DataType=LinqToDB.DataType.VarChar,  Length=50),     Nullable         ] public string ForeignKey           { get; set; } // varchar(50)
+		[Column(DataType=LinqToDB.DataType.VarChar,  Length=50),            Nullable         ] public string ForeignKey           { get; set; } // varchar(50)
 
 		#region Associations
 
