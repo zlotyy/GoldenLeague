@@ -71,13 +71,12 @@ namespace GoldenLeague.StatisticsWorker
                         // });
 
                     // workers
-                    //services.AddHostedService<MatchResultsWorker>();
-                    //services.AddHostedService<MatchRecordsWorker>();
-                    services.AddHostedService<PerDayWorker>();
+                    services.AddHostedService<OncePerDayWorker>();
+                    services.AddHostedService<FrequentWorker>();
+                    services.AddHostedService<InfrequentWorker>();
 
                     // services
                     services.AddTransient<IRestServiceFactory, RestServiceFactory>();
-                    services.AddTransient<IFantasyService, FantasyService_USUNAC>();
                     services.AddTransient<IFootballApiService, FootballApiService>();
 
                     // commands
@@ -89,10 +88,13 @@ namespace GoldenLeague.StatisticsWorker
                     // queries
                     services.AddTransient<IBaseQueries, BaseQueries>();
                     services.AddTransient<ITeamQueries, TeamQueries>();
+                    services.AddTransient<IMatchQueries, MatchQueries>();
                     services.AddTransient<ICompetitionsQueries, CompetitionsQueries>();
 
                     // adapter - jeœli zmieni siê serwis do pobierania danych, wystarczy zmieniæ tutaj adapter na inny
                     services.AddTransient<IFootballDataAdapter, FootballApiAdapter>();
+
+                    // TODO Memory Cache
                 });
         }
     }

@@ -264,6 +264,7 @@ namespace GoldenLeague.Database
 		/// Element key in external API, to get element statistics
 		/// </summary>
 		[Column(DataType=LinqToDB.DataType.VarChar,  Length=50),            Nullable         ] public string   ForeignKey    { get; set; } // varchar(50)
+		[Column(DataType=LinqToDB.DataType.Boolean),                                  NotNull] public bool     IsFinished    { get; set; } // bit
 
 		#region Associations
 

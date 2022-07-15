@@ -15,7 +15,8 @@ namespace GoldenLeague.StatisticsWorker.Services
     {
         IEnumerable<LeagueResponse> GetCurrentLeagues();
         IEnumerable<TeamResponse> GetTeams(int leagueId, int season);
-        IEnumerable<FixtureResponse> GetFixtures();
+        IEnumerable<FixtureResponse> GetFutureFixtures(int leagueId, int season);
+        IEnumerable<FixtureResponse> GetLiveFixtures(IEnumerable<int> fixtureIds);
     }
 
     public class FootballApiService : IFootballApiService
@@ -83,27 +84,58 @@ namespace GoldenLeague.StatisticsWorker.Services
             return result;
         }
 
-        public IEnumerable<FixtureResponse> GetFixtures()
+        public IEnumerable<FixtureResponse> GetFutureFixtures(int leagueId, int season)
         {
             var result = new List<FixtureResponse>();
-            _logger.LogTrace($"START {nameof(GetFixtures)}");
+            _logger.LogTrace($"START {nameof(GetFutureFixtures)}");
 
             try
             {
-                var response = _restService.Get<ArrayResponseModel<FixtureResponse>>(FootballApiEndpoints.Fixtures);
+                var now = DateTime.Now;
+
+                var response = _restService.Get<ArrayResponseModel<FixtureResponse>>(
+                    FootballApiEndpoints.FixturesIncoming(leagueId, season, now.ToString("yyyy-MM-dd"), now.AddYears(1).ToString("yyyy-MM-dd")));
                 if (response.IsSuccessful)
                 {
-                    _logger.LogTrace($"SUCCESS {nameof(GetFixtures)}, data: {response.Data.ToJson()}");
+                    _logger.LogTrace($"SUCCESS {nameof(GetFutureFixtures)}, data: {response.Data.ToJson()}");
                     result = response.Data.Response.ToList();
                 }
                 else
                 {
-                    _logger.LogError($"Error during {nameof(GetFixtures)} | {response.ErrorMessage}");
+                    _logger.LogError($"Error during {nameof(GetFutureFixtures)} | {response.ErrorMessage}");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error during {nameof(GetFixtures)}");
+                _logger.LogError(ex, $"Error during {nameof(GetFutureFixtures)}");
+            }
+
+            return result;
+        }
+
+        public IEnumerable<FixtureResponse> GetLiveFixtures(IEnumerable<int> fixtureIds)
+        {
+            var result = new List<FixtureResponse>();
+            _logger.LogTrace($"START {nameof(GetLiveFixtures)}");
+
+            try
+            {
+                var now = DateTime.Now;
+                var response = _restService
+                    .Get<ArrayResponseModel<FixtureResponse>>(FootballApiEndpoints.FixturesLive(fixtureIds));
+                if (response.IsSuccessful)
+                {
+                    _logger.LogTrace($"SUCCESS {nameof(GetLiveFixtures)}, data: {response.Data.ToJson()}");
+                    result = response.Data.Response.ToList();
+                }
+                else
+                {
+                    _logger.LogError($"Error during {nameof(GetLiveFixtures)} | {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetLiveFixtures)}");
             }
 
             return result;
@@ -117,5 +149,7 @@ namespace GoldenLeague.StatisticsWorker.Services
         public static string Teams => "teams";
         public static string TeamsCurrent(int leagueId, int season) => $"{Teams}?league={leagueId}&season={season}";
         public static string Fixtures => "fixtures";
+        public static string FixturesIncoming(int leagueId, int season, string from, string to) => $"{Fixtures}?league={leagueId}&season={season}&from={from}&to={to}";
+        public static string FixturesLive(IEnumerable<int> fixtureIds) => $"{Fixtures}?ids={string.Join("-", fixtureIds)}";
     }
 }

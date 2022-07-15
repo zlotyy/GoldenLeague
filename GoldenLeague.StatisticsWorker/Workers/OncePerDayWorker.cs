@@ -14,19 +14,22 @@ using System.Threading.Tasks;
 
 namespace GoldenLeague.StatisticsWorker.Workers
 {
-    public class PerDayWorker : BackgroundService
+    public class OncePerDayWorker : BackgroundService
     {
-        private readonly ILogger<PerDayWorker> _logger;
+        private readonly ILogger<OncePerDayWorker> _logger;
         private readonly AppSettings _config;
         private readonly IFootballDataAdapter _footballDataAdapter;
         private readonly ICompetitionsCommands _competitionsCommands;
         private readonly ICompetitionsQueries _competitionsQueries;
         private readonly ITeamCommands _teamCommands;
+        private readonly ITeamQueries _teamQueries;
+        private readonly IMatchCommands _matchCommands;
         private const int _DELAY_MULTIPLIER = 1000 * 60 * 60 * 24;
 
-        public PerDayWorker(ILogger<PerDayWorker> logger, IOptions<AppSettings> config, 
+        public OncePerDayWorker(ILogger<OncePerDayWorker> logger, IOptions<AppSettings> config, 
             IFootballDataAdapter footballDataAdapter, ICompetitionsCommands competitionsCommands,
-            ICompetitionsQueries competitionsQueries, ITeamCommands teamCommands)
+            ICompetitionsQueries competitionsQueries, ITeamCommands teamCommands,
+            ITeamQueries teamQueries, IMatchCommands matchCommands)
         {
             _logger = logger;
             _config = config.Value;
@@ -34,6 +37,8 @@ namespace GoldenLeague.StatisticsWorker.Workers
             _competitionsCommands = competitionsCommands;
             _competitionsQueries = competitionsQueries;
             _teamCommands = teamCommands;
+            _teamQueries = teamQueries;
+            _matchCommands = matchCommands;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,6 +47,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
             {
                 await SetLeaguesData();
                 await SetTeamsData();
+                await SetMatchesData();
                 await Task.Delay(_DELAY_MULTIPLIER, stoppingToken);
             }
         }
@@ -98,6 +104,34 @@ namespace GoldenLeague.StatisticsWorker.Workers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error during {nameof(SetTeamsData)}");
+            }
+            finally
+            {
+                stopwatch.Reset();
+            }
+        }
+
+        private async Task SetMatchesData()
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                _logger.LogInformation($"START {nameof(SetMatchesData)}, {DateTimeOffset.Now}");
+
+                await Task.Run(() =>
+                {
+                    var fixtures = _footballDataAdapter.GetFixturesIncoming();
+                    var matches = _footballDataAdapter.MapToMatches(fixtures);
+                    
+                    _matchCommands.UpsertMatches(matches);
+                });
+
+                _logger.LogInformation($"FINISHED {nameof(SetMatchesData)}, timeElapsed: {stopwatch.Elapsed} ms");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(SetMatchesData)}");
             }
             finally
             {

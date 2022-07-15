@@ -14,15 +14,15 @@ using System.Threading.Tasks;
 
 namespace GoldenLeague.StatisticsWorker.Workers
 {
-    public class PerHourWorker : BackgroundService
+    public class InfrequentWorker : BackgroundService
     {
-        private readonly ILogger<PerHourWorker> _logger;
+        private readonly ILogger<InfrequentWorker> _logger;
         private readonly IFootballDataAdapter _footballDataAdapter;
         private readonly ICompetitionsQueries _competitionsQueries;
         private readonly AppSettings _config;
         private const int _DELAY_MULTIPLIER = 1000 * 60 * 60;
 
-        public PerHourWorker(ILogger<PerHourWorker> logger, IOptions<AppSettings> config, 
+        public InfrequentWorker(ILogger<InfrequentWorker> logger, IOptions<AppSettings> config, 
             IFootballDataAdapter footballDataAdapter, ICompetitionsQueries competitionsQueries)
         {
             _logger = logger;
@@ -35,33 +35,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                //await SetFixturesData();
                 await Task.Delay(_DELAY_MULTIPLIER, stoppingToken);
-            }
-        }
-
-        private async Task SetFixturesData()
-        {
-            var stopwatch = Stopwatch.StartNew();
-
-            try
-            {
-                _logger.LogInformation($"START {nameof(SetFixturesData)}, {DateTimeOffset.Now}");
-
-                await Task.Run(() =>
-                {
-                    var fixtures = _footballDataAdapter.GetFixtures();
-                });
-
-                _logger.LogInformation($"FINISHED {nameof(SetFixturesData)}, timeElapsed: {stopwatch.Elapsed} ms");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error during {nameof(SetFixturesData)}");
-            }
-            finally
-            {
-                stopwatch.Reset();
             }
         }
     }

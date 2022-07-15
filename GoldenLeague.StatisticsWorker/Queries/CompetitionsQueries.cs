@@ -1,4 +1,5 @@
 ﻿using GoldenLeague.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,7 @@ namespace GoldenLeague.StatisticsWorker.Queries
     public interface ICompetitionsQueries
     {
         IEnumerable<Competitions> GetActiveCompetitions();
+        Dictionary<string, Guid> GetCompetitionsKeys();
     }
 
     public class CompetitionsQueries : ICompetitionsQueries
@@ -23,6 +25,14 @@ namespace GoldenLeague.StatisticsWorker.Queries
             using (var db = _dbContextFactory.Create())
             {
                 return db.Competitions.Where(x => x.IsActive).ToList();
+            }
+        }
+
+        public Dictionary<string, Guid> GetCompetitionsKeys()
+        {
+            using (var db = _dbContextFactory.Create())
+            {
+                return db.Competitions.ToDictionary(x => x.ForeignKey, x => x.CompetitionsId);
             }
         }
     }
