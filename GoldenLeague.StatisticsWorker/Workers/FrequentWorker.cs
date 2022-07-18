@@ -20,7 +20,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
         private readonly IMatchQueries _matchQueries;
         private readonly IMatchCommands _matchCommands;
         private readonly AppSettings _config;
-        private const int _DELAY_MULTIPLIER = 1000 * 60 * 15;
+        private readonly int _workerDelay = 1000 * 60 * 15;
 
         public FrequentWorker(ILogger<InfrequentWorker> logger, IOptions<AppSettings> config, 
             IFootballDataAdapter footballDataAdapter, ICompetitionsQueries competitionsQueries,
@@ -33,6 +33,8 @@ namespace GoldenLeague.StatisticsWorker.Workers
             _teamQueries = teamQueries;
             _matchCommands = matchCommands;
             _matchQueries = matchQueries;
+
+            _workerDelay = 1000 * 60 * _config.FrequentWorkerDelay;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,7 +42,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
             while (!stoppingToken.IsCancellationRequested)
             {
                 await SetLiveMatchesData();
-                await Task.Delay(_DELAY_MULTIPLIER, stoppingToken);
+                await Task.Delay(_workerDelay, stoppingToken);
             }
         }
 

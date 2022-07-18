@@ -61,7 +61,8 @@ namespace GoldenLeague.Api.Commands
                         {
                             LeagueId = leagueId,
                             UserId = model.InsertUserId,
-                            UserJoinDate = now
+                            UserJoinDate = now,
+                            UserRanking = 1 // po utworzeniu ligi, użytkownik który ją utworzył, będzie na 1 miejscu
                         });
 
                         transaction.Commit();

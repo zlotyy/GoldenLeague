@@ -42,10 +42,10 @@
           {{ item.match.matchTime }}
         </template>
         <template v-slot:[`item.homeTeamName`]="{ item }">
-          {{ item.match.homeTeam.teamNameShort }}
+          {{ item.match.homeTeam.teamName }}
         </template>
         <template v-slot:[`item.awayTeamName`]="{ item }">
-          {{ item.match.awayTeam.teamNameShort }}
+          {{ item.match.awayTeam.teamName }}
         </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
         <template v-slot:[`item.resultBet`]="{ item }">

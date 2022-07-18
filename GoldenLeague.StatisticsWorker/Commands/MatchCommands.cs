@@ -52,6 +52,16 @@ namespace GoldenLeague.StatisticsWorker.Commands
                                 IsFinished = s.IsFinished
                             })
                         .Merge();
+
+                    // trigger powinien uzupełnić wpisy w BookmakerBets dla nowych meczów dla każdego użytkownika
+                    // TODO: Trigger nie działa, na razie zostaje procedura ale pomyśleć nad tym
+                    db.CreateBookmakerBetRecords();
+
+                    // uzupełnij punkty w BookmakerBets dla ukończonych meczów, które mają jeszcze nieuzupełnione punkty
+                    db.SetBookmakerBetPointsForFinishedMatches();
+
+                    // uzupełnij punkty i pozycje dla wszystkich lig BookmakerLeagues
+                    db.SetBookmakerLeaguesResults();
                 }
             }
             catch (Exception ex)

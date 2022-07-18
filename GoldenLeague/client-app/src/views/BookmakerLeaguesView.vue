@@ -18,7 +18,7 @@
           :loading="loading"
           hide-default-footer
           disable-sort
-          class="elevation-1"
+          class="elevation-1 row-pointer"
           :items-per-page="-1"
           mobile-breakpoint="0"
           @click:row="ShowLeagueRank"
@@ -31,7 +31,7 @@
           :loading="loading"
           hide-default-footer
           disable-sort
-          class="elevation-1"
+          class="elevation-1 row-pointer"
           :items-per-page="-1"
           mobile-breakpoint="0"
           @click:row="ShowLeagueRank"
@@ -142,3 +142,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.row-pointer >>> tbody tr :hover {
+  cursor: pointer;
+}
+</style>

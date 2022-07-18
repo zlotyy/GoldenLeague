@@ -13,6 +13,9 @@
           item-text="competitionsName"
           item-value="competitionsId"
           return-object
+          chips
+          deletable-chips
+          small-chips
         ></v-select>
       </div>
       <MatchesBetTable

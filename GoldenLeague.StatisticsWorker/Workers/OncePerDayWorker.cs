@@ -24,7 +24,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
         private readonly ITeamCommands _teamCommands;
         private readonly ITeamQueries _teamQueries;
         private readonly IMatchCommands _matchCommands;
-        private const int _DELAY_MULTIPLIER = 1000 * 60 * 60 * 24;
+        private const int DELAY_MULTIPLIER = 1000 * 60 * 60 * 24;
 
         public OncePerDayWorker(ILogger<OncePerDayWorker> logger, IOptions<AppSettings> config, 
             IFootballDataAdapter footballDataAdapter, ICompetitionsCommands competitionsCommands,
@@ -48,7 +48,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
                 await SetLeaguesData();
                 await SetTeamsData();
                 await SetMatchesData();
-                await Task.Delay(_DELAY_MULTIPLIER, stoppingToken);
+                await Task.Delay(DELAY_MULTIPLIER, stoppingToken);
             }
         }
 

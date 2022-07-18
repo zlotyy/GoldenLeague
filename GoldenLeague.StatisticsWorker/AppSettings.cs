@@ -2,7 +2,8 @@
 {
     public class AppSettings
     {
-        public int MatchResultWorkerDelay { get; set; }
+        public int FrequentWorkerDelay { get; set; }
+        public int InFrequentWorkerDelay { get; set; }
         public RestApiSettings FantasyApi { get; set; }
         public RestApiWithCredentials GoldenLeagueApi { get; set; }
         public RestApiWithKey FootballApi { get; set; }

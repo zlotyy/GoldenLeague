@@ -12,24 +12,33 @@ Tworzenie ligi:
 
 Przydatny SQL
 
-  Tworzenie terminarza
+-- czyszczenie danych: Bookmaker
+DECLARE @GlobalLeagueId uniqueidentifier = (SELECT TOP 1 LeagueId FROM BookmakerLeagues WHERE IsPrivate = 0)
+DELETE FROM BookmakerLeagues_l_users WHERE Leagueid <> @GlobalLeagueId
+DELETE FROM BookmakerLeagues_l_Competitions WHERE LeagueId <> @GlobalLeagueId
+DELETE FROM BookmakerLeagues WHERE LeagueId <> @GlobalLeagueId
 
+-- czyszczenie danych: Matches
+DELETE FROM BookmakerBets
+DELETE FROM Matches
+
+-- tworzenie terminarza
   select * from teams 
-
+  
   DECLARE @homeTeam uniqueidentifier = (select teamid from teams where teamname like '%west ha%')
   DECLARE @awayTeam uniqueidentifier = (select teamid from teams where teamname like '%manchester city%')
   DECLARE @date datetime = '2022-08-07 17:30:00.000'
 
   insert into matches 
   values (
-	newid(),
-	'9B84BDFB-008C-4678-A425-727FD98A5A15',
-	2023,
-	1,
-	@date,
-	@homeTeam,
-	NULL,
-	@awayTeam,
-	NULL,
-	NULL
+    newid(),
+    '9B84BDFB-008C-4678-A425-727FD98A5A15',
+    2023,
+    1,
+    @date,
+    @homeTeam,
+    NULL,
+    @awayTeam,
+    NULL,
+    NULL
   )

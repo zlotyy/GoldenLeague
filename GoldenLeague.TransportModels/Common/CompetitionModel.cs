@@ -9,6 +9,5 @@ namespace GoldenLeague.TransportModels.Common
         public string CompetitionsIcon { get; set; }
         public string CountryIcon { get; set; }
         public int CurrentSeasonNo { get; set; }
-        public int CurrentGameweekNo { get; set; }
     }
 }

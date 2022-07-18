@@ -14,6 +14,7 @@ namespace GoldenLeague.StatisticsWorker.Commands
 {
     public interface ITeamStatisticsCommands
     {
+        [Obsolete]
         Result<int> UpdateTeamsStatistics();
     }
 

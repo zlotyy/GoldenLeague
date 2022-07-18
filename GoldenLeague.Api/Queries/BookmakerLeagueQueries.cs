@@ -55,8 +55,7 @@ namespace GoldenLeague.Api.Queries
                             CompetitionsName = s.Competition.CompetitionsName,
                             CompetitionsIcon = s.Competition.CompetitionsIcon,
                             CountryIcon = s.Competition.CountryIcon,
-                            CurrentSeasonNo = s.Competition.CurrentSeasonNo,
-                            CurrentGameweekNo = s.Competition.CurrentGameweekNo
+                            CurrentSeasonNo = s.Competition.CurrentSeasonNo
                         }),
                         EntryRank = x.UserRanking
                     })
@@ -71,14 +70,14 @@ namespace GoldenLeague.Api.Queries
             using (var db = _dbContextFactory.Create())
             {
                 var data = db.Competitions
+                    .Where(x => x.IsActive)
                     .Select(x => new CompetitionModel
                     {
                         CompetitionsId = x.CompetitionsId,
                         CompetitionsName = x.CompetitionsName,
                         CompetitionsIcon = x.CompetitionsIcon,
                         CountryIcon = x.CountryIcon,
-                        CurrentSeasonNo = x.CurrentSeasonNo,
-                        CurrentGameweekNo = x.CurrentGameweekNo
+                        CurrentSeasonNo = x.CurrentSeasonNo
                     })
                     .ToList();
 

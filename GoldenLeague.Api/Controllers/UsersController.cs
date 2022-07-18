@@ -5,7 +5,6 @@ using GoldenLeague.Common.Localization;
 using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.Bookmaker;
 using GoldenLeague.TransportModels.Users;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
