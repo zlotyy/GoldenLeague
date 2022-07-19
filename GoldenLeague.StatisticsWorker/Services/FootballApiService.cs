@@ -15,6 +15,7 @@ namespace GoldenLeague.StatisticsWorker.Services
     {
         IEnumerable<LeagueResponse> GetCurrentLeagues();
         IEnumerable<TeamResponse> GetTeams(int leagueId, int season);
+        IEnumerable<FixtureResponse> GetFixtures(int leagueId, int season);
         IEnumerable<FixtureResponse> GetFutureFixtures(int leagueId, int season);
         IEnumerable<FixtureResponse> GetLiveFixtures(IEnumerable<int> fixtureIds);
     }
@@ -79,6 +80,34 @@ namespace GoldenLeague.StatisticsWorker.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error during {nameof(GetTeams)}");
+            }
+
+            return result;
+        }
+
+        public IEnumerable<FixtureResponse> GetFixtures(int leagueId, int season)
+        {
+            var result = new List<FixtureResponse>();
+            _logger.LogTrace($"START {nameof(GetFixtures)}");
+
+            try
+            {
+                var now = DateTime.Now;
+
+                var response = _restService.Get<ArrayResponseModel<FixtureResponse>>(FootballApiEndpoints.FixturesForLeague(leagueId, season));
+                if (response.IsSuccessful)
+                {
+                    _logger.LogTrace($"SUCCESS {nameof(GetFixtures)}, data: {response.Data.ToJson()}");
+                    result = response.Data.Response.ToList();
+                }
+                else
+                {
+                    _logger.LogError($"Error during {nameof(GetFixtures)} | {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetFixtures)}");
             }
 
             return result;
@@ -149,6 +178,7 @@ namespace GoldenLeague.StatisticsWorker.Services
         public static string Teams => "teams";
         public static string TeamsCurrent(int leagueId, int season) => $"{Teams}?league={leagueId}&season={season}";
         public static string Fixtures => "fixtures";
+        public static string FixturesForLeague(int leagueId, int season) => $"{Fixtures}?league={leagueId}&season={season}";
         public static string FixturesIncoming(int leagueId, int season, string from, string to) => $"{Fixtures}?league={leagueId}&season={season}&from={from}&to={to}";
         public static string FixturesLive(IEnumerable<int> fixtureIds) => $"{Fixtures}?ids={string.Join("-", fixtureIds)}";
     }

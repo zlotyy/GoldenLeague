@@ -4,6 +4,7 @@ using LinqToDB;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoldenLeague.StatisticsWorker.Commands
 {
@@ -54,7 +55,7 @@ namespace GoldenLeague.StatisticsWorker.Commands
                         .Merge();
 
                     // trigger powinien uzupełnić wpisy w BookmakerBets dla nowych meczów dla każdego użytkownika
-                    // TODO: Trigger nie działa, na razie zostaje procedura ale pomyśleć nad tym
+                    // TODO: Trigger nie działa, na razie zostaje procedura ale pomyśleć nad tym - podejrzec w triggerze Competitions
                     db.CreateBookmakerBetRecords();
 
                     // uzupełnij punkty w BookmakerBets dla ukończonych meczów, które mają jeszcze nieuzupełnione punkty

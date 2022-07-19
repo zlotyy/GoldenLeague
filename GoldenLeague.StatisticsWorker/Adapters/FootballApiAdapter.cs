@@ -44,6 +44,25 @@ namespace GoldenLeague.StatisticsWorker.Adapters
             return result;
         }
 
+        public IEnumerable<IFixtureResponse> GetAllFixtures()
+        {
+            var result = new List<FixtureResponse>();
+
+            // pobierz aktywne ligi
+            var activeCompetitions = _competitionsQueries.GetActiveCompetitions().ToList();
+
+            // dla każdej ligi pobierz wszystkie mecze w sezonie
+            activeCompetitions.ForEach(competitions =>
+            {
+                var leagueId = int.Parse(competitions.ForeignKey);
+                var season = competitions.CurrentSeasonNo;
+                var leagueFixtures = _service.GetFixtures(leagueId, season);
+                result.AddRange(leagueFixtures);
+            });
+
+            return result;
+        }
+
         public IEnumerable<IFixtureResponse> GetFixturesIncoming()
         {
             var result = new List<FixtureResponse>();

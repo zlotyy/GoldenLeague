@@ -121,7 +121,7 @@ namespace GoldenLeague.StatisticsWorker.Workers
 
                 await Task.Run(() =>
                 {
-                    var fixtures = _footballDataAdapter.GetFixturesIncoming();
+                    var fixtures = _footballDataAdapter.GetAllFixtures();
                     var matches = _footballDataAdapter.MapToMatches(fixtures);
                     
                     _matchCommands.UpsertMatches(matches);

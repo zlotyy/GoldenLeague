@@ -45,8 +45,6 @@ namespace GoldenLeague.StatisticsWorker.Commands
                             CountryCode = s.CountryCode
                         })
                         .Merge();
-
-                    // TODO trigger rzuca błędem
                 }
             }
             catch (Exception ex)

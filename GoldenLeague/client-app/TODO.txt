@@ -8,7 +8,9 @@ Aktualizacja punktów typera ma aktualizować rankingi w tabeli [BookmakerLeague
 Tworzenie ligi:
   Powinno przeliczyć ranking ligi
 
+Raz na dobę - sprawdzanie wyników meczów wstecz i upsert dla nieuzupełnionych wyników
 
+Zaproś do swojej prywatnej ligi na podstawie loginu
 
 Przydatny SQL
 

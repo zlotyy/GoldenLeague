@@ -9,6 +9,7 @@ namespace GoldenLeague.StatisticsWorker.Adapters
     {
         IEnumerable<ILeagueResponse> GetCurrentLeagues();
         IEnumerable<ITeamResponse> GetTeams(Competitions competitions);
+        IEnumerable<IFixtureResponse> GetAllFixtures();
         IEnumerable<IFixtureResponse> GetFixturesIncoming();
         IEnumerable<IFixtureResponse> GetFixturesLive();
         IEnumerable<Competitions> MapToCompetitions<T>(IEnumerable<T> leagues);
