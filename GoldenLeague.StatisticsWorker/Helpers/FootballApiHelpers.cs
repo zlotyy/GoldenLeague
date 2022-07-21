@@ -10,6 +10,11 @@ namespace GoldenLeague.StatisticsWorker.Helpers
             Regex regex = new Regex(@"\d+$");
             var value = regex.Match(round).Value;
 
+            if (string.IsNullOrEmpty(value))
+            {
+                return 0;   // np. Preliminary Round - eliminacje
+            }
+
             if (!int.TryParse(value, out int result))
             {
                 throw new ArgumentException($"Cannot parse round to integer: {round} | regex value: {value}");

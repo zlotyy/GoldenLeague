@@ -1,14 +1,8 @@
-﻿using GoldenLeague.Database;
-using GoldenLeague.StatisticsWorker.Adapters;
+﻿using GoldenLeague.StatisticsWorker.Adapters;
 using GoldenLeague.StatisticsWorker.Queries;
-using GoldenLeague.StatisticsWorker.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

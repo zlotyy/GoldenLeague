@@ -35,11 +35,6 @@ namespace GoldenLeague.Api.Queries
             using (var db = _dbContextFactory.Create())
             {
                 var data = db.BookmakerLeaguesLUsers
-                    .LoadWith(x => x.User)
-                    .LoadWith(x => x.League)
-                        .ThenLoad(x => x.LCompetitions)
-                    .LoadWith(x => x.League)
-                        .ThenLoad(x => x.InsertUser)
                     .Where(x => x.UserId == userId && !x.UserLeaveDate.HasValue)
                     .Select(x => new EntryLeagueModel
                     {
@@ -51,7 +46,7 @@ namespace GoldenLeague.Api.Queries
                         InsertUserLogin = x.League.InsertUser.Login,
                         Competitions = x.League.LCompetitions.Select(s => new CompetitionModel
                         {
-                            CompetitionsId = s.CompetitionId,
+                            CompetitionsId = s.CompetitionsId,
                             CompetitionsName = s.Competition.CompetitionsName,
                             CompetitionsIcon = s.Competition.CompetitionsIcon,
                             CountryIcon = s.Competition.CountryIcon,

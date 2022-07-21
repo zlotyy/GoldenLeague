@@ -1,9 +1,7 @@
 <template>
   <div>
     <v-card class="flex">
-      <v-card-subtitle
-        >{{ $t("common.currentGameweek") }} - {{ gameweekNo }}</v-card-subtitle
-      >
+      <v-card-subtitle>Zbliżające się mecze</v-card-subtitle>
       <v-data-table
         :headers="headers"
         :items="items"
@@ -11,7 +9,6 @@
         :loading="loading"
         hide-default-footer
         group-by="matchDate"
-        group-desc
         disable-sort
         height="400"
         class="elevation-1"
@@ -25,26 +22,14 @@
         <template v-slot:[`item.matchTime`]="{ item }">
           {{ item.matchTime }}
         </template>
-        <template v-slot:[`item.homeTeamName`]="{ item }">
-          {{ item.homeTeam.teamName }}
-        </template>
-        <template v-slot:[`item.awayTeamName`]="{ item }">
-          {{ item.awayTeam.teamName }}
-        </template>
         <template v-slot:[`item.teamsSpacer`]> - </template>
-        <template v-slot:[`item.result`]="{ item }">
-          <span>
-            {{ item.homeTeamScore }} :
-            {{ item.awayTeamScore }}
-          </span>
-        </template>
       </v-data-table>
     </v-card>
   </div>
 </template>
 
 <script>
-import MatchService from "@/services/MatchService.js";
+import UserService from "@/services/UserService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
@@ -56,29 +41,22 @@ export default {
         { value: "homeTeamName", align: "end", width: "37%" },
         { value: "teamsSpacer", align: "center", width: "1%" },
         { value: "awayTeamName", align: "start", width: "37%" },
-        {
-          value: "result",
-          align: "center",
-          width: "20%",
-        },
       ],
       items: [],
       loading: false,
-      gameweekNo: null,
     };
   },
-  mounted() {
-    this.$_setCurrentGameweek();
-    this.$_setMatches();
+  async mounted() {
+    await this.$_setMatches();
   },
   methods: {
-    $_setMatches() {
-      // TODO - async await
+    async $_setMatches() {
       this.loading = true;
-      MatchService.GetCurrentGameweekMatches().then((response) => {
-        const result = response.data;
-        if (result.success) {
-          this.items = result.data
+      try {
+        const response = await UserService.GetBookmakerIncomingMatches();
+
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          this.items = response.data.data
             .map((x) => {
               return {
                 ...x,
@@ -90,15 +68,15 @@ export default {
               };
             })
             .sort((a, b) => dayjs(a.matchDateTime) - dayjs(b.matchDateTime));
+        } else {
+          this.items = [];
         }
+      } catch (err) {
+        this.items = [];
+        return;
+      } finally {
         this.loading = false;
-      });
-    },
-    $_setCurrentGameweek() {
-      MatchService.GetCurrentGameweekNo().then((response) => {
-        const result = response.data;
-        this.gameweekNo = result;
-      });
+      }
     },
     $_getMatchDate(dateTime) {
       return dayjs(dateTime).format("YYYY-MM-DD");

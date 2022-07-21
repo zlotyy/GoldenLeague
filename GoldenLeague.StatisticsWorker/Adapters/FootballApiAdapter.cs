@@ -122,7 +122,7 @@ namespace GoldenLeague.StatisticsWorker.Adapters
                 ForeignKey = x.Team.Id.ToString(),
                 TeamName = x.Team.Name,
                 TeamNameAbbreviation = x.Team.Code,
-                CompetitionId = competitions.CompetitionsId
+                CompetitionsId = competitions.CompetitionsId
             });
 
             return mappedTeams;
@@ -139,7 +139,7 @@ namespace GoldenLeague.StatisticsWorker.Adapters
             var matches = (fixtures as IEnumerable<FixtureResponse>).Select(x => new Matches
             {
                 ForeignKey = x.Fixture.Id.ToString(),
-                CompetitionId = competitionsKeys.GetValueOrDefault(x.League.Id),
+                CompetitionsId = competitionsKeys.GetValueOrDefault(x.League.Id),
                 SeasonNo = x.League.Season,
                 GameweekNo = FootballApiHelpers.ParseRound(x.League.Round),
                 HomeTeamId = teamKeys.GetValueOrDefault(x.Teams.Home.Id),

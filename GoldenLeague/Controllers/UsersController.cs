@@ -122,5 +122,35 @@ namespace GoldenLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpGet("{id}/bookmaker-competitions")]
+        public IActionResult GetBookmakerCompetitions([FromRoute] Guid id)
+        {
+            try
+            {
+                var response = _restService.Get<Result<List<CompetitionModel>>>(ApiUrlHelper.UserBookmakerCompetitions(id));
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerCompetitions)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("{id}/bookmaker-incoming-matches")]
+        public IActionResult GetBookmakerIncomingMatches([FromRoute] Guid id)
+        {
+            try
+            {
+                var response = _restService.Get<Result<List<MatchResultSimpleModel>>>(ApiUrlHelper.UserBookmakerIncomingMatches(id));
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerIncomingMatches)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

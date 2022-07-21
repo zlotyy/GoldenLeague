@@ -41,7 +41,7 @@ namespace GoldenLeague.Api.Commands
                         .Select(competitionId => new BookmakerLeaguesLCompetitions
                         {
                             LeagueId = leagueId,
-                            CompetitionId = competitionId
+                            CompetitionsId = competitionId
                         });
 
                     using (var transaction = db.BeginTransaction())

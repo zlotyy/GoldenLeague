@@ -104,8 +104,11 @@ router.beforeEach((to, from, next) => {
     !isAuthorized
   ) {
     next({ name: "Login" });
-  } else if ((to.name === "Login" || to.name === "Register") && isAuthorized) {
-    next({ name: "Home" });
+  } else if (
+    (to.name === "Login" || to.name === "Register" || to.name === "Home") &&
+    isAuthorized
+  ) {
+    next({ name: "BookmakerLeagues" });
   } else next();
 });
 

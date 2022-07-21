@@ -15,6 +15,8 @@ namespace GoldenLeague.Helpers
         public static string UserBookmakerLeaguesJoined(Guid userId) => $"{UsersBase}/{userId}/bookmaker-leagues-joined";
         public static string UserBookmakerLeagueJoin(Guid userId) => $"{UsersBase}/{userId}/bookmaker-league-join";
         public static string UserBookmakerLeagueLeave(Guid userId) => $"{UsersBase}/{userId}/bookmaker-league-leave";
+        public static string UserBookmakerCompetitions(Guid userId) => $"{UsersBase}/{userId}/bookmaker-competitions";
+        public static string UserBookmakerIncomingMatches(Guid userId) => $"{UsersBase}/{userId}/bookmaker-incoming-matches";
 
         public static string MatchesBase => "matches";
         public static string MatchesCurrentGameweek => $"{MatchesBase}/current-gameweek";

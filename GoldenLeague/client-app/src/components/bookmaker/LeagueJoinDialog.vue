@@ -41,6 +41,7 @@
 
 <script>
 import UserService from "@/services/UserService";
+import { mapActions } from "vuex";
 
 export default {
   name: "LeagueJoinDialog",
@@ -49,6 +50,7 @@ export default {
     leagueCode: "",
   }),
   methods: {
+    ...mapActions("common", ["resetCompetitions"]),
     async SubmitLeagueJoin() {
       try {
         if (!this.$_isValid()) {
@@ -59,6 +61,7 @@ export default {
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.$vToastify.customSuccess("Dołączyłeś do nowej ligi");
+          await this.resetCompetitions();
           this.CloseDialog();
           this.$emit("league-joined");
         }

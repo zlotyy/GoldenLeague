@@ -57,7 +57,7 @@ export default {
   methods: {
     ...mapGetters("user", ["getUserId"]),
     ...mapGetters("common", ["getCompetitions"]),
-    ...mapActions("common", ["setCompetitions"]),
+    ...mapActions("common", ["setCompetitions", "resetCompetitions"]),
     async SubmitLeagueCreate() {
       try {
         if (!this.$_isValid()) {
@@ -72,6 +72,7 @@ export default {
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
           this.$vToastify.customSuccess("Liga została utworzona");
+          await this.resetCompetitions();
           this.CloseDialog();
           this.$emit("league-created");
         }

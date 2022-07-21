@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GoldenLeague.Database;
 
 namespace GoldenLeague.Api.Controllers
 {
@@ -20,13 +21,16 @@ namespace GoldenLeague.Api.Controllers
         private readonly IUserCommands _userCommands;
         private readonly IBookmakerBetQueries _bookmakerBetQueries;
         private readonly IBookmakerLeagueQueries _bookmakerLeagueQueries;
+        private readonly ICompetitionsQueries _competitionsQueries;
+        private readonly IMatchQueries _matchQueries;
         private readonly IBookmakerBetCommands _bookmakerBetCommands;
         private readonly IBookmakerLeagueCommands _bookmakerLeagueCommands;
         private readonly IMapper _mapper;
 
         public UsersController(ILogger<UsersController> logger, IUserQueries userQueries, IUserCommands userCommands,
             IBookmakerBetQueries bookmakerBetQueries, IBookmakerBetCommands bookmakerBetCommands, IMapper mapper, 
-            IBookmakerLeagueQueries bookmakerLeagueQueries, IBookmakerLeagueCommands bookmakerLeagueCommands)
+            IBookmakerLeagueQueries bookmakerLeagueQueries, IBookmakerLeagueCommands bookmakerLeagueCommands,
+            ICompetitionsQueries competitionsQueries, IMatchQueries matchQueries)
         {
             _logger = logger;
             _userQueries = userQueries;
@@ -36,6 +40,8 @@ namespace GoldenLeague.Api.Controllers
             _userCommands = userCommands;
             _bookmakerLeagueQueries = bookmakerLeagueQueries;
             _bookmakerLeagueCommands = bookmakerLeagueCommands;
+            _competitionsQueries = competitionsQueries;
+            _matchQueries = matchQueries;
         }
 
         [HttpPost("authenticate")]
@@ -234,6 +240,44 @@ namespace GoldenLeague.Api.Controllers
             var result = _bookmakerLeagueCommands.LeagueLeave(model);
             if (!result.Success)
             {
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/bookmaker-competitions")]
+        public IActionResult GetBookmakerCompetitions([FromRoute] Guid id)
+        {
+            var result = new Result<IEnumerable<CompetitionModel>>(new List<CompetitionModel>());
+
+            try
+            {
+                result.Data = _competitionsQueries.GetBookmakerCompetitionsForUser(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerCompetitions)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/bookmaker-incoming-matches")]
+        public IActionResult GetBookmakerIncomingMatches([FromRoute] Guid id)
+        {
+            var result = new Result<IEnumerable<MatchResultSimpleModel>>(new List<MatchResultSimpleModel>());
+
+            try
+            {
+                result.Data = _matchQueries.GetIncomingBookmakerMatchesForUser(id, 20);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(GetBookmakerIncomingMatches)}");
+                result.Errors.Add(ErrorLocalization.ErrorDBGet);
                 return InternalServerError(result);
             }
 

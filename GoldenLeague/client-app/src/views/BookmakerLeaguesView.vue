@@ -11,7 +11,8 @@
             @league-joined="SetLeaguesData()"
           ></LeagueJoinDialog>
         </v-row>
-        <v-card-title class="mt-5">Liga globalna</v-card-title>
+        <!-- TODO Pomyśleć nad ligami globalnymi lub usunąć to całkiem -->
+        <!-- <v-card-title class="mt-5">Liga globalna</v-card-title>
         <v-data-table
           :headers="headers"
           :items="globalLeague"
@@ -23,8 +24,22 @@
           mobile-breakpoint="0"
           @click:row="ShowLeagueRank"
         >
-        </v-data-table>
-        <v-card-title class="mt-5">Ligi prywatne</v-card-title>
+        </v-data-table> -->
+        <v-card-title class="mt-5">
+          Ligi prywatne
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-bind="attrs" v-on="on" class="ml-1">
+                fas fa-info-circle
+              </v-icon>
+            </template>
+            <span>
+              Ligi prywatne tworzą użytkownicy aplikacji. Możesz założyć swoją
+              ligę i zaprosić do niej znajomych lub poprosić znajomego o kod i
+              dołączyć do jego ligi
+            </span>
+          </v-tooltip>
+        </v-card-title>
         <v-data-table
           :headers="headers"
           :items="privateLeagues"

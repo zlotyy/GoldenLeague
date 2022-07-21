@@ -38,7 +38,7 @@ namespace GoldenLeague.StatisticsWorker.Commands
                             TeamName = s.TeamName,
                             TeamNameShort = s.TeamNameShort,
                             TeamNameAbbreviation = s.TeamNameAbbreviation,
-                            CompetitionId = s.CompetitionId
+                            CompetitionsId = s.CompetitionsId
                         })
                         .Merge();
                 }

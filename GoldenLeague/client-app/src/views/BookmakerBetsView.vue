@@ -3,7 +3,11 @@
     <v-col cols="12">
       <div class="text-h5 mb-5">Twoje typy</div>
       <div>
+        <h3 v-if="!competitions[0]">
+          Dołącz do ligi typerów lub utwórz własną, aby móc typować mecze
+        </h3>
         <v-select
+          v-else
           label="Rozgrywki"
           dense
           outlined
@@ -16,6 +20,7 @@
           chips
           deletable-chips
           small-chips
+          clearable
         ></v-select>
       </div>
       <MatchesBetTable
@@ -50,12 +55,11 @@ export default {
   async mounted() {
     await this.setCompetitions();
     await this.$_setBookmakerBetsItems();
-    this.competitions = this.getCompetitions();
+    this.competitions = await this.getCompetitions();
     this.competitionsSelected = this.competitions;
   },
   methods: {
     ...mapGetters("user", ["getUserId"]),
-    ...mapGetters("common", ["getCompetitions"]),
     ...mapActions("common", ["setCompetitions"]),
     GetBetRecords(competitionsId) {
       return this.bookmakerMatches
@@ -80,6 +84,18 @@ export default {
           });
         }
       });
+    },
+    async getCompetitions() {
+      try {
+        const response = await UserService.GetBookmakerCompetitions();
+
+        if (response.status === 200 && !(response.data || {}).errors[0]) {
+          return response.data.data;
+        }
+        return [];
+      } catch (err) {
+        return [];
+      }
     },
     $_getMatchDate(dateTime) {
       return dayjs(dateTime).format("DD MMMM YYYY");

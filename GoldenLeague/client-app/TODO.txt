@@ -11,6 +11,14 @@ Tworzenie ligi:
 Raz na dobę - sprawdzanie wyników meczów wstecz i upsert dla nieuzupełnionych wyników
 
 Zaproś do swojej prywatnej ligi na podstawie loginu
+Dołączanie do ligi - szukajka po nazwie i założycielu
+
+Rzuca błąd w statistics workerze dla Teams
+
+Dla rozgrywek wyświetlać kraj (w selectcie i nie tylko)
+
+Rejestracja - zapomnialem hasla, mail itp
+
 
 Przydatny SQL
 

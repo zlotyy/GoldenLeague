@@ -94,8 +94,13 @@ namespace GoldenLeague.StatisticsWorker.Workers
                     activeCompetitions.ForEach(competitions =>
                     {
                         var teams = _footballDataAdapter.GetTeams(competitions);
-                        mappedTeams.AddRange(_footballDataAdapter.MapToTeams(teams, competitions));
+
+                        // odrzuć duplikaty spowodowane pobieraniem tych samych drużyn dla różnych rozgrywek (np. PL i LM)
+                        var currentIds = mappedTeams.Select(x => x.ForeignKey);
+                        mappedTeams.AddRange(
+                            _footballDataAdapter.MapToTeams(teams, competitions).Where(x => !currentIds.Contains(x.ForeignKey)));
                     });
+
                     _teamCommands.UpsertTeams(mappedTeams);
                 });
 

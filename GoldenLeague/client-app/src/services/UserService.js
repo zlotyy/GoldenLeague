@@ -44,4 +44,14 @@ export default {
       items
     );
   },
+  async GetBookmakerCompetitions() {
+    return axios.get(
+      `${API_URL}/${store.state.user.id}/bookmaker-competitions`
+    );
+  },
+  async GetBookmakerIncomingMatches() {
+    return axios.get(
+      `${API_URL}/${store.state.user.id}/bookmaker-incoming-matches`
+    );
+  },
 };
