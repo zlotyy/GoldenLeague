@@ -88,7 +88,7 @@ namespace GoldenLeague.StatisticsWorker.Services
         public IEnumerable<FixtureResponse> GetFixtures(int leagueId, int season)
         {
             var result = new List<FixtureResponse>();
-            _logger.LogTrace($"START {nameof(GetFixtures)}");
+            _logger.LogTrace($"START {nameof(GetFixtures)} | leagueId: {leagueId}, season: {season}");
 
             try
             {

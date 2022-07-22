@@ -99,6 +99,9 @@ namespace GoldenLeague.StatisticsWorker.Workers
                         var currentIds = mappedTeams.Select(x => x.ForeignKey);
                         mappedTeams.AddRange(
                             _footballDataAdapter.MapToTeams(teams, competitions).Where(x => !currentIds.Contains(x.ForeignKey)));
+
+                        // TODO kupić plan - darmowy plan przewiduje 10 requestów na minutę, reszta zwraca 0 rekordów
+                        Thread.Sleep(6000);
                     });
 
                     _teamCommands.UpsertTeams(mappedTeams);

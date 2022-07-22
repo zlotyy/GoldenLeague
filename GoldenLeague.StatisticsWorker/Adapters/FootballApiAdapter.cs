@@ -58,6 +58,9 @@ namespace GoldenLeague.StatisticsWorker.Adapters
                 var season = competitions.CurrentSeasonNo;
                 var leagueFixtures = _service.GetFixtures(leagueId, season);
                 result.AddRange(leagueFixtures);
+
+                // TODO kupić plan - darmowy plan przewiduje 10 requestów na minutę, reszta zwraca 0 rekordów
+                System.Threading.Thread.Sleep(6000);
             });
 
             return result;
@@ -144,7 +147,7 @@ namespace GoldenLeague.StatisticsWorker.Adapters
                 GameweekNo = FootballApiHelpers.ParseRound(x.League.Round),
                 HomeTeamId = teamKeys.GetValueOrDefault(x.Teams.Home.Id),
                 AwayTeamId = teamKeys.GetValueOrDefault(x.Teams.Away.Id),
-                MatchDateTime = x.Fixture.Date,
+                MatchDateTime = x.Fixture.Date.ToLocalTime(),   // TODO użyć TimeZone w API
                 HomeTeamScore = x.Goals.Home,
                 AwayTeamScore = x.Goals.Away,
                 IsFinished = FootballApiHelpers.IsMatchFinished(x.Fixture.Status.Short)
