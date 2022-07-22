@@ -1,4 +1,5 @@
-﻿using GoldenLeague.Database;
+﻿using GoldenLeague.Api.Helpers;
+using GoldenLeague.Database;
 using GoldenLeague.TransportModels.Common;
 using GoldenLeague.TransportModels.Users;
 using LinqToDB;
@@ -32,14 +33,18 @@ namespace GoldenLeague.Api.Commands
             {
                 using (var db = _dbContextFactory.Create())
                 {
+                    var salt = PasswordHelpers.GetSalt();
+                    var password = PasswordHelpers.GetHash(model.Password, salt);
+
                     var user = new Users
                     {
                         UserId = Guid.NewGuid(),
                         Login = model.Login,
-                        FullName = model.FullName,
-                        Password = model.Password,
+                        Email = model.Email,
+                        Password = password,
+                        PasswordSalt = salt,
                         IsAdmin = false,
-                        IsDeleted = false                        
+                        IsDeleted = false
                     };
 
                     var globalLeagueId = db.BookmakerLeagues.Where(x => !x.InsertUserId.HasValue).Select(x => x.LeagueId).First();
@@ -56,7 +61,7 @@ namespace GoldenLeague.Api.Commands
                     {
                         UserId = user.UserId,
                         Login = user.Login,
-                        FullName = user.FullName,
+                        Email = user.Email,
                         IsAdmin = user.IsAdmin
                     };
                 }

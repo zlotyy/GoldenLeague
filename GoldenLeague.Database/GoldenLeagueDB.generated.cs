@@ -364,12 +364,13 @@ namespace GoldenLeague.Database
 	[Table(Schema="dbo", Name="Users")]
 	public partial class Users
 	{
-		[Column(DataType=LinqToDB.DataType.Guid),                 PrimaryKey,  NotNull] public Guid   UserId    { get; set; } // uniqueidentifier
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string Login     { get; set; } // nvarchar(100)
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),    Nullable         ] public string FullName  { get; set; } // nvarchar(100)
-		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string Password  { get; set; } // nvarchar(100)
-		[Column(DataType=LinqToDB.DataType.Boolean),                           NotNull] public bool   IsAdmin   { get; set; } // bit
-		[Column(DataType=LinqToDB.DataType.Boolean),                           NotNull] public bool   IsDeleted { get; set; } // bit
+		[Column(DataType=LinqToDB.DataType.Guid),                 PrimaryKey,  NotNull] public Guid   UserId       { get; set; } // uniqueidentifier
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string Login        { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=500),    Nullable         ] public string Email        { get; set; } // nvarchar(500)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),              NotNull] public string Password     { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.NVarChar, Length=100),    Nullable         ] public string PasswordSalt { get; set; } // nvarchar(100)
+		[Column(DataType=LinqToDB.DataType.Boolean),                           NotNull] public bool   IsAdmin      { get; set; } // bit
+		[Column(DataType=LinqToDB.DataType.Boolean),                           NotNull] public bool   IsDeleted    { get; set; } // bit
 
 		#region Associations
 

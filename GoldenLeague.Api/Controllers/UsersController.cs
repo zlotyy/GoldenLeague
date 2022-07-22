@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GoldenLeague.Database;
+using GoldenLeague.Api.Helpers;
 
 namespace GoldenLeague.Api.Controllers
 {
@@ -56,8 +57,7 @@ namespace GoldenLeague.Api.Controllers
                 return NotFound(result);
             }
 
-            // TODO - PasswordHash
-            if (user.Password != credentials.Password)
+            if (user.Password != PasswordHelpers.GetHash(credentials.Password, user.PasswordSalt))
             {
                 result.Errors.Add("Podane hasło jest nieprawidłowe");
                 return Unauthorized(result);
@@ -67,7 +67,7 @@ namespace GoldenLeague.Api.Controllers
             {
                 UserId = user.UserId,
                 Login = user.Login,
-                FullName = user.FullName,
+                Email = user.Email,
                 IsAdmin = user.IsAdmin
             };
 

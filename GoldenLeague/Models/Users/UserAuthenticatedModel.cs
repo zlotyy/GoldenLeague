@@ -8,7 +8,7 @@ namespace GoldenLeague.Models.Users
         {
             UserId = user.UserId;
             Login = user.Login;
-            FullName = user.FullName;
+            Email = user.Email;
             IsAdmin = user.IsAdmin;
             Token = token;
         }
