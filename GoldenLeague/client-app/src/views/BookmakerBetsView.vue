@@ -14,7 +14,7 @@
           multiple
           v-model="competitionsSelected"
           :items="competitions"
-          item-text="competitionsName"
+          item-text="competitionsFullName"
           item-value="competitionsId"
           return-object
           chips

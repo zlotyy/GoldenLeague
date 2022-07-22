@@ -15,7 +15,7 @@
         <v-spacer></v-spacer>
         <div class="d-flex flex-column text-center pa-3">
           <v-chip label large>
-            {{ competitions.competitionsName }}
+            {{ competitions.competitionsFullName }}
           </v-chip>
         </div>
       </v-row>
@@ -30,6 +30,7 @@
         group-desc
         sort-by="match.matchDateTime"
         sort-desc
+        disable-sort
         :item-class="RowClass()"
         class="elevation-1"
       >

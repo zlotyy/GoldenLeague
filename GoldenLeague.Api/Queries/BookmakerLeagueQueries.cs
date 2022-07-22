@@ -71,8 +71,10 @@ namespace GoldenLeague.Api.Queries
                         CompetitionsId = x.CompetitionsId,
                         CompetitionsName = x.CompetitionsName,
                         CompetitionsIcon = x.CompetitionsIcon,
-                        CountryIcon = x.CountryIcon,
-                        CurrentSeasonNo = x.CurrentSeasonNo
+                        CurrentSeasonNo = x.CurrentSeasonNo,
+                        CountryName = x.CountryName,
+                        CountryCode = x.CountryCode,
+                        CountryIcon = x.CountryIcon
                     })
                     .ToList();
 

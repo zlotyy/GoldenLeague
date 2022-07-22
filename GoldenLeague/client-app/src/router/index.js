@@ -37,18 +37,6 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/ChangePasswordView.vue"),
   },
-  // {
-  //   path: "/my-squad",
-  //   name: "MySquad",
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/MySquadView.vue"),
-  // },
-  // {
-  //   path: "/ranking",
-  //   name: "Ranking",
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/RankingView.vue"),
-  // },
   {
     path: "/bookmaker-leagues",
     name: "BookmakerLeagues",

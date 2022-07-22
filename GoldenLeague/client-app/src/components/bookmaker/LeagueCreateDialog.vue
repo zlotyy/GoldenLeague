@@ -15,14 +15,19 @@
     <v-card>
       <v-card-title>Nowa liga prywatna</v-card-title>
       <v-card-text>
-        <v-text-field label="Nazwa" v-model="leagueName"> </v-text-field>
+        <v-text-field
+          label="Nazwa"
+          v-model="leagueName"
+          @keyup.enter="SubmitLeagueCreate"
+        >
+        </v-text-field>
         <v-select
           dense
           outlined
           multiple
           label="Rozgrywki"
           :items="competitions"
-          item-text="competitionsName"
+          item-text="competitionsFullName"
           item-value="competitionsId"
           v-model="competitionsSelected"
         ></v-select>
@@ -89,6 +94,12 @@ export default {
     $_isValid() {
       if (!this.leagueName) {
         this.$vToastify.validationError("Wprowadź nazwę ligi");
+        return false;
+      }
+      if (this.leagueName.length > 50) {
+        this.$vToastify.validationError(
+          "Nazwa ligi nie może przekraczać 50 znaków"
+        );
         return false;
       }
 

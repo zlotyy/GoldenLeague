@@ -26,7 +26,12 @@
         </v-tooltip>
       </v-card-title>
       <v-card-text>
-        <v-text-field label="Kod ligi" v-model="leagueCode"> </v-text-field>
+        <v-text-field
+          label="Kod ligi"
+          v-model="leagueCode"
+          @keyup.enter="SubmitLeagueJoin"
+        >
+        </v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

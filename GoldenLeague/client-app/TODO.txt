@@ -1,14 +1,4 @@
-Hashowanie hasła - salted hash 
-
-Tworzenie użytkownika:
-  Ma tworzyć wpis [BookmakerLeagues_l_Users] dla ligi globalnej
-
-Aktualizacja punktów typera ma aktualizować rankingi w tabeli [BookmakerLeagues_l_Users]
-
-Tworzenie ligi:
-  Powinno przeliczyć ranking ligi
-
-Raz na dobę - sprawdzanie wyników meczów wstecz i upsert dla nieuzupełnionych wyników
+Punkty zliczane tylko dla meczów po utworzeniu ligi - sprawdzic czy dziala prawidlowo
 
 Zaproś do swojej prywatnej ligi na podstawie loginu
 Dołączanie do ligi - szukajka po nazwie i założycielu
@@ -18,6 +8,8 @@ Rzuca błąd w statistics workerze dla Teams
 Dla rozgrywek wyświetlać kraj (w selectcie i nie tylko)
 
 Rejestracja - zapomnialem hasla, mail itp
+
+Podejrzyj typy innych uzytkownikow z danej ligi
 
 
 Przydatny SQL

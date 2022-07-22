@@ -12,6 +12,7 @@
               type="password"
               v-model="passwordConfirm"
               label="Potwierdź hasło"
+              @keyup.enter="Register"
             >
             </v-text-field>
           </v-card-text>
