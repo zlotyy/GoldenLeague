@@ -49,9 +49,11 @@ export default {
         this.$vToastify.customSuccess(
           "Użytkownik o nazwie " + this.login + " został utworzony"
         );
-        this.$router.push({
-          name: "Login",
-        });
+        this.$router
+          .push({
+            name: "Login",
+          })
+          .catch(() => {});
       }
     },
     $_isValid() {

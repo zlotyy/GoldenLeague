@@ -54,9 +54,11 @@ export default {
           this.leagueName = data.leagueName;
           this.items = data.users;
         } else if (response.status === 404) {
-          this.$router.push({
-            name: "BookmakerLeagues",
-          });
+          this.$router
+            .push({
+              name: "BookmakerLeagues",
+            })
+            .catch(() => {});
         }
       } catch (err) {
         return;

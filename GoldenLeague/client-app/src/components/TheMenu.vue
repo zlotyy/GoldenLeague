@@ -32,10 +32,27 @@
       <v-icon>fas fa-sign-in-alt</v-icon>
       <span class="ml-1">Zaloguj</span>
     </v-btn>
-    <v-btn text v-if="isAuthorized()" @click="Logout()">
+    <!-- <v-btn text v-if="isAuthorized()" @click="Logout()">
       <v-icon>fas fa-sign-out-alt</v-icon>
       <span class="ml-1 d-none d-md-flex">Wyloguj</span>
-    </v-btn>
+    </v-btn> -->
+    <v-menu v-if="isAuthorized()" offset-y bottom rounded="lg">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn icon>
+          <v-icon v-bind="attrs" v-on="on" large>fas fa-user-circle</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item @click="ChangePassword()">
+          <v-list-item-title>Zmień hasło</v-list-item-title>
+        </v-list-item>
+      </v-list>
+      <v-list>
+        <v-list-item @click="Logout()">
+          <v-list-item-title>Wyloguj</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-app-bar>
 </template>
 
@@ -57,10 +74,25 @@ export default {
 
       this.$vToastify.customSuccess("Wylogowano z aplikacji");
 
-      this.$router.push({
-        name: "Login",
-      });
+      this.$router
+        .push({
+          name: "Login",
+        })
+        .catch(() => {});
+    },
+    ChangePassword() {
+      this.$router
+        .push({
+          name: "ChangePassword",
+        })
+        .catch(() => {});
     },
   },
 };
 </script>
+
+<style scoped>
+.v-list {
+  padding: 0;
+}
+</style>

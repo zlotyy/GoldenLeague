@@ -39,13 +39,17 @@ axios.interceptors.response.use(
     if (status === 403) {
       Vue.$vToastify.authorizationError();
       store.dispatch("user/resetUser");
-      router.push("/");
+      router.push("/").catch(() => {});
       return;
     }
     if (status === 401 && !headers["token-expired"]) {
-      Vue.$vToastify.authorizationError();
+      if (((response.data || {}).errors || [])[0]) {
+        response.data.errors.forEach((err) => Vue.$vToastify.customError(err));
+        return Promise.resolve(response);
+      }
+      // Vue.$vToastify.authorizationError();
       store.dispatch("user/resetUser");
-      router.push("/");
+      router.push("/").catch(() => {});
       return;
     }
     if (status === 401 && headers["token-expired"] === "true") {

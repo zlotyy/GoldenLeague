@@ -64,9 +64,11 @@ export default {
 
           await this.resetCompetitions();
 
-          this.$router.push({
-            name: "Home",
-          });
+          this.$router
+            .push({
+              name: "Home",
+            })
+            .catch(() => {});
         } else {
           await this.resetUser();
         }

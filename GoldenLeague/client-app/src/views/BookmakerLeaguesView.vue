@@ -149,10 +149,12 @@ export default {
       }
     },
     async ShowLeagueRank(row) {
-      this.$router.push({
-        name: "BookmakerLeague",
-        params: { leagueId: row.leagueId },
-      });
+      this.$router
+        .push({
+          name: "BookmakerLeague",
+          params: { leagueId: row.leagueId },
+        })
+        .catch(() => {});
     },
   },
 };

@@ -48,6 +48,21 @@ namespace GoldenLeague.Controllers
             }
         }
 
+        [HttpPost("{id}/password-change")]
+        public IActionResult PasswordChange([FromRoute] Guid id, [FromBody] UserPasswordChangeModel model)
+        {
+            try
+            {
+                var response = _restService.Post<Result<bool>>(ApiUrlHelper.UserPasswordChange(id), model);
+                return ResolveApiResponse(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(PasswordChange)}");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpGet("{id}/bookmaker-bets")]
         public IActionResult GetMatchBetting([FromRoute] Guid id)
         {

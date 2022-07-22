@@ -3,8 +3,8 @@
     <v-col cols="12">
       <div class="text-h5 mb-5">Twoje typy</div>
       <div>
-        <h3 v-if="!competitions[0]">
-          Dołącz do ligi typerów lub utwórz własną, aby móc typować mecze
+        <h3 v-if="!competitions[0] && !competitionsLoading">
+          Dołącz do ligi typerów lub utwórz własną ligę, aby móc typować mecze
         </h3>
         <v-select
           v-else
@@ -21,6 +21,7 @@
           deletable-chips
           small-chips
           clearable
+          :loading="competitionsLoading"
         ></v-select>
       </div>
       <MatchesBetTable
@@ -50,6 +51,7 @@ export default {
       competitions: [],
       competitionsSelected: [],
       bookmakerMatches: [],
+      competitionsLoading: false,
     };
   },
   async mounted() {
@@ -87,6 +89,7 @@ export default {
     },
     async getCompetitions() {
       try {
+        this.competitionsLoading = true;
         const response = await UserService.GetBookmakerCompetitions();
 
         if (response.status === 200 && !(response.data || {}).errors[0]) {
@@ -95,6 +98,8 @@ export default {
         return [];
       } catch (err) {
         return [];
+      } finally {
+        this.competitionsLoading = false;
       }
     },
     $_getMatchDate(dateTime) {

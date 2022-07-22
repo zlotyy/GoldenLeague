@@ -119,6 +119,26 @@ namespace GoldenLeague.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPost("{id}/password-change")]
+        public IActionResult PasswordChange([FromRoute] Guid id, [FromBody] UserPasswordChangeModel model)
+        {
+            var result = new Result<bool>();
+            var user = _userQueries.GetUser(id);
+            if (user.Password != PasswordHelpers.GetHash(model.PasswordPrevious, user.PasswordSalt))
+            {
+                result.Errors.Add("Podane aktualne hasło jest nieprawidłowe");
+                return BadRequest(result);
+            }
+            
+            result = _userCommands.PasswordChange(model);
+            if (!result.Success)
+            {
+                return InternalServerError(result);
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}/bookmaker-bets")]
         public IActionResult GetBookmakerBets([FromRoute] Guid id)
         {

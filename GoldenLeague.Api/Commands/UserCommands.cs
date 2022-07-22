@@ -12,6 +12,7 @@ namespace GoldenLeague.Api.Commands
     public interface IUserCommands
     {
         Result<UserModel> UserCreate(UserCreateModel model);
+        Result<bool> PasswordChange(UserPasswordChangeModel model);
     }
 
     public class UserCommands : IUserCommands
@@ -70,6 +71,35 @@ namespace GoldenLeague.Api.Commands
             {
                 _logger.LogError(ex, $"Error during {nameof(UserCreate)}");
                 result.Errors.Add("Wystąpił błąd podczas tworzenia użytkownika");
+            }
+
+            return result;
+        }
+
+        public Result<bool> PasswordChange(UserPasswordChangeModel model)
+        {
+            var result = new Result<bool>();
+
+            try
+            {
+                using (var db = _dbContextFactory.Create())
+                {
+                    var salt = PasswordHelpers.GetSalt();
+                    var password = PasswordHelpers.GetHash(model.PasswordNew, salt);
+
+                    db.Users
+                        .Where(x => x.UserId == model.UserId)
+                        .Set(x => x.Password, password)
+                        .Set(x => x.PasswordSalt, salt)
+                        .Update();
+
+                    result.Data = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error during {nameof(PasswordChange)}");
+                result.Errors.Add("Wystąpił błąd podczas zmiany hasła");
             }
 
             return result;

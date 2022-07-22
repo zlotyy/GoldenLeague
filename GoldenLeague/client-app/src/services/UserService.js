@@ -9,6 +9,13 @@ export default {
   async Register(login, password) {
     return axios.post(API_URL, { login, password });
   },
+  async ChangePassword(passwordPrevious, passwordNew) {
+    return axios.post(`${API_URL}/${store.state.user.id}/password-change`, {
+      userId: store.state.user.id,
+      passwordPrevious,
+      passwordNew,
+    });
+  },
   async RefreshToken(token) {
     return axios.post("login/refresh-token", { token });
   },
