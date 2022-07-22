@@ -10,7 +10,6 @@
         hide-default-footer
         group-by="matchDate"
         disable-sort
-        height="400"
         class="elevation-1"
         mobile-breakpoint="0"
       >
@@ -33,7 +32,7 @@ import UserService from "@/services/UserService.js";
 import dayjs from "@/plugins/dayjs.js";
 
 export default {
-  name: "GameweekTable",
+  name: "IncomingMatchesTable",
   data() {
     return {
       headers: [

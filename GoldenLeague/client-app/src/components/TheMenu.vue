@@ -32,10 +32,6 @@
       <v-icon>fas fa-sign-in-alt</v-icon>
       <span class="ml-1">Zaloguj</span>
     </v-btn>
-    <!-- <v-btn text v-if="isAuthorized()" @click="Logout()">
-      <v-icon>fas fa-sign-out-alt</v-icon>
-      <span class="ml-1 d-none d-md-flex">Wyloguj</span>
-    </v-btn> -->
     <v-menu v-if="isAuthorized()" offset-y bottom rounded="lg">
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon>

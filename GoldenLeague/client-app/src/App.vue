@@ -27,4 +27,7 @@ export default {
 
 <style lang="scss">
 @import "@/scss/global.scss";
+.custom-height {
+  min-height: 100%;
+}
 </style>
